@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+# Locally installed node
+/app/node/
+
 # Logs
 logs
 *.log
