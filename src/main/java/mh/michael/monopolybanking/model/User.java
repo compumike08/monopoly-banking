@@ -1,18 +1,31 @@
 package mh.michael.monopolybanking.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class User {
-    private long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(unique = true)
     private String name;
+
+    @Column(unique = true)
     private String code;
+
     private int moneyBalance;
     private UserRole userRole;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
 }
