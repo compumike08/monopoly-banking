@@ -10,6 +10,7 @@ import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
 import mh.michael.monopolybanking.repository.GameRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +22,18 @@ public class PayService {
     private final GameRepository gameRepository;
     private final UserService userService;
     private final MoneySinkService moneySinkService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public PayService(
             GameRepository gameRepository,
             UserService userService,
-            MoneySinkService moneySinkService
+            MoneySinkService moneySinkService,
+            SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.gameRepository = gameRepository;
         this.userService = userService;
         this.moneySinkService = moneySinkService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Transactional
@@ -279,6 +283,8 @@ public class PayService {
             payResponseDTO.setToUser(userService.getUserById(gameId, toUser.getId()));
             payResponseDTO.setToSink(false);
         }
+
+        simpMessagingTemplate.convertAndSend("/topic/game/" + game.getId(), payResponseDTO);
 
         return payResponseDTO;
     }

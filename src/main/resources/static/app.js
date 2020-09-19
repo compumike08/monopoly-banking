@@ -13,12 +13,12 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
+    var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/games', function (payment) {
+        stompClient.subscribe('/topic/game/1', function (payment) {
             showGreeting(JSON.parse(payment.body));
         });
     });
@@ -37,13 +37,13 @@ function sendName() {
         gameId: 1,
         payRequestUUID: "eaeb5b18-aa8f-4910-9044-2f35fa324848",
         fromId: 4,
-        toId: 5,
+        toId: 3,
         requestInitiatorUserId: 4,
         isFromSink: false,
-        isToSink: false,
-        amountToPay: 200,
+        isToSink: true,
+        amountToPay: 250,
         originalFromAmount: 1500,
-        originalToAmount: 1500
+        originalToAmount: 0
     }));
 }
 
