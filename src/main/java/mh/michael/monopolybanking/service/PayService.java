@@ -30,7 +30,6 @@ public class PayService {
         this.gameRepository = gameRepository;
         this.userService = userService;
         this.moneySinkService = moneySinkService;
-
     }
 
     @Transactional
@@ -131,6 +130,133 @@ public class PayService {
         log.info("...payment complete");
 
         PayResponseDTO payResponseDTO = new PayResponseDTO();
+        payResponseDTO.setGameId(game.getId());
+        payResponseDTO.setPayRequestUUID(payRequestDTO.getPayRequestUUID());
+        payResponseDTO.setRequestInitiatorUserId(payRequestDTO.getRequestInitiatorUserId());
+
+        if (payRequestDTO.isFromSink()) {
+            assert fromMoneySink != null;
+            payResponseDTO.setFromMoneySink(moneySinkService.getMoneySinkById(gameId, fromMoneySink.getId()));
+            payResponseDTO.setFromSink(true);
+        } else {
+            assert fromUser != null;
+            payResponseDTO.setFromUser(userService.getUserById(gameId, fromUser.getId()));
+            payResponseDTO.setFromSink(false);
+        }
+
+        if (payRequestDTO.isToSink()) {
+            assert toMoneySink != null;
+            payResponseDTO.setToMoneySink(moneySinkService.getMoneySinkById(gameId, toMoneySink.getId()));
+            payResponseDTO.setToSink(true);
+        } else {
+            assert toUser != null;
+            payResponseDTO.setToUser(userService.getUserById(gameId, toUser.getId()));
+            payResponseDTO.setToSink(false);
+        }
+
+        return payResponseDTO;
+    }
+
+    @Transactional
+    public PayResponseDTO payMoneySocket(PayRequestDTO payRequestDTO) {
+        log.info("Initiating payment via websocket...");
+        long gameId = payRequestDTO.getGameId();
+        Game game = gameRepository.getOne(gameId);
+        MoneySink fromMoneySink = null;
+        MoneySink toMoneySink = null;
+        User fromUser = null;
+        User toUser = null;
+
+        if (payRequestDTO.isFromSink()) {
+            fromMoneySink = game.getMoneySinks().stream()
+                    .filter(moneySink -> moneySink.getId() == payRequestDTO.getFromId())
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("from money sink not found"));
+
+            if (fromMoneySink.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
+                String errMsg = "Payment request original amount doesn't match current amount for fromMoneySink";
+                log.error(errMsg);
+                throw new DataOutOfSyncException(errMsg);
+            }
+
+            int balanceRemaining = fromMoneySink.getMoneyBalance() - payRequestDTO.getAmountToPay();
+
+            if (balanceRemaining < 0) {
+                if (fromMoneySink.isBank()) {
+                    // The bank cannot run out of money, so if bank hits 0 then reset bank balance back to initial starting amount
+                    balanceRemaining = INITIAL_BANK_AMT;
+                } else {
+                    throw new InsufficentFundsException("Insufficient Funds");
+                }
+            }
+
+            fromMoneySink.setMoneyBalance(balanceRemaining);
+        } else {
+            fromUser = game.getUsers().stream()
+                    .filter(user -> user.getId() == payRequestDTO.getFromId())
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("from user not found"));
+
+            if (fromUser.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
+                String errMsg = "Payment request original amount doesn't match current amount for fromUser";
+                log.error(errMsg);
+                throw new DataOutOfSyncException(errMsg);
+            }
+
+            int balanceRemaining = fromUser.getMoneyBalance() - payRequestDTO.getAmountToPay();
+
+            if (balanceRemaining < 0) {
+                throw new InsufficentFundsException("Insufficient Funds");
+            }
+
+            fromUser.setMoneyBalance(balanceRemaining);
+        }
+
+        if (payRequestDTO.isToSink()) {
+            toMoneySink = game.getMoneySinks().stream()
+                    .filter(moneySink -> moneySink.getId() == payRequestDTO.getToId())
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("to money sink not found"));
+
+            if (toMoneySink.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
+                String errMsg = "Payment request original amount doesn't match current amount for toMoneySink";
+                log.error(errMsg);
+                throw new DataOutOfSyncException(errMsg);
+            }
+
+            toMoneySink.setMoneyBalance(toMoneySink.getMoneyBalance() + payRequestDTO.getAmountToPay());
+        } else {
+            toUser = game.getUsers().stream()
+                    .filter(user -> user.getId() == payRequestDTO.getToId())
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("to user not found"));
+
+            if (toUser.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
+                String errMsg = "Payment request original amount doesn't match current amount for toUser";
+                log.error(errMsg);
+                throw new DataOutOfSyncException(errMsg);
+            }
+
+            toUser.setMoneyBalance(toUser.getMoneyBalance() + payRequestDTO.getAmountToPay());
+        }
+
+        if (payRequestDTO.isFromSink()) {
+            game.updateMoneySink(fromMoneySink);
+        } else {
+            game.updateUser(fromUser);
+        }
+
+        if (payRequestDTO.isToSink()) {
+            game.updateMoneySink(toMoneySink);
+        } else {
+            game.updateUser(toUser);
+        }
+
+        gameRepository.save(game);
+        log.info("...payment complete");
+
+        PayResponseDTO payResponseDTO = new PayResponseDTO();
+        payResponseDTO.setGameId(game.getId());
         payResponseDTO.setPayRequestUUID(payRequestDTO.getPayRequestUUID());
         payResponseDTO.setRequestInitiatorUserId(payRequestDTO.getRequestInitiatorUserId());
 

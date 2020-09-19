@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class PayResponseDTO {
+    private long gameId;
     private String payRequestUUID;
     private UserDTO fromUser;
     private MoneySinkDTO fromMoneySink;

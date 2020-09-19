@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 public class PayRequestDTO {
+    private long gameId;
     private String payRequestUUID;
     private long fromId;
     private long toId;
