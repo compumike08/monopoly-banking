@@ -5,16 +5,22 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import Home from "./components/Home";
+import TitleBar from "./components/TitleBar/TitleBar";
+import Home from "./components/Home/Home";
+import CreateNewGame from "./components/CreateNewGame/CreateNewGame";
 import './App.css';
 
 function App() {
   return (
       <Router>
           <div className="App">
+              <TitleBar />
               <Switch>
                   <Route exact path="/">
                       <Home />
+                  </Route>
+                  <Route path="/createNewGame">
+                      <CreateNewGame />
                   </Route>
               </Switch>
           </div>
