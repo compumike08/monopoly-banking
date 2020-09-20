@@ -14,8 +14,8 @@ public class PayController {
         this.payService = payService;
     }
 
-    @PutMapping("/game/{game_id}")
-    public PayResponseDTO payMoney(@PathVariable("game_id") long gameId, @RequestBody PayRequestDTO payRequestDTO) {
-        return payService.payMoney(gameId, payRequestDTO);
+    @PutMapping()
+    public PayResponseDTO payMoney(@RequestBody PayRequestDTO payRequestDTO) {
+        return payService.payMoney(payRequestDTO);
     }
 }

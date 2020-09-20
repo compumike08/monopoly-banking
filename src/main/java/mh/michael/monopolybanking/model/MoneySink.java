@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "money_sink")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -13,16 +12,15 @@ import javax.persistence.*;
 @Builder
 public class MoneySink {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
     private String sinkName;
 
     private int moneyBalance;
     private boolean isBank = false;
 
-    @ManyToOne
-    @JoinColumn(name = "game_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "GAME_ID")
     private Game game;
 }

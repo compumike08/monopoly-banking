@@ -5,12 +5,12 @@ import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.repository.GameRepository;
+import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static mh.michael.monopolybanking.util.Constants.*;
@@ -19,16 +19,16 @@ import static mh.michael.monopolybanking.util.Constants.*;
 @Slf4j
 public class GameService {
     private final GameRepository gameRepository;
+    private final MoneySinkRepository moneySinkRepository;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, MoneySinkRepository moneySinkRepository) {
         this.gameRepository = gameRepository;
+        this.moneySinkRepository = moneySinkRepository;
     }
 
     @Transactional
     public GameDTO createGame() {
         Game newGame = Game.builder()
-                .users(new ArrayList<>())
-                .moneySinks(new ArrayList<>())
                 .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH))
                 .build();
         Game savedGame = gameRepository.save(newGame);
@@ -47,11 +47,14 @@ public class GameService {
                 .isBank(false)
                 .build();
 
-        savedGame.addMoneySink(bank);
-        savedGame.addMoneySink(freeParking);
-        Game updatedGame = gameRepository.save(savedGame);
+        moneySinkRepository.save(bank);
+        moneySinkRepository.save(freeParking);
 
-        return ConvertDTOUtil.convertGameToGameDTO(updatedGame);
+        List<MoneySink> moneySinkList = moneySinkRepository.findAllByGameId(savedGame.getId());
+
+        savedGame.setMoneySinks(moneySinkList);
+
+        return ConvertDTOUtil.convertGameToGameDTO(savedGame);
     }
 
     @Transactional

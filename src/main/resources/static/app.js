@@ -32,21 +32,6 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
-    stompClient.send("/app/paysocket", {}, JSON.stringify({
-        gameId: 1,
-        payRequestUUID: "eaeb5b18-aa8f-4910-9044-2f35fa324848",
-        fromId: 4,
-        toId: 3,
-        requestInitiatorUserId: 4,
-        isFromSink: false,
-        isToSink: true,
-        amountToPay: 250,
-        originalFromAmount: 1500,
-        originalToAmount: 0
-    }));
-}
-
 function showGreeting(message) {
     console.log(message);
 }
@@ -57,5 +42,4 @@ $(function () {
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
 });

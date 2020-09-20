@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,10 +12,9 @@ import javax.persistence.*;
 @Builder
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
     private String name;
 
     @Column(unique = true)
@@ -25,7 +23,7 @@ public class User {
     private int moneyBalance;
     private UserRole userRole;
 
-    @ManyToOne
-    @JoinColumn(name = "game_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "GAME_ID")
     private Game game;
 }

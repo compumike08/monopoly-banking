@@ -7,6 +7,7 @@ import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +45,8 @@ public class ConvertDTOUtil {
     public static GameDTO convertGameToGameDTO(Game game) {
         return GameDTO.builder()
                 .gameId(game.getId())
-                .users(convertUserListToUserDTOList(game.getUsers()))
-                .moneySinks(convertMoneySinkListToMoneySinkDTOList(game.getMoneySinks()))
+                .users(game.getUsers() != null ? convertUserListToUserDTOList(game.getUsers()) : new ArrayList<>())
+                .moneySinks(game.getMoneySinks() != null ? convertMoneySinkListToMoneySinkDTOList(game.getMoneySinks()) : new ArrayList<>())
                 .code(game.getCode())
                 .build();
     }
