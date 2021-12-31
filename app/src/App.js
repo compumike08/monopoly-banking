@@ -2,12 +2,12 @@ import React from 'react';
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
-    Link
+    Route
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
 import Home from "./features/Home/Home";
-import CreateNewGame from "./features/games/CreateNewGame";
+import GamesList from "./features/games/GamesList";
+import CreateNewGame from './features/games/CreateNewGame';
 import './App.css';
 
 function App() {
@@ -18,6 +18,9 @@ function App() {
               <Switch>
                   <Route exact path="/">
                       <Home />
+                  </Route>
+                  <Route path="/gamesList">
+                      <GamesList />
                   </Route>
                   <Route path="/createNewGame">
                       <CreateNewGame />

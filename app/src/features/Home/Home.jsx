@@ -2,9 +2,15 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button } from "reactstrap";
 
+import "./home.css";
+
 class Home extends React.Component {
+    handleGotoGamesList = () => {
+        this.props.history.push('/gamesList');
+    };
+
     handleCreateNewGame = () => {
-        this.props.history.push('/createNewGame');
+        this.props.history.push('/createNewGame')
     };
 
     render() {
@@ -21,6 +27,13 @@ class Home extends React.Component {
                     <Col>
                         <Button color="primary" className="btn-home-cmd" size="lg" onClick={this.handleCreateNewGame}>
                             Create New Game
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Button color="primary" className="btn-home-cmd" size="lg" onClick={this.handleGotoGamesList}>
+                            View Games List
                         </Button>
                     </Col>
                 </Row>
