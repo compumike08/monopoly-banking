@@ -5,9 +5,9 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import TitleBar from "./components/TitleBar/TitleBar";
-import Home from "./components/Home/Home";
-import CreateNewGame from "./components/CreateNewGame/CreateNewGame";
+import TitleBar from "./features/TitleBar/TitleBar";
+import Home from "./features/Home/Home";
+import CreateNewGame from "./features/games/CreateNewGame";
 import './App.css';
 
 function App() {
