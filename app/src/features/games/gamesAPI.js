@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { BACKEND_BASE_URL } from "../../constants/urls";
 
 const API_ERROR_MSG = "API error";
 
 export async function fetchGames() {
-    const url = `${BACKEND_BASE_URL}/games/list`;
+    const url = `/games/list`;
     try {
         const response = await axios.get(url);
         return response.data;
@@ -15,7 +14,7 @@ export async function fetchGames() {
 }
 
 export async function createNewGame() {
-    const url = `${BACKEND_BASE_URL}/games/createNewGame`;
+    const url = `/games/createNewGame`;
     try {
         const response = await axios.post(url);
         return response.data;
@@ -26,7 +25,7 @@ export async function createNewGame() {
 }
 
 export async function addNewUserToGame(gameId, data) {
-    const url = `${BACKEND_BASE_URL}/games/game/${gameId}/createNewUser`;
+    const url = `/games/game/${gameId}/createNewUser`;
     try {
         const response = await axios.post(url, data);
         return response.data;
