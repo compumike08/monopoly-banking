@@ -5,9 +5,9 @@ import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button } from "reactstrap";
 import { createNewGameAction } from "../games/gamesSlice";
 
-import "./home.css";
+import "./HomePage.css";
 
-class Home extends React.Component {
+class HomePage extends React.Component {
     handleJoinExistingGame = () => {
         // this.props.history.push('/gamesList');
     };
@@ -21,7 +21,7 @@ class Home extends React.Component {
 
     render() {
         return (
-            <Container>
+            <Container className="home-container">
                 <Row>
                     <Col>
                         <div className="glbl-heading">
@@ -56,4 +56,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default withRouter(connect(undefined, mapDispatchToProps)(Home));
+export default withRouter(connect(undefined, mapDispatchToProps)(HomePage));

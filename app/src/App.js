@@ -5,7 +5,7 @@ import {
     Route
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
-import Home from "./features/Home/Home";
+import HomePage from "./features/Home/HomePage";
 import NewGame from './features/games/NewGame';
 import './App.css';
 
@@ -16,7 +16,7 @@ function App() {
               <TitleBar />
               <Switch>
                   <Route exact path="/">
-                      <Home />
+                      <HomePage />
                   </Route>
                   <Route path="/newGame">
                       <NewGame />
