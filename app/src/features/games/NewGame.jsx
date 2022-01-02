@@ -31,8 +31,8 @@ class NewGame extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        gameId: state.gamesData.activeGame ? state.gamesData.activeGame.gameId : null,
-        gameCode: state.gamesData.activeGame ? state.gamesData.activeGame.code : null
+        gameId: state.gamesData.activeGame.gameId,
+        gameCode: state.gamesData.activeGame.code
     };
 }
 

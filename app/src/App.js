@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
 import Home from "./features/Home/Home";
-import GamesList from "./features/games/GamesList";
 import NewGame from './features/games/NewGame';
 import './App.css';
 
@@ -18,9 +17,6 @@ function App() {
               <Switch>
                   <Route exact path="/">
                       <Home />
-                  </Route>
-                  <Route path="/gamesList">
-                      <GamesList />
                   </Route>
                   <Route path="/newGame">
                       <NewGame />
