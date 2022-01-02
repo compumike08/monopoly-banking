@@ -8,8 +8,10 @@ import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -72,6 +74,9 @@ public class GameService {
     @Transactional
     public GameDTO getGameByCode(String gameCode) {
         Game game = gameRepository.findByCode(gameCode);
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
+        }
         return ConvertDTOUtil.convertGameToGameDTO(game);
     }
 }
