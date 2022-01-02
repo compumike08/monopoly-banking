@@ -1,22 +1,20 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 
-class Game extends PureComponent {
-    render() {
-        return (
-            <Card>
-                <CardBody>
-                    <CardTitle tag="h5">
-                        {this.props.code}
-                    </CardTitle>
-                    <CardSubtitle className="mb-2 text-muted" tag="h6">
-                        {this.props.gameId}
-                    </CardSubtitle>
-                </CardBody>
-            </Card>
-        );
-    }
+const Game = ({ gameId, code }) => {
+    return (
+        <Card>
+            <CardBody>
+                <CardTitle tag="h5">
+                    {code}
+                </CardTitle>
+                <CardSubtitle className="mb-2 text-muted" tag="h6">
+                    {gameId}
+                </CardSubtitle>
+            </CardBody>
+        </Card>
+    );
 }
 
 Game.propTypes = {
