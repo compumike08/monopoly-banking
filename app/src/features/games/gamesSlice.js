@@ -4,6 +4,7 @@ import { fetchGames, createNewGame, addNewUserToGame } from "./gamesAPI";
 
 const initialState = {
     games: [],
+    activeGame: {},
     fetchGamesStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
     addNewUserToGameStatus: IDLE_STATUS
@@ -51,6 +52,7 @@ export const gamesSlice = createSlice({
             .addCase(createNewGameAction.fulfilled, (state, action) => {
                 state.createNewGameStatus = IDLE_STATUS;
                 state.games.push(action.payload);
+                state.activeGame = action.payload;
             })
             .addCase(createNewGameAction.rejected, (state) => {
                 state.createNewGameStatus = ERROR_STATUS;

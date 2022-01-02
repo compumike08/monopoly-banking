@@ -7,7 +7,7 @@ import {
 import TitleBar from "./features/TitleBar/TitleBar";
 import Home from "./features/Home/Home";
 import GamesList from "./features/games/GamesList";
-import CreateNewGame from './features/games/CreateNewGame';
+import NewGame from './features/games/NewGame';
 import './App.css';
 
 function App() {
@@ -22,8 +22,8 @@ function App() {
                   <Route path="/gamesList">
                       <GamesList />
                   </Route>
-                  <Route path="/createNewGame">
-                      <CreateNewGame />
+                  <Route path="/newGame">
+                      <NewGame />
                   </Route>
               </Switch>
           </div>
