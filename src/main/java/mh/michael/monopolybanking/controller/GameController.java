@@ -38,6 +38,11 @@ public class GameController {
         return gameService.getGameById(gameId);
     }
 
+    @GetMapping("/gameCode/{game_code}")
+    public GameDTO getGameByCode(@PathVariable("game_code") String gameCode) {
+        return gameService.getGameByCode(gameCode);
+    }
+
     @PostMapping("/createNewGame")
     public GameDTO createNewGame() {
         return gameService.createGame();

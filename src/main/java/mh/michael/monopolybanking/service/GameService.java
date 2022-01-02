@@ -68,4 +68,10 @@ public class GameService {
         Game game = gameRepository.getOne(gameId);
         return ConvertDTOUtil.convertGameToGameDTO(game);
     }
+
+    @Transactional
+    public GameDTO getGameByCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode);
+        return ConvertDTOUtil.convertGameToGameDTO(game);
+    }
 }
