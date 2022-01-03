@@ -9,7 +9,7 @@ import "./HomePage.css";
 
 class HomePage extends React.Component {
     handleJoinExistingGame = () => {
-        // this.props.history.push('/gamesList');
+        this.props.history.push('/joinGame');
     };
 
     handleCreateNewGame = () => {

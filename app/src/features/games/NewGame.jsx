@@ -1,12 +1,14 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { Container, Row, Col } from "reactstrap";
-import { createNewGameAction } from "./gamesSlice";
+import { Container, Row, Col, Button } from "reactstrap";
 import Game from "./Game";
 
 class NewGame extends React.Component {
+    handleContinue = () => {
+        this.props.history.push('/newUser');
+    };
+
     render() {
         return (
             <Container>
@@ -17,12 +19,24 @@ class NewGame extends React.Component {
                         </div>
                     </Col>
                 </Row>
-                {this.props.gameId && this.props.gameCode && (
-                    <Row>
-                        <Col>
-                            <Game gameId={this.props.gameId} code={this.props.gameCode} />
-                        </Col>
-                    </Row>
+                {this.props.gameCode && (
+                    <>
+                        <Row>
+                            <Col md="3">
+                                <Game code={this.props.gameCode} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                Make sure you write down the game code before continuing.
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Button color="primary" onClick={this.handleContinue}>Continue</Button>
+                            </Col>
+                        </Row>
+                    </>
                 )}
             </Container>
         );
@@ -31,17 +45,8 @@ class NewGame extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        gameId: state.gamesData.activeGame.gameId,
         gameCode: state.gamesData.activeGame.code
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators({
-            createNewGameAction
-        }, dispatch)
-    };
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewGame));
+export default withRouter(connect(mapStateToProps)(NewGame));

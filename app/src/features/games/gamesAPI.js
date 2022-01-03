@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const API_ERROR_MSG = "API error";
-
 export async function fetchGames() {
     const url = `/games/list`;
     try {
@@ -9,7 +7,18 @@ export async function fetchGames() {
         return response.data;
     } catch (err) {
         console.log(err);
-        throw new Error(API_ERROR_MSG);
+        throw new Error(err.response.data.message);
+    }
+}
+
+export async function fetchGameByCode(gameCode) {
+    const url = `/games/gameCode/${gameCode}`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
     }
 }
 
@@ -20,7 +29,7 @@ export async function createNewGame() {
         return response.data;
     } catch (err) {
         console.log(err);
-        throw new Error(API_ERROR_MSG);
+        throw new Error(err.response.data.message);
     }
 }
 
@@ -31,6 +40,6 @@ export async function addNewUserToGame(gameId, data) {
         return response.data;
     } catch (err) {
         console.log(err);
-        throw new Error(API_ERROR_MSG);
+        throw new Error(err.response.data.message);
     }
 }
