@@ -2,7 +2,8 @@ import React, { PureComponent } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Container, Row, Col, Card, CardBody, CardTitle, CardSubtitle, CardText } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
+import UserCard from '../../sharedComponents/UserCard';
 
 class GameView extends PureComponent {
     render() {
@@ -22,26 +23,14 @@ class GameView extends PureComponent {
                 </Row>
                 {this.props.activeGame.users.map(user => {
                     return (
-                        <Row>
+                        <Row key={user.userId}>
                             <Col md="3">
-                                <Card>
-                                    <CardBody>
-                                        <CardTitle tag="h4">
-                                            {user.name}
-                                        </CardTitle>
-                                        <CardSubtitle tag="h5" className="mb-2 text-muted">
-                                            {user.code}
-                                        </CardSubtitle>
-                                        <CardText>
-                                            <div>
-                                                Role: {user.userRole}
-                                            </div>
-                                            <div>
-                                                Balance: {user.moneyBalance}
-                                            </div>
-                                        </CardText>
-                                    </CardBody>
-                                </Card>
+                                <UserCard
+                                    name={user.name}
+                                    code={user.code}
+                                    userRole={user.userRole}
+                                    moneyBalance={user.moneyBalance}
+                                />
                             </Col>
                         </Row>
                     );
