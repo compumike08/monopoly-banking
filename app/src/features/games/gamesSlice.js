@@ -7,7 +7,8 @@ const initialState = {
         gameId: null,
         code: null,
         users: [],
-        moneySinks: []
+        moneySinks: [],
+        loggedInUserId: null
     },
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
@@ -64,6 +65,7 @@ export const gamesSlice = createSlice({
             .addCase(addNewUserToGameAction.fulfilled, (state, action) => {
                 state.addNewUserToGameStatus = IDLE_STATUS;
                 state.activeGame.users.push(action.payload);
+                state.activeGame.loggedInUserId = action.payload.userId;
             })
             .addCase(addNewUserToGameAction.rejected, (state) => {
                 state.addNewUserToGameStatus = ERROR_STATUS;

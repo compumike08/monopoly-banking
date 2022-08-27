@@ -7,6 +7,7 @@ import UserCard from '../../sharedComponents/UserCard';
 
 class GameView extends PureComponent {
     render() {
+        const { loggedInUserId, users } = this.props.activeGame;
         return (
             <Container>
                 <Row>
@@ -21,7 +22,7 @@ class GameView extends PureComponent {
                         <h3>Users</h3>
                     </Col>
                 </Row>
-                {this.props.activeGame.users.map(user => {
+                {users.map(user => {
                     return (
                         <Row key={user.userId}>
                             <Col md="3">
@@ -30,6 +31,7 @@ class GameView extends PureComponent {
                                     code={user.code}
                                     userRole={user.userRole}
                                     moneyBalance={user.moneyBalance}
+                                    isYou={loggedInUserId === user.userId}
                                 />
                             </Col>
                         </Row>
