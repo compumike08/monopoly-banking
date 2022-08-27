@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { Container, Row, Col, Button } from "reactstrap";
-import Game from "./Game";
+import GameCard from "../../sharedComponents/GameCard";
 
 class NewGame extends React.Component {
     handleContinue = () => {
@@ -23,7 +23,7 @@ class NewGame extends React.Component {
                     <>
                         <Row>
                             <Col md="3">
-                                <Game code={this.props.gameCode} />
+                                <GameCard code={this.props.gameCode} />
                             </Col>
                         </Row>
                         <Row>

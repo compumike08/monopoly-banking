@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardTitle } from "reactstrap";
 
-const Game = ({ code }) => {
+const GameCard = ({ code }) => {
     return (
         <Card>
             <CardBody>
@@ -14,8 +14,8 @@ const Game = ({ code }) => {
     );
 }
 
-Game.propTypes = {
+GameCard.propTypes = {
     code: PropTypes.string.isRequired
 };
 
-export default Game;
+export default GameCard;
