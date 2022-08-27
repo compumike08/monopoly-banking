@@ -38,6 +38,11 @@ export const fetchExistingGameByCodeAction = createAsyncThunk(
 export const gamesSlice = createSlice({
     name: 'games',
     initialState,
+    reducers: {
+        userReceivedFromWs(state, action) {
+            state.activeGame.users.push(action.payload);
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createNewGameAction.pending, (state) => {
@@ -79,4 +84,8 @@ export const gamesSlice = createSlice({
     }
 });
 
-export default gamesSlice.reducer;
+const { actions, reducer } = gamesSlice;
+
+export const { userReceivedFromWs } = actions;
+
+export default reducer;

@@ -1,0 +1,60 @@
+import React, { PureComponent } from "react";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import SockJsClient from 'react-stomp';
+import { TOPIC_GAME_PREFIX, TOPIC_GAME_USERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
+import { userReceivedFromWs } from "../games/gamesSlice";
+import GameView from "./GameView";
+
+class GameContainer extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            wsClientConnected: false
+        }
+    }
+
+    onWsMessageReceive = (msg, topic) => {
+        if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_USERS}`) {
+            this.props.actions.userReceivedFromWs(msg);
+        }
+    };
+
+    render() {
+        const wsSourceUrl = window.location.protocol + "//" + window.location.host + "/ws";
+        return (
+            <>
+                <GameView />
+                <SockJsClient
+                    url={wsSourceUrl}
+                    topics={[
+                        `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_USERS}`,
+                        `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PAYMENT}`
+                    ]}
+                    onConnect={() => { this.setState({ wsClientConnected: true }) }}
+                    onDisconnect={() => { this.setState({ wsClientConnected: false }) }}
+                    onMessage={this.onWsMessageReceive}
+                    ref={client => this.clientRef = client}
+                    debug={false}
+                />
+            </>
+        );
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+        activeGameId: state.gamesData.activeGame.gameId
+    };
+};
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators({
+            userReceivedFromWs
+        }, dispatch)
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameContainer);

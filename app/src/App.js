@@ -9,7 +9,7 @@ import HomePage from "./features/Home/HomePage";
 import NewGame from './features/games/NewGame';
 import NewUser from "./features/games/NewUser";
 import JoinGame from "./features/games/JoinGame";
-import GameView from "./features/gameView/GameView";
+import GameContainer from './features/gameView/GameContainer';
 
 import './App.css';
 
@@ -32,7 +32,7 @@ function App() {
                       <JoinGame />
                   </Route>
                   <Route path="/gameView">
-                      <GameView />
+                      <GameContainer />
                   </Route>
               </Switch>
           </div>
