@@ -168,7 +168,7 @@ public class PayService {
             payResponseDTO.setToSink(false);
         }
 
-        simpMessagingTemplate.convertAndSend("/topic/game/" + gameId, payResponseDTO);
+        simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
 
         return payResponseDTO;
     }

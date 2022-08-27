@@ -11,6 +11,7 @@ import mh.michael.monopolybanking.repository.UserRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,10 +26,16 @@ import static mh.michael.monopolybanking.util.Constants.STARTING_MONEY_AMT;
 public class UserService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public UserService(GameRepository gameRepository, UserRepository userRepository) {
+    public UserService(
+            GameRepository gameRepository,
+            UserRepository userRepository,
+            SimpMessagingTemplate simpMessagingTemplate
+    ) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Transactional
@@ -50,7 +57,11 @@ public class UserService {
 
         User updatedUser = userRepository.save(newUser);
 
-        return ConvertDTOUtil.convertUserToUserDTO(updatedUser);
+        UserDTO updatedUserDTO = ConvertDTOUtil.convertUserToUserDTO(updatedUser);
+
+        simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/users", updatedUserDTO);
+
+        return updatedUserDTO;
     }
 
     @Transactional
