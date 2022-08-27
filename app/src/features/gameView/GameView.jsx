@@ -27,10 +27,7 @@ class GameView extends PureComponent {
                         <Row key={user.userId}>
                             <Col md="3">
                                 <UserCard
-                                    name={user.name}
-                                    code={user.code}
-                                    userRole={user.userRole}
-                                    moneyBalance={user.moneyBalance}
+                                    user={user}
                                     isYou={loggedInUserId === user.userId}
                                 />
                             </Col>

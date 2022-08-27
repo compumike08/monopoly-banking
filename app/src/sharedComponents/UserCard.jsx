@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 
-const UserCard = ({ name, code, userRole, moneyBalance, isYou }) => {
+const UserCard = ({ user, isYou }) => {
+    const { name, code, userRole, moneyBalance } = user;
     return (
         <Card color={isYou ? "info" : "light"}>
             <CardBody>
@@ -33,10 +34,14 @@ UserCard.defaultProps = {
 };
 
 UserCard.propTypes = {
-    name: PropTypes.string.isRequired,
-    code: PropTypes.string.isRequired,
-    userRole: PropTypes.string.isRequired,
-    moneyBalance: PropTypes.number.isRequired,
+    user: PropTypes.shape({
+        userId: PropTypes.number.isRequired,
+        gameId: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        code: PropTypes.string.isRequired,
+        userRole: PropTypes.string.isRequired,
+        moneyBalance: PropTypes.number.isRequired
+    }).isRequired,
     isYou: PropTypes.bool
 };
 
