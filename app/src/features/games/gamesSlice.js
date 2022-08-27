@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { createNewGame, addNewUserToGame, fetchGameByCode } from "./gamesAPI";
+import { sendPayment } from './paymentsAPI';
 
 const initialState = {
     activeGame: {
@@ -12,7 +13,7 @@ const initialState = {
     },
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
-    addNewUserToGameStatus: IDLE_STATUS
+    addNewUserToGameStatus: IDLE_STATUS,
 };
 
 export const createNewGameAction = createAsyncThunk(
@@ -36,12 +37,43 @@ export const fetchExistingGameByCodeAction = createAsyncThunk(
     }
 )
 
+export const sendPaymentAction = createAsyncThunk(
+    'games/sendPayment',
+    async (data) => {
+        return await sendPayment(data);
+    }
+);
+
+const processPayment = (state, action) => {
+    const { isFromSink, isToSink, fromUser, toUser } = action.payload;
+    state.sendPaymentStatus = IDLE_STATUS;
+    
+    if (!isFromSink) {
+        const userIndex = state.activeGame.users.findIndex(user => user.userId === fromUser.userId);
+        if (userIndex > -1) {
+            state.activeGame.users[userIndex] = fromUser;
+        }
+    }
+
+    if (!isToSink) {
+        const userIndex = state.activeGame.users.findIndex(user => user.userId === toUser.userId);
+        if (userIndex > -1) {
+            state.activeGame.users[userIndex] = toUser;
+        }
+    }
+
+    return state;
+};
+
 export const gamesSlice = createSlice({
     name: 'games',
     initialState,
     reducers: {
         userReceivedFromWs(state, action) {
             state.activeGame.users.push(action.payload);
+        },
+        paymentReceivedFromWs(state, action) {
+            state = processPayment(state, action);
         }
     },
     extraReducers: (builder) => {
@@ -82,12 +114,21 @@ export const gamesSlice = createSlice({
             })
             .addCase(fetchExistingGameByCodeAction.rejected, (state) => {
                 state.fetchExistingGameByCodeStatus = ERROR_STATUS;
+            })
+            .addCase(sendPaymentAction.pending, (state) => {
+                state.sendPaymentStatus = LOADING_STATUS;
+            })
+            .addCase(sendPaymentAction.fulfilled, (state, action) => {
+                state = processPayment(state, action);
+            })
+            .addCase(sendPaymentAction.rejected, (state) => {
+                state.sendPaymentStatus = ERROR_STATUS;
             });
     }
 });
 
 const { actions, reducer } = gamesSlice;
 
-export const { userReceivedFromWs } = actions;
+export const { userReceivedFromWs, paymentReceivedFromWs } = actions;
 
 export default reducer;

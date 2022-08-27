@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import SockJsClient from 'react-stomp';
 import { TOPIC_GAME_PREFIX, TOPIC_GAME_USERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
-import { userReceivedFromWs } from "../games/gamesSlice";
+import { userReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
 import GameView from "./GameView";
 
 class GameContainer extends PureComponent {
@@ -18,6 +18,8 @@ class GameContainer extends PureComponent {
     onWsMessageReceive = (msg, topic) => {
         if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_USERS}`) {
             this.props.actions.userReceivedFromWs(msg);
+        } else if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PAYMENT}`) {
+            this.props.actions.paymentReceivedFromWs(msg);
         }
     };
 
@@ -52,7 +54,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            userReceivedFromWs
+            userReceivedFromWs,
+            paymentReceivedFromWs
         }, dispatch)
     };
 };
