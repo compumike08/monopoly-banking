@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
-import { createNewGame, addNewUserToGame, fetchGameByCode } from "../../api/gamesAPI";
+import { createNewGame, addNewUserToGame, fetchGameByCode, joinGameAsExistingUser } from "../../api/gamesAPI";
 import { sendPayment } from '../../api/paymentsAPI';
 
 const initialState = {
@@ -14,6 +14,7 @@ const initialState = {
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
     addNewUserToGameStatus: IDLE_STATUS,
+    joinGameAsExistingUserStatus: IDLE_STATUS
 };
 
 export const createNewGameAction = createAsyncThunk(
@@ -27,6 +28,13 @@ export const addNewUserToGameAction = createAsyncThunk(
     'games/addNewUserToGameAction',
     async (data) => {
         return await addNewUserToGame(data.gameId, data);
+    }
+);
+
+export const joinGameAsExistingUserAction = createAsyncThunk(
+    'games/joinGameAsExistingUserAction',
+    async (data) => {
+        return await joinGameAsExistingUser(data.gameId, data.userCode);
     }
 );
 
@@ -102,6 +110,16 @@ export const gamesSlice = createSlice({
             .addCase(addNewUserToGameAction.rejected, (state) => {
                 state.addNewUserToGameStatus = ERROR_STATUS;
             })
+            .addCase(joinGameAsExistingUserAction.pending, (state) => {
+                state.joinGameAsExistingUserStatus = LOADING_STATUS;
+            })
+            .addCase(joinGameAsExistingUserAction.fulfilled, (state, action) => {
+                state.joinGameAsExistingUserStatus = IDLE_STATUS;
+                state.activeGame.loggedInUserId = action.payload.userId;
+            })
+            .addCase(joinGameAsExistingUserAction.rejected, (state => {
+                state.joinGameAsExistingUserStatus = ERROR_STATUS;
+            }))
             .addCase(fetchExistingGameByCodeAction.pending, (state) => {
                 state.fetchExistingGameByCodeStatus = LOADING_STATUS;
             })

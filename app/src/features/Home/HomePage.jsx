@@ -5,8 +5,6 @@ import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button } from "reactstrap";
 import { createNewGameAction } from "../games/gamesSlice";
 
-import "./HomePage.css";
-
 class HomePage extends React.Component {
     handleJoinExistingGame = () => {
         this.props.history.push('/joinGame');
@@ -21,7 +19,7 @@ class HomePage extends React.Component {
 
     render() {
         return (
-            <Container className="home-container">
+            <Container className="main-menu-container">
                 <Row>
                     <Col>
                         <div className="glbl-heading">
@@ -31,14 +29,14 @@ class HomePage extends React.Component {
                 </Row>
                 <Row>
                     <Col>
-                        <Button color="primary" className="btn-home-cmd" size="lg" onClick={this.handleCreateNewGame}>
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleCreateNewGame}>
                             Create New Game
                         </Button>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Button color="primary" className="btn-home-cmd" size="lg" onClick={this.handleJoinExistingGame}>
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinExistingGame}>
                             Join Existing Game
                         </Button>
                     </Col>

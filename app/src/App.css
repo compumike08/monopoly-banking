@@ -32,3 +32,11 @@
     transform: rotate(360deg);
   }
 }
+
+.btn-menu-cmd {
+  margin-bottom: 10px;
+}
+
+.main-menu-container {
+  text-align: center;
+}

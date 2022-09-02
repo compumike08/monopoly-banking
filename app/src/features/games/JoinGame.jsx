@@ -30,11 +30,10 @@ class JoinGame extends PureComponent {
         } else {
             this.props.actions.fetchExistingGameByCodeAction(this.state.gameCode)
                 .catch(err => {
-                    console.log("FLAG");
                     console.log(err);
                 })
                 .then(() => {
-                    this.props.history.push('/newUser');
+                    this.props.history.push('/userManagement');
                 });
                 
         }

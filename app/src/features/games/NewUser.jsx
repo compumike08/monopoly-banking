@@ -30,6 +30,10 @@ class NewUser extends PureComponent {
     };
 
     handleSubmit = async () => {
+        this.setState({
+            isNameError: false
+        });
+
         if (this.state.name.length < 1) {
             this.setState({
                 isNameError: true

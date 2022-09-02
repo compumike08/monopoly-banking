@@ -6,7 +6,7 @@ import GameCard from "../../sharedComponents/GameCard";
 
 class NewGame extends React.Component {
     handleContinue = () => {
-        this.props.history.push('/newUser');
+        this.props.history.push('/userManagement');
     };
 
     render() {
