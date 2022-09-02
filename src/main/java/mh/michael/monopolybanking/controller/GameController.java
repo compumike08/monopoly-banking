@@ -43,6 +43,14 @@ public class GameController {
         return gameService.getGameByCode(gameCode);
     }
 
+    @GetMapping("/game/{game_id}/user/{user_code}")
+    public UserDTO getUserByCode(
+            @PathVariable("game_id") long gameId,
+            @PathVariable("user_code") String userCode
+    ) {
+        return userService.getUserByCodeAndGameId(gameId, userCode);
+    }
+
     @PostMapping("/createNewGame")
     public GameDTO createNewGame() {
         return gameService.createGame();
@@ -52,5 +60,4 @@ public class GameController {
     public UserDTO createNewUser(@PathVariable("game_id") long gameId, @RequestBody NewUserRequestDTO newUserRequestDTO) {
         return userService.createNewUser(gameId, newUserRequestDTO);
     }
-
 }

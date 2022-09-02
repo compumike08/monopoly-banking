@@ -71,6 +71,15 @@ public class UserService {
     }
 
     @Transactional
+    public UserDTO getUserByCodeAndGameId(long gameId, String userCode) {
+        User foundUser = userRepository.findByGame_IdAndCode(gameId, userCode);
+        if (foundUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        return ConvertDTOUtil.convertUserToUserDTO(foundUser);
+    }
+
+    @Transactional
     public List<UserDTO> getUsersByGameId(long gameId) {
         List<User> userList = userRepository.findAllByGameId(gameId);
         return ConvertDTOUtil.convertUserListToUserDTOList(userList);
