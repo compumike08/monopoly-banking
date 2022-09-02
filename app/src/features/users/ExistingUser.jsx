@@ -61,7 +61,7 @@ class ExistingUser extends PureComponent {
                 <Row>
                     <Col>
                         <div className="glbl-heading">
-                            New User
+                            Existing User
                         </div>
                     </Col>
                 </Row>
