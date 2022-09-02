@@ -42,14 +42,14 @@ class GameView extends PureComponent {
                     </Col>
                 </Row>
                 <Row>
-                    <Col md="3">
+                    <Col lg="4">
                         <h3>Users</h3>
                     </Col>
                 </Row>
                 {users.map(user => {
                     return (
                         <Row key={user.userId}>
-                            <Col md="3">
+                            <Col lg="4">
                                 <UserCard
                                     user={user}
                                     isYou={loggedInUserId === user.userId}
