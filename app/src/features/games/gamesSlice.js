@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
-import { createNewGame, addNewUserToGame, fetchGameByCode } from "./gamesAPI";
-import { sendPayment } from './paymentsAPI';
+import { createNewGame, addNewUserToGame, fetchGameByCode } from "../../api/gamesAPI";
+import { sendPayment } from '../../api/paymentsAPI';
 
 const initialState = {
     activeGame: {
