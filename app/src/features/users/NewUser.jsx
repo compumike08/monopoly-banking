@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col, Form, FormGroup, Input, Label, Button, FormFeedback, Alert } from "reactstrap";
-import { addNewUserToGameAction } from "./gamesSlice";
+import { addNewUserToGameAction } from "../games/gamesSlice";
 
 class NewUser extends PureComponent {
     constructor(props) {

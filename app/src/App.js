@@ -7,11 +7,11 @@ import {
 import TitleBar from "./features/TitleBar/TitleBar";
 import HomePage from "./features/Home/HomePage";
 import NewGame from './features/games/NewGame';
-import NewUser from "./features/games/NewUser";
+import NewUser from "./features/users/NewUser";
 import JoinGame from "./features/games/JoinGame";
 import GameContainer from './features/gameView/GameContainer';
-import UserManagement from './features/games/UserManagement';
-import ExistingUser from './features/games/ExistingUser';
+import UserManagement from './features/users/UserManagement';
+import ExistingUser from './features/users/ExistingUser';
 
 import './App.css';
 
