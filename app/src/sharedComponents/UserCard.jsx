@@ -15,6 +15,10 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
     const { name, code, moneyBalance, id } = user;
     const userRole = user.userRole || "";
     const isYou = loggedInUserId === id;
+    const mappedUser = {
+        ...user,
+        isSink: false
+    };
 
     return (
         <Card color={isYou ? "info" : "light"}>
@@ -39,7 +43,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
                                 <PayButton
                                     gameId={gameId}
                                     loggedInUserId={loggedInUserId}
-                                    userOrSink={user}
+                                    userOrSink={mappedUser}
                                 />
                             </Col>
                         )}
@@ -72,8 +76,7 @@ UserCard.propTypes = {
         name: PropTypes.string.isRequired,
         code: PropTypes.string.isRequired,
         moneyBalance: PropTypes.number.isRequired,
-        userRole: PropTypes.string,
-        isSink: PropTypes.bool.isRequired
+        userRole: PropTypes.string
     }).isRequired,
     loggedInUserId: PropTypes.number.isRequired,
     showPay: PropTypes.bool
