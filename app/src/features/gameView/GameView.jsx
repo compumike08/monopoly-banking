@@ -2,14 +2,18 @@ import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col } from "reactstrap";
+import { BANKER_ROLE } from "../../constants/general";
 import UserCard from '../../sharedComponents/UserCard';
 import MoneySinkCard from "../../sharedComponents/MoneySinkCard";
+import PayUserFromSinkButton from "../../sharedComponents/PayUserFromSinkButton";
 import { sendPaymentAction } from "../games/gamesSlice";
-import { selectActiveGameUsersYouOnTop } from "./gameUsersSelector";
+import { selectActiveGameUsersYouOnTop, selectLoggedInUser } from "./gameUsersSelector";
 
 class GameView extends PureComponent {
     render() {
-        const { loggedInUserId, users, gameCode, gameId, moneySinks } = this.props;
+        const { loggedInUserId, loggedInUserObject, users, gameCode, gameId, moneySinks } = this.props;
+        const { userRole } = loggedInUserObject;
+
         return (
             <Container>
                 <Row>
@@ -19,6 +23,13 @@ class GameView extends PureComponent {
                         </h2>
                     </Col>
                 </Row>
+                {userRole === BANKER_ROLE && (
+                    <Row>
+                        <Col>
+                            <PayUserFromSinkButton />
+                        </Col>
+                    </Row>
+                )}
                 <Row>
                     <Col lg="4">
                         <Row>
@@ -72,7 +83,8 @@ function mapStateToProps(state) {
         gameCode: state.gamesData.activeGame.code,
         loggedInUserId: state.gamesData.activeGame.loggedInUserId,
         users: selectActiveGameUsersYouOnTop(state),
-        moneySinks: state.gamesData.activeGame.moneySinks
+        moneySinks: state.gamesData.activeGame.moneySinks,
+        loggedInUserObject: selectLoggedInUser(state)
     };
 };
 
