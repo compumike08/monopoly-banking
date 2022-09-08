@@ -28,7 +28,7 @@ class GameView extends PureComponent {
                         <Row key={user.id}>
                             <Col lg="4">
                                 <UserCard
-                                    userOrSink={user}
+                                    user={user}
                                     isYou={loggedInUserId === user.userId}
                                     gameId={gameId}
                                     loggedInUserId={loggedInUserId}

@@ -11,9 +11,9 @@ import {
 } from "reactstrap";
 import PayButton from "./PayButton";
 
-const UserCard = ({ userOrSink, loggedInUserId, showPay, gameId }) => {
-    const { name, code, moneyBalance, id } = userOrSink;
-    const userRole = userOrSink.userRole || "";
+const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
+    const { name, code, moneyBalance, id } = user;
+    const userRole = user.userRole || "";
     const isYou = loggedInUserId === id;
 
     return (
@@ -39,7 +39,7 @@ const UserCard = ({ userOrSink, loggedInUserId, showPay, gameId }) => {
                                 <PayButton
                                     gameId={gameId}
                                     loggedInUserId={loggedInUserId}
-                                    userOrSink={userOrSink}
+                                    userOrSink={user}
                                 />
                             </Col>
                         )}
@@ -67,7 +67,7 @@ UserCard.defaultProps = {
 
 UserCard.propTypes = {
     gameId: PropTypes.number.isRequired,
-    userOrSink: PropTypes.shape({
+    user: PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         code: PropTypes.string.isRequired,
