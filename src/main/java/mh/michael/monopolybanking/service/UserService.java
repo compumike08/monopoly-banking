@@ -52,7 +52,7 @@ public class UserService {
                 .userRole(newUserRole)
                 .moneyBalance(STARTING_MONEY_AMT)
                 .name(newUserRequestDTO.getName())
-                .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH))
+                .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
                 .build();
 
         User updatedUser = userRepository.save(newUser);
@@ -72,7 +72,7 @@ public class UserService {
 
     @Transactional
     public UserDTO getUserByCodeAndGameId(long gameId, String userCode) {
-        User foundUser = userRepository.findByGame_IdAndCode(gameId, userCode);
+        User foundUser = userRepository.findByGame_IdAndCode(gameId, userCode.toUpperCase());
         if (foundUser == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }

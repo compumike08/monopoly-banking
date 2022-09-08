@@ -31,7 +31,7 @@ public class GameService {
     @Transactional
     public GameDTO createGame() {
         Game newGame = Game.builder()
-                .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH))
+                .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
                 .build();
         Game savedGame = gameRepository.save(newGame);
 
@@ -73,7 +73,7 @@ public class GameService {
 
     @Transactional
     public GameDTO getGameByCode(String gameCode) {
-        Game game = gameRepository.findByCode(gameCode);
+        Game game = gameRepository.findByCode(gameCode.toUpperCase());
         if (game == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
         }
