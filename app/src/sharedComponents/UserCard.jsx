@@ -65,7 +65,6 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
 };
 
 UserCard.defaultProps = {
-    isYou: false,
     showPay: true
 };
 
