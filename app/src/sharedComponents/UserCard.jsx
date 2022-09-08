@@ -25,7 +25,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
             <CardBody>
                 <Container>
                     <Row>
-                        <Col>
+                        <Col xs="9">
                             <CardTitle tag="h4">
                                 {isYou && (
                                     `${name} (YOU)`
@@ -39,7 +39,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
                             </CardSubtitle>
                         </Col>
                         {showPay && !isYou && (
-                            <Col className="align-right">
+                            <Col className="align-right" xs="3">
                                 <PayButton
                                     gameId={gameId}
                                     loggedInUserId={loggedInUserId}
