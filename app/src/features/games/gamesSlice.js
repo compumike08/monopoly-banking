@@ -57,14 +57,14 @@ const processPayment = (state, action) => {
     state.sendPaymentStatus = IDLE_STATUS;
     
     if (!isFromSink) {
-        const userIndex = state.activeGame.users.findIndex(user => user.userId === fromUser.userId);
+        const userIndex = state.activeGame.users.findIndex(user => user.id === fromUser.id);
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = fromUser;
         }
     }
 
     if (!isToSink) {
-        const userIndex = state.activeGame.users.findIndex(user => user.userId === toUser.userId);
+        const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = toUser;
         }
@@ -105,7 +105,7 @@ export const gamesSlice = createSlice({
             .addCase(addNewUserToGameAction.fulfilled, (state, action) => {
                 state.addNewUserToGameStatus = IDLE_STATUS;
                 state.activeGame.users.push(action.payload);
-                state.activeGame.loggedInUserId = action.payload.userId;
+                state.activeGame.loggedInUserId = action.payload.id;
             })
             .addCase(addNewUserToGameAction.rejected, (state) => {
                 state.addNewUserToGameStatus = ERROR_STATUS;
@@ -115,7 +115,7 @@ export const gamesSlice = createSlice({
             })
             .addCase(joinGameAsExistingUserAction.fulfilled, (state, action) => {
                 state.joinGameAsExistingUserStatus = IDLE_STATUS;
-                state.activeGame.loggedInUserId = action.payload.userId;
+                state.activeGame.loggedInUserId = action.payload.id;
             })
             .addCase(joinGameAsExistingUserAction.rejected, (state => {
                 state.joinGameAsExistingUserStatus = ERROR_STATUS;

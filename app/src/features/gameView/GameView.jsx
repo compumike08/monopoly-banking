@@ -2,36 +2,13 @@ import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col } from "reactstrap";
-import { v4 as uuid } from "uuid";
 import UserCard from '../../sharedComponents/UserCard';
 import { sendPaymentAction } from "../games/gamesSlice";
 import { selectActiveGameUsersYouOnTop } from "./gameUsersSelector";
 
 class GameView extends PureComponent {
-    payFunc = async (toUserId, amountToPay, isToSink) => {
-        const { gameId, loggedInUserId, users } = this.props;
-
-        const fromUser = users.find(user => user.userId === loggedInUserId);
-        const toUser = users.find(user => user.userId === toUserId);
-
-        const data = {
-            gameId,
-            payRequestUUID: uuid(),
-            fromId: loggedInUserId,
-            toId: toUserId,
-            requestInitiatorUserId: loggedInUserId,
-            isFromSink: false,
-            isToSink,
-            amountToPay: parseInt(amountToPay),
-            originalFromAmount: fromUser.moneyBalance,
-            originalToAmount: toUser.moneyBalance
-        };
-
-        return await this.props.actions.sendPaymentAction(data);
-    };
-
     render() {
-        const { loggedInUserId, users, gameCode } = this.props;
+        const { loggedInUserId, users, gameCode, gameId } = this.props;
         return (
             <Container>
                 <Row>
@@ -48,12 +25,13 @@ class GameView extends PureComponent {
                 </Row>
                 {users.map(user => {
                     return (
-                        <Row key={user.userId}>
+                        <Row key={user.id}>
                             <Col lg="4">
                                 <UserCard
-                                    user={user}
+                                    userOrSink={user}
                                     isYou={loggedInUserId === user.userId}
-                                    payFunc={this.payFunc}
+                                    gameId={gameId}
+                                    loggedInUserId={loggedInUserId}
                                 />
                             </Col>
                         </Row>
@@ -66,7 +44,6 @@ class GameView extends PureComponent {
 
 function mapStateToProps(state) {
     return {
-        activeGame: state.gamesData.activeGame,
         gameId: state.gamesData.activeGame.gameId,
         gameCode: state.gamesData.activeGame.code,
         loggedInUserId: state.gamesData.activeGame.loggedInUserId,

@@ -13,7 +13,7 @@ import mh.michael.monopolybanking.model.UserRole;
 @Setter
 @Builder
 public class UserDTO {
-    private long userId;
+    private long id;
     private String name;
     private String code;
     private int moneyBalance;

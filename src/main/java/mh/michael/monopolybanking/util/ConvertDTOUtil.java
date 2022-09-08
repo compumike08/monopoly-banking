@@ -20,7 +20,7 @@ public class ConvertDTOUtil {
                 .code(user.getCode())
                 .moneyBalance(user.getMoneyBalance())
                 .name(user.getName())
-                .userId(user.getId())
+                .id(user.getId())
                 .userRole(user.getUserRole())
                 .build();
     }
@@ -33,7 +33,7 @@ public class ConvertDTOUtil {
         return MoneySinkDTO.builder()
                 .gameId(moneySink.getGame().getId())
                 .moneyBalance(moneySink.getMoneyBalance())
-                .sinkId(moneySink.getId())
+                .id(moneySink.getId())
                 .sinkName(moneySink.getSinkName())
                 .build();
     }
