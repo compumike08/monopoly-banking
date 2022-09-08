@@ -75,7 +75,7 @@ UserCard.propTypes = {
         name: PropTypes.string.isRequired,
         code: PropTypes.string.isRequired,
         moneyBalance: PropTypes.number.isRequired,
-        userRole: PropTypes.string
+        userRole: PropTypes.string.isRequired
     }).isRequired,
     loggedInUserId: PropTypes.number.isRequired,
     showPay: PropTypes.bool
