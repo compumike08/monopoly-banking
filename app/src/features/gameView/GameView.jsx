@@ -20,23 +20,27 @@ class GameView extends PureComponent {
                 </Row>
                 <Row>
                     <Col lg="4">
-                        <h3>Users</h3>
-                    </Col>
-                </Row>
-                {users.map(user => {
-                    return (
-                        <Row key={user.id}>
-                            <Col lg="4">
-                                <UserCard
-                                    user={user}
-                                    isYou={loggedInUserId === user.userId}
-                                    gameId={gameId}
-                                    loggedInUserId={loggedInUserId}
-                                />
+                        <Row>
+                            <Col>
+                                <h3>Users</h3>
                             </Col>
                         </Row>
-                    );
-                })}
+                        {users.map(user => {
+                            return (
+                                <Row key={user.id}>
+                                    <Col>
+                                        <UserCard
+                                            user={user}
+                                            isYou={loggedInUserId === user.userId}
+                                            gameId={gameId}
+                                            loggedInUserId={loggedInUserId}
+                                        />
+                                    </Col>
+                                </Row>
+                            );
+                        })}
+                    </Col>
+                </Row>
             </Container>
         );
     }
@@ -47,7 +51,8 @@ function mapStateToProps(state) {
         gameId: state.gamesData.activeGame.gameId,
         gameCode: state.gamesData.activeGame.code,
         loggedInUserId: state.gamesData.activeGame.loggedInUserId,
-        users: selectActiveGameUsersYouOnTop(state)
+        users: selectActiveGameUsersYouOnTop(state),
+        moneySinks: state.gamesData.activeGame.moneySinks
     };
 };
 
