@@ -53,7 +53,7 @@ export const sendPaymentAction = createAsyncThunk(
 );
 
 const processPayment = (state, action) => {
-    const { isFromSink, isToSink, fromUser, toUser } = action.payload;
+    const { fromSink: isFromSink, toSink: isToSink, fromUser, toUser, fromMoneySink, toMoneySink } = action.payload;
     state.sendPaymentStatus = IDLE_STATUS;
     
     if (!isFromSink) {
@@ -61,12 +61,22 @@ const processPayment = (state, action) => {
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = fromUser;
         }
+    } else {
+        const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === fromMoneySink.id);
+        if (sinkIndex > -1) {
+            state.activeGame.moneySinks[sinkIndex] = fromMoneySink;
+        }
     }
 
     if (!isToSink) {
         const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = toUser;
+        }
+    } else {
+        const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === toMoneySink.id);
+        if (sinkIndex > -1) {
+            state.activeGame.moneySinks[sinkIndex] = toMoneySink;
         }
     }
 

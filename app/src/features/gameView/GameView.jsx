@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col } from "reactstrap";
 import UserCard from '../../sharedComponents/UserCard';
+import MoneySinkCard from "../../sharedComponents/MoneySinkCard";
 import { sendPaymentAction } from "../games/gamesSlice";
 import { selectActiveGameUsersYouOnTop } from "./gameUsersSelector";
 
 class GameView extends PureComponent {
     render() {
-        const { loggedInUserId, users, gameCode, gameId } = this.props;
+        const { loggedInUserId, users, gameCode, gameId, moneySinks } = this.props;
         return (
             <Container>
                 <Row>
@@ -33,6 +34,26 @@ class GameView extends PureComponent {
                                             user={user}
                                             gameId={gameId}
                                             loggedInUserId={loggedInUserId}
+                                        />
+                                    </Col>
+                                </Row>
+                            );
+                        })}
+                    </Col>
+                    <Col lg="4">
+                        <Row>
+                            <Col>
+                                <h3>Money Sinks</h3>
+                            </Col>
+                        </Row>
+                        {moneySinks.map(moneySink => {
+                            return (
+                                <Row key={`sink-${moneySink.id}`}>
+                                    <Col>
+                                        <MoneySinkCard
+                                            gameId={gameId}
+                                            loggedInUserId={loggedInUserId}
+                                            sink={moneySink}
                                         />
                                     </Col>
                                 </Row>
