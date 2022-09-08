@@ -34,7 +34,7 @@ public class ConvertDTOUtil {
                 .gameId(moneySink.getGame().getId())
                 .moneyBalance(moneySink.getMoneyBalance())
                 .id(moneySink.getId())
-                .sinkName(moneySink.getSinkName())
+                .name(moneySink.getSinkName())
                 .build();
     }
 

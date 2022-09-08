@@ -13,7 +13,7 @@ import lombok.Setter;
 @Builder
 public class MoneySinkDTO {
     private long id;
-    private String sinkName;
+    private String name;
     private int moneyBalance;
     private long gameId;
 }
