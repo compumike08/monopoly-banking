@@ -5,7 +5,7 @@ import mh.michael.monopolybanking.dto.PayRequestDTO;
 import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
-import mh.michael.monopolybanking.model.UserRole;
+import mh.michael.monopolybanking.util.UserRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class PayService {
         if (payRequestDTO.isFromSink()) {
             User requesterUser = userRepository.getOne(payRequestDTO.getRequestInitiatorUserId());
 
-            if (!requesterUser.getUserRole().equals(UserRole.BANKER)) {
+            if (!requesterUser.getUserRole().equals(UserRole.BANKER.name())) {
                 String errMsg = "Only the banker can pay from a money sink";
                 log.error(errMsg);
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, errMsg);

@@ -31,7 +31,7 @@ public class User {
     private String code;
 
     private int moneyBalance;
-    private UserRole userRole;
+    private String userRole;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "GAME_ID")

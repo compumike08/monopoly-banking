@@ -21,7 +21,7 @@ public class ConvertDTOUtil {
                 .moneyBalance(user.getMoneyBalance())
                 .name(user.getName())
                 .id(user.getId())
-                .userRole(user.getUserRole())
+                .userRole(UserRole.valueOf(user.getUserRole()))
                 .build();
     }
 

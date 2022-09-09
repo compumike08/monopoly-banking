@@ -5,7 +5,7 @@ import mh.michael.monopolybanking.dto.NewUserRequestDTO;
 import mh.michael.monopolybanking.dto.UserDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.User;
-import mh.michael.monopolybanking.model.UserRole;
+import mh.michael.monopolybanking.util.UserRole;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
@@ -43,13 +43,13 @@ public class UserService {
         UserRole newUserRole = newUserRequestDTO.getUserRole();
         Game game = gameRepository.getOne(gameId);
 
-        if (newUserRole.equals(UserRole.BANKER) && game.getUsers().stream().anyMatch(user -> user.getUserRole().equals(UserRole.BANKER))) {
+        if (newUserRole.equals(UserRole.BANKER) && game.getUsers().stream().anyMatch(user -> user.getUserRole().equals(UserRole.BANKER.name()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This game already has a banker");
         }
 
         User newUser = User.builder()
                 .game(game)
-                .userRole(newUserRole)
+                .userRole(newUserRole.name())
                 .moneyBalance(STARTING_MONEY_AMT)
                 .name(newUserRequestDTO.getName())
                 .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
