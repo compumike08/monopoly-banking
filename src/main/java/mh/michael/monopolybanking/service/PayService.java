@@ -156,6 +156,7 @@ public class PayService {
         payResponseDTO.setGameId(gameId);
         payResponseDTO.setPayRequestUUID(payRequestDTO.getPayRequestUUID());
         payResponseDTO.setRequestInitiatorUserId(payRequestDTO.getRequestInitiatorUserId());
+        payResponseDTO.setAmountPaid(payRequestDTO.getAmountToPay());
 
         if (payRequestDTO.isFromSink()) {
             assert fromMoneySink != null;
