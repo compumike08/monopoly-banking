@@ -30,6 +30,6 @@ public class MoneySink {
     private boolean isBank = false;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "GAME_ID")
+    @JoinColumn(name = "game_id")
     private Game game;
 }

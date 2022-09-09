@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity
+@Entity(name = "user_player")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -34,6 +34,6 @@ public class User {
     private String userRole;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "GAME_ID")
+    @JoinColumn(name = "game_id")
     private Game game;
 }
