@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { createNewGame, addNewUserToGame, fetchGameByCode, joinGameAsExistingUser } from "../../api/gamesAPI";
 import { sendPayment } from '../../api/paymentsAPI';
@@ -52,19 +53,24 @@ export const sendPaymentAction = createAsyncThunk(
     }
 );
 
-const processPayment = (state, action) => {
-    const { fromSink: isFromSink, toSink: isToSink, fromUser, toUser, fromMoneySink, toMoneySink } = action.payload;
+const processPayment = (state, action, isFromWebsocketMsg) => {
+    const { fromSink: isFromSink, toSink: isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid } = action.payload;
     state.sendPaymentStatus = IDLE_STATUS;
+
+    let fromObject = null;
+    let toObject = null;
     
     if (!isFromSink) {
         const userIndex = state.activeGame.users.findIndex(user => user.id === fromUser.id);
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = fromUser;
+            fromObject = fromUser;
         }
     } else {
         const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === fromMoneySink.id);
         if (sinkIndex > -1) {
             state.activeGame.moneySinks[sinkIndex] = fromMoneySink;
+            fromObject = fromMoneySink;
         }
     }
 
@@ -72,12 +78,27 @@ const processPayment = (state, action) => {
         const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
         if (userIndex > -1) {
             state.activeGame.users[userIndex] = toUser;
+            toObject = toUser;
         }
     } else {
         const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === toMoneySink.id);
         if (sinkIndex > -1) {
             state.activeGame.moneySinks[sinkIndex] = toMoneySink;
+            toObject = toMoneySink;
         }
+    }
+
+    if (fromObject && toObject && isFromWebsocketMsg) {
+        const fromName = fromObject.name;
+        const toName = toObject.name;
+        const formattedAmountPaid = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+        }).format(amountPaid);
+
+        const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
+        toast.success(toastMessage);
     }
 
     return state;
@@ -91,7 +112,7 @@ export const gamesSlice = createSlice({
             state.activeGame.users.push(action.payload);
         },
         paymentReceivedFromWs(state, action) {
-            state = processPayment(state, action);
+            state = processPayment(state, action, true);
         }
     },
     extraReducers: (builder) => {
@@ -147,7 +168,7 @@ export const gamesSlice = createSlice({
                 state.sendPaymentStatus = LOADING_STATUS;
             })
             .addCase(sendPaymentAction.fulfilled, (state, action) => {
-                state = processPayment(state, action);
+                state = processPayment(state, action, false);
             })
             .addCase(sendPaymentAction.rejected, (state) => {
                 state.sendPaymentStatus = ERROR_STATUS;

@@ -1,10 +1,13 @@
 import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { ToastContainer } from 'react-toastify';
 import SockJsClient from 'react-stomp';
 import { TOPIC_GAME_PREFIX, TOPIC_GAME_USERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
 import { userReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
 import GameView from "./GameView";
+
+import 'react-toastify/dist/ReactToastify.css';
 
 class GameContainer extends PureComponent {
     constructor(props) {
@@ -27,6 +30,11 @@ class GameContainer extends PureComponent {
         const wsSourceUrl = window.location.protocol + "//" + window.location.host + "/ws";
         return (
             <>
+                <ToastContainer
+                    hideProgressBar
+                    newestOnTop
+                    limit={3}
+                />
                 <GameView />
                 <SockJsClient
                     url={wsSourceUrl}
