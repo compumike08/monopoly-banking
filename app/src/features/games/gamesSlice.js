@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
+import { formatNumberAsCurrency } from '../../utils/util';
 import { createNewGame, addNewUserToGame, fetchGameByCode, joinGameAsExistingUser } from "../../api/gamesAPI";
 import { sendPayment } from '../../api/paymentsAPI';
 
@@ -91,11 +92,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     if (fromObject && toObject && isFromWebsocketMsg) {
         const fromName = fromObject.name;
         const toName = toObject.name;
-        const formattedAmountPaid = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 0
-        }).format(amountPaid);
+        const formattedAmountPaid = formatNumberAsCurrency(amountPaid);
 
         const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
         toast.success(toastMessage);

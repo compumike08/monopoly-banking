@@ -9,6 +9,7 @@ import {
     Row,
     Col
 } from "reactstrap";
+import { formatNumberAsCurrency } from "../utils/util";
 import PayButton from "./PayButton";
 
 const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
@@ -19,6 +20,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
         ...user,
         isSink: false
     };
+    const formattedMoneyBalance = formatNumberAsCurrency(moneyBalance);
 
     return (
         <Card color={isYou ? "info" : "light"}>
@@ -54,7 +56,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
                                 Role: {userRole}
                             </div>
                             <div>
-                                Balance: {moneyBalance}
+                                Balance: {formattedMoneyBalance}
                             </div>
                         </Col>
                     </Row>
