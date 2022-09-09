@@ -33,9 +33,24 @@ class PayUserFromSinkButton extends PureComponent {
         };
     }
 
-    togglePayModal = () => {
+    initializeFormFields = () => {
         this.setState({
-            showPayModal: !this.state.showPayModal
+            fromSinkId: this.props.moneySinks.length > 0 ? this.props.moneySinks[0].id : null,
+            toUserId: this.props.users.length > 0 ? this.props.users[0].id : null,
+            amountToPay: null
+        });
+    };
+
+    showPayModal = () => {
+        this.initializeFormFields();
+        this.setState({
+            showPayModal: true
+        });
+    };
+
+    hidePayModal = () => {
+        this.setState({
+            showPayModal: false
         });
     };
 
@@ -128,7 +143,7 @@ class PayUserFromSinkButton extends PureComponent {
                     responseErrorMsg: result.error.message
                 });
             } else {
-                this.togglePayModal();
+                this.hidePayModal();
             }
         }
     };
@@ -138,10 +153,10 @@ class PayUserFromSinkButton extends PureComponent {
         return (
             <>
                 <div>
-                    <Button color="primary" onClick={this.togglePayModal}>Pay User From Money Sink</Button>
+                    <Button color="primary" onClick={this.showPayModal}>Pay User From Money Sink</Button>
                 </div>
                 {this.state.showPayModal && (
-                    <Modal isOpen={this.state.showPayModal} toggle={this.togglePayModal}>
+                    <Modal isOpen={this.state.showPayModal} toggle={this.hidePayModal}>
                         <ModalHeader toggle={this.togglePayModal}>Pay User From Money Sink</ModalHeader>
                         <ModalBody>
                             <Alert color="danger" isOpen={this.state.isResponseError} toggle={this.clearError}>
@@ -214,7 +229,7 @@ class PayUserFromSinkButton extends PureComponent {
                         </ModalBody>
                         <ModalFooter>
                             <Button color="primary" onClick={this.submitPayment}>Pay</Button>
-                            <Button color="secondary" onClick={this.togglePayModal}>Cancel</Button>
+                            <Button color="secondary" onClick={this.hidePayModal}>Cancel</Button>
                         </ModalFooter>
                     </Modal>
                 )}
