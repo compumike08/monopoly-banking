@@ -26,7 +26,7 @@ public class MoneySink {
 
     private String sinkName;
 
-    private int moneyBalance;
+    private long moneyBalance;
     private boolean isBank = false;
 
     @ManyToOne(optional = false)

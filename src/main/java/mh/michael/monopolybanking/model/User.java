@@ -30,7 +30,7 @@ public class User {
     @Column(unique = true)
     private String code;
 
-    private int moneyBalance;
+    private long moneyBalance;
     private String userRole;
 
     @ManyToOne(optional = false)

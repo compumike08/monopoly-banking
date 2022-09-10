@@ -66,7 +66,7 @@ public class PayService {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
             }
 
-            int balanceRemaining = fromMoneySink.getMoneyBalance() - payRequestDTO.getAmountToPay();
+            long balanceRemaining = fromMoneySink.getMoneyBalance() - payRequestDTO.getAmountToPay();
 
             if (balanceRemaining < 0) {
                 if (fromMoneySink.getIsBank()) {
@@ -87,7 +87,7 @@ public class PayService {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
             }
 
-            int balanceRemaining = fromUser.getMoneyBalance() - payRequestDTO.getAmountToPay();
+            long balanceRemaining = fromUser.getMoneyBalance() - payRequestDTO.getAmountToPay();
 
             if (balanceRemaining < 0) {
                 throw new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED, "Insufficient Funds");

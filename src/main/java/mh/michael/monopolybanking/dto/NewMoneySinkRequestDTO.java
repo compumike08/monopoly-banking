@@ -13,5 +13,5 @@ import lombok.Setter;
 @Builder
 public class NewMoneySinkRequestDTO {
     private String sinkName;
-    private int moneyBalance;
+    private long moneyBalance;
 }

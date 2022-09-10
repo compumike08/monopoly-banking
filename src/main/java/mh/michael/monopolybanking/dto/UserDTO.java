@@ -16,7 +16,7 @@ public class UserDTO {
     private long id;
     private String name;
     private String code;
-    private int moneyBalance;
+    private long moneyBalance;
     private UserRole userRole;
     private long gameId;
 }

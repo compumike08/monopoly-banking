@@ -14,7 +14,7 @@ import lombok.Setter;
 public class MoneySinkDTO {
     private long id;
     private String name;
-    private int moneyBalance;
+    private long moneyBalance;
     private long gameId;
     private boolean isBank;
 }

@@ -21,5 +21,5 @@ public class PayResponseDTO {
     private boolean isFromSink;
     private boolean isToSink;
     private long requestInitiatorUserId;
-    private int amountPaid;
+    private long amountPaid;
 }

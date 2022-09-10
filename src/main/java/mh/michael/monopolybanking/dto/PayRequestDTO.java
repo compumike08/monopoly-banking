@@ -19,7 +19,7 @@ public class PayRequestDTO {
     private long requestInitiatorUserId;
     private boolean isFromSink;
     private boolean isToSink;
-    private int amountToPay;
-    private int originalFromAmount;
-    private int originalToAmount;
+    private long amountToPay;
+    private long originalFromAmount;
+    private long originalToAmount;
 }
