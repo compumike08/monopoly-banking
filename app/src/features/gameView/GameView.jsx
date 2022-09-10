@@ -8,6 +8,7 @@ import MoneySinkCard from "../../sharedComponents/MoneySinkCard";
 import PayUserFromSinkButton from "../../sharedComponents/PayUserFromSinkButton";
 import { sendPaymentAction } from "../games/gamesSlice";
 import { selectActiveGameUsersYouOnTop, selectLoggedInUser } from "./gameUsersSelector";
+import { selectActiveGameBankMoneySinkOnTop } from "./gameMoneySinksSelector";
 
 class GameView extends PureComponent {
     render() {
@@ -83,7 +84,7 @@ function mapStateToProps(state) {
         gameCode: state.gamesData.activeGame.code,
         loggedInUserId: state.gamesData.activeGame.loggedInUserId,
         users: selectActiveGameUsersYouOnTop(state),
-        moneySinks: state.gamesData.activeGame.moneySinks,
+        moneySinks: selectActiveGameBankMoneySinkOnTop(state),
         loggedInUserObject: selectLoggedInUser(state)
     };
 };

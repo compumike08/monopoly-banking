@@ -14,6 +14,7 @@ import {
     FormFeedback,
     ModalFooter
 } from "reactstrap";
+import { selectActiveGameBankMoneySinkOnTop } from "../features/gameView/gameMoneySinksSelector";
 import { sendPaymentAction } from "../features/games/gamesSlice";
 
 class PayUserFromSinkButton extends PureComponent {
@@ -241,7 +242,7 @@ class PayUserFromSinkButton extends PureComponent {
 const mapStateToProps = state => {
     return {
         gameId: state.gamesData.activeGame.gameId,
-        moneySinks: state.gamesData.activeGame.moneySinks,
+        moneySinks: selectActiveGameBankMoneySinkOnTop(state),
         users: state.gamesData.activeGame.users,
         loggedInUserId: state.gamesData.activeGame.loggedInUserId
     };
