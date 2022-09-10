@@ -55,7 +55,7 @@ export const sendPaymentAction = createAsyncThunk(
 );
 
 const processPayment = (state, action, isFromWebsocketMsg) => {
-    const { fromSink: isFromSink, toSink: isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid } = action.payload;
+    const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid } = action.payload;
     state.sendPaymentStatus = IDLE_STATUS;
 
     let fromObject = null;

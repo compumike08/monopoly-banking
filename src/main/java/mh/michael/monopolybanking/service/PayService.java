@@ -49,7 +49,7 @@ public class PayService {
         User fromUser = null;
         User toUser = null;
 
-        if (payRequestDTO.isFromSink()) {
+        if (payRequestDTO.getIsFromSink()) {
             User requesterUser = userRepository.getOne(payRequestDTO.getRequestInitiatorUserId());
 
             if (!requesterUser.getUserRole().equals(UserRole.BANKER.name())) {
@@ -69,7 +69,7 @@ public class PayService {
             int balanceRemaining = fromMoneySink.getMoneyBalance() - payRequestDTO.getAmountToPay();
 
             if (balanceRemaining < 0) {
-                if (fromMoneySink.isBank()) {
+                if (fromMoneySink.getIsBank()) {
                     // The bank cannot run out of money, so if bank hits 0 then reset bank balance back to initial starting amount
                     balanceRemaining = INITIAL_BANK_AMT;
                 } else {
@@ -96,7 +96,7 @@ public class PayService {
             fromUser.setMoneyBalance(balanceRemaining);
         }
 
-        if (payRequestDTO.isToSink()) {
+        if (payRequestDTO.getIsToSink()) {
             toMoneySink = moneySinkRepository.getOne(payRequestDTO.getToId());
 
             if (toMoneySink.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
@@ -118,7 +118,7 @@ public class PayService {
             toUser.setMoneyBalance(toUser.getMoneyBalance() + payRequestDTO.getAmountToPay());
         }
 
-        if (payRequestDTO.isFromSink()) {
+        if (payRequestDTO.getIsFromSink()) {
             assert fromMoneySink != null;
             if (fromMoneySink.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the fromMoneySink entity");
@@ -134,7 +134,7 @@ public class PayService {
             userRepository.save(fromUser);
         }
 
-        if (payRequestDTO.isToSink()) {
+        if (payRequestDTO.getIsToSink()) {
             assert toMoneySink != null;
             if (toMoneySink.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the toMoneySink entity");
@@ -158,24 +158,24 @@ public class PayService {
         payResponseDTO.setRequestInitiatorUserId(payRequestDTO.getRequestInitiatorUserId());
         payResponseDTO.setAmountPaid(payRequestDTO.getAmountToPay());
 
-        if (payRequestDTO.isFromSink()) {
+        if (payRequestDTO.getIsFromSink()) {
             assert fromMoneySink != null;
             payResponseDTO.setFromMoneySink(moneySinkService.getMoneySinkById(fromMoneySink.getId()));
-            payResponseDTO.setFromSink(true);
+            payResponseDTO.setIsFromSink(true);
         } else {
             assert fromUser != null;
             payResponseDTO.setFromUser(userService.getUserById(fromUser.getId()));
-            payResponseDTO.setFromSink(false);
+            payResponseDTO.setIsFromSink(false);
         }
 
-        if (payRequestDTO.isToSink()) {
+        if (payRequestDTO.getIsToSink()) {
             assert toMoneySink != null;
             payResponseDTO.setToMoneySink(moneySinkService.getMoneySinkById(toMoneySink.getId()));
-            payResponseDTO.setToSink(true);
+            payResponseDTO.setIsToSink(true);
         } else {
             assert toUser != null;
             payResponseDTO.setToUser(userService.getUserById(toUser.getId()));
-            payResponseDTO.setToSink(false);
+            payResponseDTO.setIsToSink(false);
         }
 
         simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
