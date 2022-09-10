@@ -35,6 +35,7 @@ public class ConvertDTOUtil {
                 .moneyBalance(moneySink.getMoneyBalance())
                 .id(moneySink.getId())
                 .name(moneySink.getSinkName())
+                .isBank(moneySink.getIsBank())
                 .build();
     }
 

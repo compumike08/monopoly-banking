@@ -16,4 +16,5 @@ public class MoneySinkDTO {
     private String name;
     private int moneyBalance;
     private long gameId;
+    private boolean isBank;
 }
