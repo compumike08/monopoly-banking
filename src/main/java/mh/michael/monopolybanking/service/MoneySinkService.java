@@ -8,12 +8,12 @@ import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
-import org.springframework.http.HttpStatus;
+import mh.michael.monopolybanking.util.OptionalUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,7 +28,13 @@ public class MoneySinkService {
 
     @Transactional
     public MoneySinkDTO createMoneySink(long gameId, NewMoneySinkRequestDTO newMoneySinkRequestDTO) {
-        Game game = gameRepository.getOne(gameId);
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                gameOpt,
+                "Game not found",
+                gameId
+        );
+
         MoneySink newMoneySink = MoneySink.builder()
                 .isBank(false)
                 .sinkName(newMoneySinkRequestDTO.getSinkName())
@@ -41,8 +47,13 @@ public class MoneySinkService {
 
     @Transactional
     public MoneySinkDTO getMoneySinkById(long sinkId) {
-        MoneySink foundSink = moneySinkRepository.findById(sinkId).stream()
-                .filter(sink -> sink.getId() == sinkId).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "money sink not found"));
+        Optional<MoneySink> foundSinkOpt = moneySinkRepository.findById(sinkId);
+        MoneySink foundSink = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                foundSinkOpt,
+                "Money sink not found",
+                sinkId
+        );
+
         return ConvertDTOUtil.convertMoneySinkToMoneySinkDTO(foundSink);
     }
 

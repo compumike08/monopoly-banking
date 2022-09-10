@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
-import { Container, Row, Col, Form, FormGroup, Input, Label, Button, FormFeedback } from "reactstrap";
+import { Container, Row, Col, Form, FormGroup, Input, Label, Button, FormFeedback, Alert } from "reactstrap";
 import { fetchExistingGameByCodeAction } from "./gamesSlice";
 
 const GAME_CODE_LENGTH = 5;
@@ -12,7 +12,8 @@ class JoinGame extends PureComponent {
         super(props);
         this.state = {
             gameCode: "",
-            isGameCodeError: false
+            isGameCodeError: false,
+            backendErrorMsg: null
         }
     }
 
@@ -22,20 +23,20 @@ class JoinGame extends PureComponent {
         });
     };
 
-    handleSubmit = () => {
+    handleSubmit = async () => {
         if (this.state.gameCode.length !== GAME_CODE_LENGTH) {
             this.setState({
                 isGameCodeError: true
             });
         } else {
-            this.props.actions.fetchExistingGameByCodeAction(this.state.gameCode)
-                .catch(err => {
-                    console.log(err);
-                })
-                .then(() => {
-                    this.props.history.push('/userManagement');
+            try {
+                await this.props.actions.fetchExistingGameByCodeAction(this.state.gameCode).unwrap();
+                this.props.history.push('/userManagement');
+            } catch (err) {
+                this.setState({
+                    backendErrorMsg: err.message
                 });
-                
+            }
         }
     };
 
@@ -49,6 +50,13 @@ class JoinGame extends PureComponent {
                         </div>
                     </Col>
                 </Row>
+                {this.state.backendErrorMsg && (
+                    <Row>
+                        <Col>
+                            <Alert color="danger">{this.state.backendErrorMsg}</Alert>
+                        </Col>
+                    </Row>
+                )}
                 <Row>
                     <Col md="5">
                         <Form>

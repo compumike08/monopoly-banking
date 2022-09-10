@@ -7,6 +7,7 @@ import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
+import mh.michael.monopolybanking.util.OptionalUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static mh.michael.monopolybanking.util.Constants.*;
 
@@ -67,7 +69,13 @@ public class GameService {
 
     @Transactional
     public GameDTO getGameById(long gameId) {
-        Game game = gameRepository.getOne(gameId);
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                gameOpt,
+                "Game not found",
+                gameId
+        );
+
         return ConvertDTOUtil.convertGameToGameDTO(game);
     }
 
@@ -75,6 +83,7 @@ public class GameService {
     public GameDTO getGameByCode(String gameCode) {
         Game game = gameRepository.findByCode(gameCode.toUpperCase());
         if (game == null) {
+            log.error("Game not found - code searched for: " + gameCode);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
         }
         return ConvertDTOUtil.convertGameToGameDTO(game);

@@ -5,6 +5,7 @@ import mh.michael.monopolybanking.dto.NewUserRequestDTO;
 import mh.michael.monopolybanking.dto.UserDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.util.OptionalUtil;
 import mh.michael.monopolybanking.util.UserRole;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static mh.michael.monopolybanking.util.Constants.CODE_LENGTH;
 import static mh.michael.monopolybanking.util.Constants.STARTING_MONEY_AMT;
@@ -41,7 +43,12 @@ public class UserService {
     @Transactional
     public UserDTO createNewUser(long gameId, NewUserRequestDTO newUserRequestDTO) {
         UserRole newUserRole = newUserRequestDTO.getUserRole();
-        Game game = gameRepository.getOne(gameId);
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                gameOpt,
+                "Game not found",
+                gameId
+        );
 
         if (newUserRole.equals(UserRole.BANKER) && game.getUsers().stream().anyMatch(user -> user.getUserRole().equals(UserRole.BANKER.name()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This game already has a banker");
@@ -66,7 +73,13 @@ public class UserService {
 
     @Transactional
     public UserDTO getUserById(long userId) {
-        User foundUser = userRepository.getOne(userId);
+        Optional<User> foundUserOpt = userRepository.findById(userId);
+        User foundUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                foundUserOpt,
+                "User not found",
+                userId
+        );
+
         return ConvertDTOUtil.convertUserToUserDTO(foundUser);
     }
 

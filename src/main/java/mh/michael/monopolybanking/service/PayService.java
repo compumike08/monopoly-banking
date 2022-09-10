@@ -5,6 +5,7 @@ import mh.michael.monopolybanking.dto.PayRequestDTO;
 import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.util.OptionalUtil;
 import mh.michael.monopolybanking.util.UserRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 import static mh.michael.monopolybanking.util.Constants.INITIAL_BANK_AMT;
+import static mh.michael.monopolybanking.util.Constants.OUT_OF_SYNC_ERR_MSG;
 
 @Service
 @Slf4j
@@ -50,7 +54,13 @@ public class PayService {
         User toUser = null;
 
         if (payRequestDTO.getIsFromSink()) {
-            User requesterUser = userRepository.getOne(payRequestDTO.getRequestInitiatorUserId());
+            Optional<User> requesterUserOpt = userRepository.findById(payRequestDTO.getRequestInitiatorUserId());
+            User requesterUser = OptionalUtil
+                    .getTypeFromOptionalOrThrowNotFound(
+                            requesterUserOpt,
+                            "Requester user not found",
+                            payRequestDTO.getRequestInitiatorUserId()
+                    );
 
             if (!requesterUser.getUserRole().equals(UserRole.BANKER.name())) {
                 String errMsg = "Only the banker can pay from a money sink";
@@ -58,12 +68,17 @@ public class PayService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, errMsg);
             }
 
-            fromMoneySink = moneySinkRepository.getOne(payRequestDTO.getFromId());
+            Optional<MoneySink> fromMoneySinkOpt = moneySinkRepository.findById(payRequestDTO.getFromId());
+            fromMoneySink = OptionalUtil
+                    .getTypeFromOptionalOrThrowNotFound(
+                            fromMoneySinkOpt,
+                            "From money sink not found",
+                            payRequestDTO.getFromId()
+                    );
 
             if (fromMoneySink.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
-                String errMsg = "Payment request original amount doesn't match current amount for fromMoneySink";
-                log.error(errMsg);
-                throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+                log.error("Payment request original amount doesn't match current amount for fromMoneySink");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
             long balanceRemaining = fromMoneySink.getMoneyBalance() - payRequestDTO.getAmountToPay();
@@ -79,12 +94,16 @@ public class PayService {
 
             fromMoneySink.setMoneyBalance(balanceRemaining);
         } else {
-            fromUser = userRepository.getOne(payRequestDTO.getFromId());
+            Optional<User> fromUserOpt = userRepository.findById(payRequestDTO.getFromId());
+            fromUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                    fromUserOpt,
+                    "From user not found",
+                    payRequestDTO.getFromId()
+            );
 
             if (fromUser.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
-                String errMsg = "Payment request original amount doesn't match current amount for fromUser";
-                log.error(errMsg);
-                throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+                log.error("Payment request original amount doesn't match current amount for fromUser");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
             long balanceRemaining = fromUser.getMoneyBalance() - payRequestDTO.getAmountToPay();
@@ -97,22 +116,30 @@ public class PayService {
         }
 
         if (payRequestDTO.getIsToSink()) {
-            toMoneySink = moneySinkRepository.getOne(payRequestDTO.getToId());
+            Optional<MoneySink> toMoneySinkOpt = moneySinkRepository.findById(payRequestDTO.getToId());
+            toMoneySink = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                    toMoneySinkOpt,
+                    "To money sink not found",
+                    payRequestDTO.getToId()
+            );
 
             if (toMoneySink.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
-                String errMsg = "Payment request original amount doesn't match current amount for toMoneySink";
-                log.error(errMsg);
-                throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+                log.error("Payment request original amount doesn't match current amount for toMoneySink");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
             toMoneySink.setMoneyBalance(toMoneySink.getMoneyBalance() + payRequestDTO.getAmountToPay());
         } else {
-            toUser = userRepository.getOne(payRequestDTO.getToId());
+            Optional<User> toUserOpt = userRepository.findById(payRequestDTO.getToId());
+            toUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                    toUserOpt,
+                    "To user not found",
+                    payRequestDTO.getToId()
+            );
 
             if (toUser.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
-                String errMsg = "Payment request original amount doesn't match current amount for toUser";
-                log.error(errMsg);
-                throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+                log.error("Payment request original amount doesn't match current amount for toUser");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
             toUser.setMoneyBalance(toUser.getMoneyBalance() + payRequestDTO.getAmountToPay());
@@ -122,14 +149,14 @@ public class PayService {
             assert fromMoneySink != null;
             if (fromMoneySink.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the fromMoneySink entity");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "from and/or to entities not found for specified gameId");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
             moneySinkRepository.save(fromMoneySink);
         } else {
             assert fromUser != null;
             if (fromUser.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the fromUser entity");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "from and/or to entities not found for specified gameId");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
             userRepository.save(fromUser);
         }
@@ -138,19 +165,19 @@ public class PayService {
             assert toMoneySink != null;
             if (toMoneySink.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the toMoneySink entity");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "from and/or to entities not found for specified gameId");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
             moneySinkRepository.save(toMoneySink);
         } else {
             assert toUser != null;
             if (toUser.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the toUser entity");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "from and/or to entities not found for specified gameId");
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
             userRepository.save(toUser);
         }
 
-        log.info("...payment complete");
+        log.debug("Entities involved in payment transaction have been updated and saved");
 
         PayResponseDTO payResponseDTO = new PayResponseDTO();
         payResponseDTO.setGameId(gameId);
@@ -179,6 +206,8 @@ public class PayService {
         }
 
         simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
+        log.debug("Websocket message sent");
+        log.info("...payment complete");
 
         return payResponseDTO;
     }
