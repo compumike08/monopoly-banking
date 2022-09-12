@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mh.michael.monopolybanking.constants.UserRole;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class UserDTO {
+public class UserDTO implements Serializable {
     private long id;
     private String name;
     private String code;

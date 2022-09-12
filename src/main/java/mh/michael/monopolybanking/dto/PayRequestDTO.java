@@ -6,12 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class PayRequestDTO {
+public class PayRequestDTO implements Serializable {
     private long gameId;
     private String payRequestUUID;
     private long fromId;
