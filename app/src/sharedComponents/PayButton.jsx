@@ -148,7 +148,7 @@ PayButton.propTypes = {
         isSink: PropTypes.bool.isRequired,
         moneyBalance: PropTypes.number.isRequired
     }).isRequired,
-    isFromSink: PropTypes.number,
+    isFromSink: PropTypes.bool,
     fromSink: PropTypes.shape({
         sinkId: PropTypes.number.isRequired,
         sinkName: PropTypes.string.isRequired,
