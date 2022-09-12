@@ -10,9 +10,4 @@ public class Constants {
     public static final int CODE_LENGTH = 5;
 
     public static final String OUT_OF_SYNC_ERR_MSG = "The application is out of sync. Please close webpage and log in again.";
-
-    public static final String SECURED_CHAT_HISTORY = "/secured/history";
-    public static final String SECURED_CHAT = "/secured/chat";
-    public static final String SECURED_CHAT_ROOM = "/secured/room";
-    public static final String SECURED_CHAT_SPECIFIC_USER = "/secured/user/queue/specific-user";
 }
