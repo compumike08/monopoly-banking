@@ -21,8 +21,8 @@ const initialState = {
 
 export const createNewGameAction = createAsyncThunk(
     'games/createNewGameAction',
-    async () => {
-        return await createNewGame();
+    async (data) => {
+        return await createNewGame(data);
     }
 );
 

@@ -30,6 +30,8 @@ public class Game {
     @Column(unique = true)
     private String code;
 
+    private boolean isCollectFromFreeParking;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 

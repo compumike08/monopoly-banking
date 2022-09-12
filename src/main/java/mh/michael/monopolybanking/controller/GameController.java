@@ -1,5 +1,6 @@
 package mh.michael.monopolybanking.controller;
 
+import mh.michael.monopolybanking.dto.CreateNewGameDTO;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.dto.NewUserRequestDTO;
 import mh.michael.monopolybanking.dto.UserDTO;
@@ -52,8 +53,8 @@ public class GameController {
     }
 
     @PostMapping("/createNewGame")
-    public GameDTO createNewGame() {
-        return gameService.createGame();
+    public GameDTO createNewGame(@RequestBody CreateNewGameDTO createNewGameDTO) {
+        return gameService.createGame(createNewGameDTO);
     }
 
     @PostMapping("/game/{game_id}/createNewUser")

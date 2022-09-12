@@ -22,10 +22,10 @@ export async function fetchGameByCode(gameCode) {
     }
 }
 
-export async function createNewGame() {
+export async function createNewGame(data) {
     const url = `/games/createNewGame`;
     try {
-        const response = await axios.post(url);
+        const response = await axios.post(url, data);
         return response.data;
     } catch (err) {
         console.log(err);

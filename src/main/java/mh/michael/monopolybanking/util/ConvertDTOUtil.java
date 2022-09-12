@@ -50,6 +50,7 @@ public class ConvertDTOUtil {
                 .users(game.getUsers() != null ? convertUserListToUserDTOList(game.getUsers()) : new ArrayList<>())
                 .moneySinks(game.getMoneySinks() != null ? convertMoneySinkListToMoneySinkDTOList(game.getMoneySinks()) : new ArrayList<>())
                 .code(game.getCode())
+                .isCollectFromFreeParking(game.getIsCollectFromFreeParking())
                 .build();
     }
 

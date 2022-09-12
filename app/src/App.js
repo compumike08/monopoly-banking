@@ -7,6 +7,7 @@ import {
 import TitleBar from "./features/TitleBar/TitleBar";
 import HomePage from "./features/Home/HomePage";
 import NewGame from './features/games/NewGame';
+import NewGameConfirmation from './features/games/NewGameConfirmation';
 import NewUser from "./features/users/NewUser";
 import JoinGame from "./features/games/JoinGame";
 import GameContainer from './features/gameView/GameContainer';
@@ -26,6 +27,9 @@ function App() {
                   </Route>
                   <Route path="/newGame">
                       <NewGame />
+                  </Route>
+                  <Route path="/newGameConfirmation">
+                    <NewGameConfirmation />
                   </Route>
                   <Route path="/userManagement">
                       <UserManagement />

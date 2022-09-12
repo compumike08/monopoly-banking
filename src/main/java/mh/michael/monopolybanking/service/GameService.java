@@ -1,6 +1,7 @@
 package mh.michael.monopolybanking.service;
 
 import lombok.extern.slf4j.Slf4j;
+import mh.michael.monopolybanking.dto.CreateNewGameDTO;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
@@ -31,9 +32,10 @@ public class GameService {
     }
 
     @Transactional
-    public GameDTO createGame() {
+    public GameDTO createGame(CreateNewGameDTO createNewGameDTO) {
         Game newGame = Game.builder()
                 .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
+                .isCollectFromFreeParking(createNewGameDTO.getIsCollectFromFreeParking())
                 .build();
         Game savedGame = gameRepository.save(newGame);
 
@@ -44,15 +46,18 @@ public class GameService {
                 .isBank(true)
                 .build();
 
-        MoneySink freeParking = MoneySink.builder()
-                .game(savedGame)
-                .moneyBalance(0)
-                .sinkName(FREE_PARKING_SINK_NAME)
-                .isBank(false)
-                .build();
-
         moneySinkRepository.save(bank);
-        moneySinkRepository.save(freeParking);
+
+        if (savedGame.getIsCollectFromFreeParking()) {
+            MoneySink freeParking = MoneySink.builder()
+                    .game(savedGame)
+                    .moneyBalance(0)
+                    .sinkName(FREE_PARKING_SINK_NAME)
+                    .isBank(false)
+                    .build();
+
+            moneySinkRepository.save(freeParking);
+        }
 
         List<MoneySink> moneySinkList = moneySinkRepository.findAllByGameId(savedGame.getId());
 

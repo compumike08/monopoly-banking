@@ -1,32 +1,14 @@
 import React from "react";
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
-import { Container, Row, Col, Button, Alert } from "reactstrap";
-import { createNewGameAction } from "../games/gamesSlice";
+import { Container, Row, Col, Button } from "reactstrap";
 
 class HomePage extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            backendErrorMsg: null
-        }
-    }
-
     handleJoinExistingGame = () => {
         this.props.history.push('/joinGame');
     };
 
     handleCreateNewGame = async () => {
-        try {
-            await this.props.actions.createNewGameAction();
-            this.props.history.push('/newGame');
-        } catch (err) {
-            this.setState({
-                backendErrorMsg: err.message
-            });
-        }
+        this.props.history.push('/newGame');
     };
 
     render() {
@@ -39,13 +21,6 @@ class HomePage extends React.Component {
                         </div>
                     </Col>
                 </Row>
-                {this.state.backendErrorMsg && (
-                    <Row>
-                        <Col>
-                            <Alert color="danger">{this.state.backendErrorMsg}</Alert>
-                        </Col>
-                    </Row>
-                )}
                 <Row>
                     <Col>
                         <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleCreateNewGame}>
@@ -65,12 +40,4 @@ class HomePage extends React.Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators({
-            createNewGameAction
-        }, dispatch)
-    };
-}
-
-export default withRouter(connect(undefined, mapDispatchToProps)(HomePage));
+export default withRouter(HomePage);
