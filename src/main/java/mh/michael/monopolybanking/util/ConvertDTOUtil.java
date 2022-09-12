@@ -1,5 +1,6 @@
 package mh.michael.monopolybanking.util;
 
+import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.dto.MoneySinkDTO;
 import mh.michael.monopolybanking.dto.UserDTO;

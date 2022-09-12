@@ -6,7 +6,7 @@ import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
 import mh.michael.monopolybanking.util.OptionalUtil;
-import mh.michael.monopolybanking.util.UserRole;
+import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static mh.michael.monopolybanking.util.Constants.INITIAL_BANK_AMT;
-import static mh.michael.monopolybanking.util.Constants.OUT_OF_SYNC_ERR_MSG;
+import static mh.michael.monopolybanking.constants.Constants.INITIAL_BANK_AMT;
+import static mh.michael.monopolybanking.constants.Constants.OUT_OF_SYNC_ERR_MSG;
 
 @Service
 @Slf4j

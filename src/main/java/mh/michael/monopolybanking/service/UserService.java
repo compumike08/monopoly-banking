@@ -6,7 +6,7 @@ import mh.michael.monopolybanking.dto.UserDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.User;
 import mh.michael.monopolybanking.util.OptionalUtil;
-import mh.michael.monopolybanking.util.UserRole;
+import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
@@ -20,8 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-import static mh.michael.monopolybanking.util.Constants.CODE_LENGTH;
-import static mh.michael.monopolybanking.util.Constants.STARTING_MONEY_AMT;
+import static mh.michael.monopolybanking.constants.Constants.CODE_LENGTH;
+import static mh.michael.monopolybanking.constants.Constants.STARTING_MONEY_AMT;
 
 @Service
 @Slf4j

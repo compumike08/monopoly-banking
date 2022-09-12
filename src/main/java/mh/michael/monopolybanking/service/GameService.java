@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-import static mh.michael.monopolybanking.util.Constants.*;
+import static mh.michael.monopolybanking.constants.Constants.*;
 
 @Service
 @Slf4j

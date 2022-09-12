@@ -1,4 +1,4 @@
-package mh.michael.monopolybanking.util;
+package mh.michael.monopolybanking.constants;
 
 public enum UserRole {
     PLAYER,
