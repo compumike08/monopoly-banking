@@ -10,4 +10,5 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByGameId(long gameId);
     User findByGame_IdAndCode(long gameId, String userCode);
+    User findByCode(String userCode);
 }

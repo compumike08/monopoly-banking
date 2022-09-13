@@ -4,6 +4,23 @@ spring:
 server:
   error:
     include-message: always
+jwt:
+  get:
+    token:
+      uri: /authenticate
+  refresh:
+    token:
+      uri: /refresh
+  http:
+    request:
+      header: Authorization
+  token:
+    expiration:
+      in:
+        seconds: 216000
+  signing:
+    key:
+      secret: QlFVVnhyMmdGTlk2WkdtS1UyYWtoeFhzYVU5OHlFdjl6bTdBUXJiS1ZtN0ZyNEh6U251WjlrUUdkZHNOZmE0aGRRWUhYTExoQWpVNlozMkgyQno4TnZRRmhKNTd3RHl2a25uZg==
 
 ---
 spring:
