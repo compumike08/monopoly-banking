@@ -30,7 +30,8 @@ public class DatabaseAuthUserDetailsService implements UserDetailsService {
                 user.getId(),
                 user.getCode(),
                 user.getCode(),
-                user.getUserRole()
+                user.getUserRole(),
+                user.getGame().getId()
         );
     }
 }

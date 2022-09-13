@@ -5,6 +5,7 @@ import mh.michael.monopolybanking.dto.PayRequestDTO;
 import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.OptionalUtil;
 import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
@@ -44,9 +45,17 @@ public class PayService {
     }
 
     @Transactional
-    public PayResponseDTO payMoney(PayRequestDTO payRequestDTO) {
+    public PayResponseDTO payMoney(PayRequestDTO payRequestDTO, JwtUserDetails jwtUserDetails) {
         log.info("Initiating payment...");
+        Long authRequesterUserId = jwtUserDetails.getId();
+        Long authGameId = jwtUserDetails.getGameId();
+
         long gameId = payRequestDTO.getGameId();
+
+        if (!authGameId.equals(gameId)) {
+            log.error("User attempted to forge the game id in their pay request");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
 
         MoneySink fromMoneySink = null;
         MoneySink toMoneySink = null;
@@ -94,7 +103,13 @@ public class PayService {
 
             fromMoneySink.setMoneyBalance(balanceRemaining);
         } else {
+            if (!authRequesterUserId.equals(payRequestDTO.getFromId())) {
+                log.error("User attempted to pay from a source they don't have access to");
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+            }
+
             Optional<User> fromUserOpt = userRepository.findById(payRequestDTO.getFromId());
+
             fromUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
                     fromUserOpt,
                     "From user not found",

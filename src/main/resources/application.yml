@@ -20,7 +20,7 @@ jwt:
         seconds: 216000
   signing:
     key:
-      secret: QlFVVnhyMmdGTlk2WkdtS1UyYWtoeFhzYVU5OHlFdjl6bTdBUXJiS1ZtN0ZyNEh6U251WjlrUUdkZHNOZmE0aGRRWUhYTExoQWpVNlozMkgyQno4TnZRRmhKNTd3RHl2a25uZg==
+      secret: ${MONOPOLY_APP_JWT_SECRET}
 
 ---
 spring:

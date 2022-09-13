@@ -15,12 +15,14 @@ public class JwtUserDetails implements UserDetails {
     private final Long id;
     private final String username;
     private final String password;
+    private final Long gameId;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUserDetails(Long id, String username, String password, String role) {
+    public JwtUserDetails(Long id, String username, String password, String role, Long gameId) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.gameId = gameId;
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role));
@@ -37,6 +39,8 @@ public class JwtUserDetails implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    public Long getGameId() { return gameId; }
 
     @JsonIgnore
     @Override
