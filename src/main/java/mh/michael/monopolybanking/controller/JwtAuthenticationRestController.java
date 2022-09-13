@@ -4,20 +4,14 @@ import mh.michael.monopolybanking.exceptions.AuthenticationException;
 import mh.michael.monopolybanking.security.JwtTokenRequest;
 import mh.michael.monopolybanking.security.JwtTokenResponse;
 import mh.michael.monopolybanking.security.JwtTokenUtil;
-import mh.michael.monopolybanking.security.JwtUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins={ "http://localhost:3000", "http://localhost:8080" })
@@ -25,16 +19,13 @@ public class JwtAuthenticationRestController {
     @Value("${jwt.http.request.header}")
     private String tokenHeader;
 
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService jwtInMemoryUserDetailsService;
 
     public JwtAuthenticationRestController(
-            AuthenticationManager authenticationManager,
             JwtTokenUtil jwtTokenUtil,
             UserDetailsService jwtInMemoryUserDetailsService
     ) {
-        this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
     }
@@ -54,8 +45,6 @@ public class JwtAuthenticationRestController {
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUserDetails user = (JwtUserDetails) jwtInMemoryUserDetailsService.loadUserByUsername(username);
 
         if (jwtTokenUtil.canTokenBeRefreshed(token)) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
@@ -68,20 +57,5 @@ public class JwtAuthenticationRestController {
     @ExceptionHandler({ AuthenticationException.class })
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    }
-
-    private void authenticate(String username, String password) {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(password);
-
-        try {
-            if (!username.equals(password)) {
-                throw new BadCredentialsException("Invalid user code");
-            }
-        } catch (DisabledException e) {
-            throw new AuthenticationException("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new AuthenticationException("INVALID_CREDENTIALS", e);
-        }
     }
 }
