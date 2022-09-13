@@ -6,13 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "user_player")
 @AllArgsConstructor
@@ -36,4 +32,13 @@ public class User {
     @ManyToOne(optional = false)
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
+    private List<Payment> fromUserPayments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
+    private List<Payment> toUserPayments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "requesterUser", cascade = CascadeType.ALL)
+    private List<Payment> requesterUserPayments = new ArrayList<>();
 }

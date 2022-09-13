@@ -10,3 +10,14 @@ export async function sendPayment(data) {
         throw new Error(err.response.data.message);
     }
 }
+
+export async function getAllPaymentsList(gameId) {
+    const url = `/pay/game/${gameId}/list`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
+    }
+}

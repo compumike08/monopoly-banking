@@ -3,9 +3,14 @@ package mh.michael.monopolybanking.service;
 import lombok.extern.slf4j.Slf4j;
 import mh.michael.monopolybanking.dto.PayRequestDTO;
 import mh.michael.monopolybanking.dto.PayResponseDTO;
+import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
+import mh.michael.monopolybanking.model.Payment;
 import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.repository.GameRepository;
+import mh.michael.monopolybanking.repository.PaymentRepository;
 import mh.michael.monopolybanking.security.JwtUserDetails;
+import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import mh.michael.monopolybanking.util.OptionalUtil;
 import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static mh.michael.monopolybanking.constants.Constants.INITIAL_BANK_AMT;
@@ -26,6 +32,8 @@ import static mh.michael.monopolybanking.constants.Constants.OUT_OF_SYNC_ERR_MSG
 public class PayService {
     private final MoneySinkRepository moneySinkRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
+    private final GameRepository gameRepository;
     private final UserService userService;
     private final MoneySinkService moneySinkService;
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -33,15 +41,25 @@ public class PayService {
     public PayService(
             MoneySinkRepository moneySinkRepository,
             UserRepository userRepository,
+            PaymentRepository paymentRepository,
+            GameRepository gameRepository,
             UserService userService,
             MoneySinkService moneySinkService,
             SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.moneySinkRepository = moneySinkRepository;
         this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
+        this.gameRepository = gameRepository;
         this.userService = userService;
         this.moneySinkService = moneySinkService;
         this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    @Transactional
+    public List<PayResponseDTO> getPaymentList(long gameId) {
+        List<Payment> paymentList = paymentRepository.findAllByGame_Id(gameId);
+        return ConvertDTOUtil.convertPaymentListToPayResponseDTOList(paymentList);
     }
 
     @Transactional
@@ -219,6 +237,36 @@ public class PayService {
             payResponseDTO.setToUser(userService.getUserById(toUser.getId()));
             payResponseDTO.setIsToSink(false);
         }
+
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+                gameOpt,
+                "Game not found",
+                gameId
+        );
+
+        Optional<User> requesterUserOpt = userRepository.findById(payRequestDTO.getRequestInitiatorUserId());
+        User requesterUser = OptionalUtil
+                .getTypeFromOptionalOrThrowNotFound(
+                        requesterUserOpt,
+                        "Requester user not found",
+                        payRequestDTO.getRequestInitiatorUserId()
+                );
+
+        Payment payment = Payment.builder()
+                .amountPaid(payResponseDTO.getAmountPaid())
+                .fromMoneySink(fromMoneySink)
+                .toMoneySink(toMoneySink)
+                .fromUser(fromUser)
+                .toUser(toUser)
+                .requesterUser(requesterUser)
+                .game(game)
+                .isFromSink(payResponseDTO.getIsFromSink())
+                .isToSink(payResponseDTO.getIsToSink())
+                .payRequestUuid(payResponseDTO.getPayRequestUUID())
+                .build();
+
+        paymentRepository.save(payment);
 
         simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
         log.debug("Websocket message sent");

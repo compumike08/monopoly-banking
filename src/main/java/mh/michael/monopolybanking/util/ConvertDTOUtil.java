@@ -3,9 +3,11 @@ package mh.michael.monopolybanking.util;
 import mh.michael.monopolybanking.constants.UserRole;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.dto.MoneySinkDTO;
+import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.dto.UserDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
+import mh.michael.monopolybanking.model.Payment;
 import mh.michael.monopolybanking.model.User;
 
 import java.util.ArrayList;
@@ -56,5 +58,24 @@ public class ConvertDTOUtil {
 
     public static List<GameDTO> convertGameListToGameDTOList(List<Game> gameList) {
         return gameList.stream().map(ConvertDTOUtil::convertGameToGameDTO).collect(Collectors.toList());
+    }
+
+    public static PayResponseDTO convertPaymentToPayResponseDTO(Payment payment) {
+        return PayResponseDTO.builder()
+                .amountPaid(payment.getAmountPaid())
+                .fromMoneySink(payment.getFromMoneySink() != null ? convertMoneySinkToMoneySinkDTO(payment.getFromMoneySink()) : null)
+                .fromUser(payment.getFromUser() != null ? convertUserToUserDTO(payment.getFromUser()) : null)
+                .gameId(payment.getGame().getId())
+                .isFromSink(payment.getIsFromSink())
+                .isToSink(payment.getIsToSink())
+                .payRequestUUID(payment.getPayRequestUuid())
+                .requestInitiatorUserId(payment.getRequesterUser().getId())
+                .toMoneySink(payment.getToMoneySink() != null ? convertMoneySinkToMoneySinkDTO(payment.getToMoneySink()) : null)
+                .toUser(payment.getToUser() != null ? convertUserToUserDTO(payment.getToUser()) : null)
+                .build();
+    }
+
+    public static List<PayResponseDTO> convertPaymentListToPayResponseDTOList(List<Payment> paymentList) {
+        return paymentList.stream().map(ConvertDTOUtil::convertPaymentToPayResponseDTO).collect(Collectors.toList());
     }
 }

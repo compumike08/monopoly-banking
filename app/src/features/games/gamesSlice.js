@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { formatNumberAsCurrency } from '../../utils/util';
 import { createNewGame, addNewUserToGame, fetchGameByCode, joinGameAsExistingUser, authenticate, registerSuccessfulLoginForJwt } from "../../api/gamesAPI";
-import { sendPayment } from '../../api/paymentsAPI';
+import { sendPayment, getAllPaymentsList } from '../../api/paymentsAPI';
 
 const initialState = {
     activeGame: {
@@ -11,12 +11,15 @@ const initialState = {
         code: null,
         users: [],
         moneySinks: [],
-        loggedInUserId: null
+        loggedInUserId: null,
+        paymentRecords: []
     },
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
     addNewUserToGameStatus: IDLE_STATUS,
-    joinGameAsExistingUserStatus: IDLE_STATUS
+    joinGameAsExistingUserStatus: IDLE_STATUS,
+    sendPaymentStatus: IDLE_STATUS,
+    getAllPaymentsListStatus: IDLE_STATUS
 };
 
 export const createNewGameAction = createAsyncThunk(
@@ -55,6 +58,13 @@ export const fetchExistingGameByCodeAction = createAsyncThunk(
     }
 )
 
+export const getAllPaymentsAction = createAsyncThunk(
+    'games/getAllPayments',
+    async (gameId) => {
+        return await getAllPaymentsList(gameId);
+    }
+);
+
 export const sendPaymentAction = createAsyncThunk(
     'games/sendPayment',
     async (data) => {
@@ -63,7 +73,7 @@ export const sendPaymentAction = createAsyncThunk(
 );
 
 const processPayment = (state, action, isFromWebsocketMsg) => {
-    const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid } = action.payload;
+    const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = action.payload;
     state.sendPaymentStatus = IDLE_STATUS;
 
     let fromObject = null;
@@ -102,9 +112,64 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
         const toName = toObject.name;
         const formattedAmountPaid = formatNumberAsCurrency(amountPaid);
 
+        state.activeGame.paymentRecords.push({
+            payRequestUUID,
+            fromName,
+            toName,
+            formattedAmountPaid
+        });
+
         const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
         toast.success(toastMessage);
     }
+
+    return state;
+};
+
+const processPaymentRecordList = (state, action) => {
+    state.getAllPaymentsListStatus = IDLE_STATUS;
+    
+    action.payload.forEach(paymentRecord => {
+        const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = paymentRecord;
+
+        let fromObject = null;
+        let toObject = null;
+        
+        if (!isFromSink) {
+            const userIndex = state.activeGame.users.findIndex(user => user.id === fromUser.id);
+            if (userIndex > -1) {
+                fromObject = fromUser;
+            }
+        } else {
+            const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === fromMoneySink.id);
+            if (sinkIndex > -1) {
+                fromObject = fromMoneySink;
+            }
+        }
+
+        if (!isToSink) {
+            const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
+            if (userIndex > -1) {
+                toObject = toUser;
+            }
+        } else {
+            const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === toMoneySink.id);
+            if (sinkIndex > -1) {
+                toObject = toMoneySink;
+            }
+        }
+
+        const fromName = fromObject.name;
+        const toName = toObject.name;
+        const formattedAmountPaid = formatNumberAsCurrency(amountPaid);
+
+        state.activeGame.paymentRecords.push({
+            payRequestUUID,
+            fromName,
+            toName,
+            formattedAmountPaid
+        });
+    });
 
     return state;
 };
@@ -153,9 +218,9 @@ export const gamesSlice = createSlice({
                 state.joinGameAsExistingUserStatus = IDLE_STATUS;
                 state.activeGame.loggedInUserId = action.payload.id;
             })
-            .addCase(joinGameAsExistingUserAction.rejected, (state => {
+            .addCase(joinGameAsExistingUserAction.rejected, (state) => {
                 state.joinGameAsExistingUserStatus = ERROR_STATUS;
-            }))
+            })
             .addCase(fetchExistingGameByCodeAction.pending, (state) => {
                 state.fetchExistingGameByCodeStatus = LOADING_STATUS;
             })
@@ -177,6 +242,15 @@ export const gamesSlice = createSlice({
             })
             .addCase(sendPaymentAction.rejected, (state) => {
                 state.sendPaymentStatus = ERROR_STATUS;
+            })
+            .addCase(getAllPaymentsAction.pending, (state) => {
+                state.getAllPaymentsListStatus = LOADING_STATUS;
+            })
+            .addCase(getAllPaymentsAction.fulfilled, (state, action) => {
+                state = processPaymentRecordList(state, action)
+            })
+            .addCase(getAllPaymentsAction.rejected, (state) => {
+                state.getAllPaymentsListStatus = ERROR_STATUS;
             });
     }
 });
