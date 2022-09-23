@@ -22,24 +22,24 @@ public class Payment {
     private long amountPaid;
 
     @ManyToOne
-    @JoinColumn(name = "from_user_player_id")
-    private User fromUser;
+    @JoinColumn(name = "from_player_id")
+    private Player fromPlayer;
 
     @ManyToOne
     @JoinColumn(name = "from_money_sink_id")
     private MoneySink fromMoneySink;
 
     @ManyToOne
-    @JoinColumn(name = "to_user_player_id")
-    private User toUser;
+    @JoinColumn(name = "to_player_id")
+    private Player toPlayer;
 
     @ManyToOne
     @JoinColumn(name = "to_money_sink_id")
     private MoneySink toMoneySink;
 
     @ManyToOne
-    @JoinColumn(name = "requester_user_player_id")
-    private User requesterUser;
+    @JoinColumn(name = "requester_player_id")
+    private Player requesterPlayer;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "game_id")

@@ -11,7 +11,7 @@ import {
 import { formatNumberAsCurrency } from "../utils/util";
 import PayButton from "./PayButton";
 
-const MoneySinkCard = ({ sink, loggedInUserId, showPay, gameId }) => {
+const MoneySinkCard = ({ sink, loggedInPlayerId, showPay, gameId }) => {
     const { name, moneyBalance } = sink;
     const mappedSink = {
         ...sink,
@@ -33,8 +33,8 @@ const MoneySinkCard = ({ sink, loggedInUserId, showPay, gameId }) => {
                             <Col className="align-right" xs="3">
                                 <PayButton
                                     gameId={gameId}
-                                    loggedInUserId={loggedInUserId}
-                                    userOrSink={mappedSink}
+                                    loggedInPlayerId={loggedInPlayerId}
+                                    playerOrSink={mappedSink}
                                 />
                             </Col>
                         )}
@@ -63,7 +63,7 @@ MoneySinkCard.propTypes = {
         name: PropTypes.string.isRequired,
         moneyBalance: PropTypes.number.isRequired,
     }).isRequired,
-    loggedInUserId: PropTypes.number.isRequired,
+    loggedInPlayerId: PropTypes.number.isRequired,
     showPay: PropTypes.bool
 };
 

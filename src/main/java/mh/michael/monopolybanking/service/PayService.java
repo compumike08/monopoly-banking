@@ -6,15 +6,15 @@ import mh.michael.monopolybanking.dto.PayResponseDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.Payment;
-import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.model.Player;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.PaymentRepository;
 import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import mh.michael.monopolybanking.util.OptionalUtil;
-import mh.michael.monopolybanking.constants.UserRole;
+import mh.michael.monopolybanking.constants.PlayerRole;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
-import mh.michael.monopolybanking.repository.UserRepository;
+import mh.michael.monopolybanking.repository.PlayerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -31,27 +31,27 @@ import static mh.michael.monopolybanking.constants.Constants.OUT_OF_SYNC_ERR_MSG
 @Slf4j
 public class PayService {
     private final MoneySinkRepository moneySinkRepository;
-    private final UserRepository userRepository;
+    private final PlayerRepository playerRepository;
     private final PaymentRepository paymentRepository;
     private final GameRepository gameRepository;
-    private final UserService userService;
+    private final PlayerService playerService;
     private final MoneySinkService moneySinkService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public PayService(
             MoneySinkRepository moneySinkRepository,
-            UserRepository userRepository,
+            PlayerRepository playerRepository,
             PaymentRepository paymentRepository,
             GameRepository gameRepository,
-            UserService userService,
+            PlayerService playerService,
             MoneySinkService moneySinkService,
             SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.moneySinkRepository = moneySinkRepository;
-        this.userRepository = userRepository;
+        this.playerRepository = playerRepository;
         this.paymentRepository = paymentRepository;
         this.gameRepository = gameRepository;
-        this.userService = userService;
+        this.playerService = playerService;
         this.moneySinkService = moneySinkService;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
@@ -77,19 +77,19 @@ public class PayService {
 
         MoneySink fromMoneySink = null;
         MoneySink toMoneySink = null;
-        User fromUser = null;
-        User toUser = null;
+        Player fromPlayer = null;
+        Player toPlayer = null;
 
         if (payRequestDTO.getIsFromSink()) {
-            Optional<User> requesterUserOpt = userRepository.findById(payRequestDTO.getRequestInitiatorUserId());
-            User requesterUser = OptionalUtil
+            Optional<Player> requesterUserOpt = playerRepository.findById(payRequestDTO.getRequestInitiatorPlayerId());
+            Player requesterPlayer = OptionalUtil
                     .getTypeFromOptionalOrThrowNotFound(
                             requesterUserOpt,
                             "Requester user not found",
-                            payRequestDTO.getRequestInitiatorUserId()
+                            payRequestDTO.getRequestInitiatorPlayerId()
                     );
 
-            if (!requesterUser.getUserRole().equals(UserRole.BANKER.name())) {
+            if (!requesterPlayer.getPlayerRole().equals(PlayerRole.BANKER.name())) {
                 String errMsg = "Only the banker can pay from a money sink";
                 log.error(errMsg);
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, errMsg);
@@ -126,26 +126,26 @@ public class PayService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
 
-            Optional<User> fromUserOpt = userRepository.findById(payRequestDTO.getFromId());
+            Optional<Player> fromUserOpt = playerRepository.findById(payRequestDTO.getFromId());
 
-            fromUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+            fromPlayer = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
                     fromUserOpt,
                     "From user not found",
                     payRequestDTO.getFromId()
             );
 
-            if (fromUser.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
+            if (fromPlayer.getMoneyBalance() != payRequestDTO.getOriginalFromAmount()) {
                 log.error("Payment request original amount doesn't match current amount for fromUser");
                 throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
-            long balanceRemaining = fromUser.getMoneyBalance() - payRequestDTO.getAmountToPay();
+            long balanceRemaining = fromPlayer.getMoneyBalance() - payRequestDTO.getAmountToPay();
 
             if (balanceRemaining < 0) {
                 throw new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED, "Insufficient Funds");
             }
 
-            fromUser.setMoneyBalance(balanceRemaining);
+            fromPlayer.setMoneyBalance(balanceRemaining);
         }
 
         if (payRequestDTO.getIsToSink()) {
@@ -163,19 +163,19 @@ public class PayService {
 
             toMoneySink.setMoneyBalance(toMoneySink.getMoneyBalance() + payRequestDTO.getAmountToPay());
         } else {
-            Optional<User> toUserOpt = userRepository.findById(payRequestDTO.getToId());
-            toUser = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
+            Optional<Player> toUserOpt = playerRepository.findById(payRequestDTO.getToId());
+            toPlayer = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
                     toUserOpt,
                     "To user not found",
                     payRequestDTO.getToId()
             );
 
-            if (toUser.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
+            if (toPlayer.getMoneyBalance() != payRequestDTO.getOriginalToAmount()) {
                 log.error("Payment request original amount doesn't match current amount for toUser");
                 throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
 
-            toUser.setMoneyBalance(toUser.getMoneyBalance() + payRequestDTO.getAmountToPay());
+            toPlayer.setMoneyBalance(toPlayer.getMoneyBalance() + payRequestDTO.getAmountToPay());
         }
 
         if (payRequestDTO.getIsFromSink()) {
@@ -186,12 +186,12 @@ public class PayService {
             }
             moneySinkRepository.save(fromMoneySink);
         } else {
-            assert fromUser != null;
-            if (fromUser.getGame().getId() != gameId) {
+            assert fromPlayer != null;
+            if (fromPlayer.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the fromUser entity");
                 throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
-            userRepository.save(fromUser);
+            playerRepository.save(fromPlayer);
         }
 
         if (payRequestDTO.getIsToSink()) {
@@ -202,12 +202,12 @@ public class PayService {
             }
             moneySinkRepository.save(toMoneySink);
         } else {
-            assert toUser != null;
-            if (toUser.getGame().getId() != gameId) {
+            assert toPlayer != null;
+            if (toPlayer.getGame().getId() != gameId) {
                 log.error("The gameId in the payRequest does not match the gameId on the toUser entity");
                 throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, OUT_OF_SYNC_ERR_MSG);
             }
-            userRepository.save(toUser);
+            playerRepository.save(toPlayer);
         }
 
         log.debug("Entities involved in payment transaction have been updated and saved");
@@ -215,7 +215,7 @@ public class PayService {
         PayResponseDTO payResponseDTO = new PayResponseDTO();
         payResponseDTO.setGameId(gameId);
         payResponseDTO.setPayRequestUUID(payRequestDTO.getPayRequestUUID());
-        payResponseDTO.setRequestInitiatorUserId(payRequestDTO.getRequestInitiatorUserId());
+        payResponseDTO.setRequestInitiatorPlayerId(payRequestDTO.getRequestInitiatorPlayerId());
         payResponseDTO.setAmountPaid(payRequestDTO.getAmountToPay());
 
         if (payRequestDTO.getIsFromSink()) {
@@ -223,8 +223,8 @@ public class PayService {
             payResponseDTO.setFromMoneySink(moneySinkService.getMoneySinkById(fromMoneySink.getId()));
             payResponseDTO.setIsFromSink(true);
         } else {
-            assert fromUser != null;
-            payResponseDTO.setFromUser(userService.getUserById(fromUser.getId()));
+            assert fromPlayer != null;
+            payResponseDTO.setFromPlayer(playerService.getPlayerById(fromPlayer.getId()));
             payResponseDTO.setIsFromSink(false);
         }
 
@@ -233,8 +233,8 @@ public class PayService {
             payResponseDTO.setToMoneySink(moneySinkService.getMoneySinkById(toMoneySink.getId()));
             payResponseDTO.setIsToSink(true);
         } else {
-            assert toUser != null;
-            payResponseDTO.setToUser(userService.getUserById(toUser.getId()));
+            assert toPlayer != null;
+            payResponseDTO.setToPlayer(playerService.getPlayerById(toPlayer.getId()));
             payResponseDTO.setIsToSink(false);
         }
 
@@ -245,21 +245,21 @@ public class PayService {
                 gameId
         );
 
-        Optional<User> requesterUserOpt = userRepository.findById(payRequestDTO.getRequestInitiatorUserId());
-        User requesterUser = OptionalUtil
+        Optional<Player> requesterUserOpt = playerRepository.findById(payRequestDTO.getRequestInitiatorPlayerId());
+        Player requesterPlayer = OptionalUtil
                 .getTypeFromOptionalOrThrowNotFound(
                         requesterUserOpt,
                         "Requester user not found",
-                        payRequestDTO.getRequestInitiatorUserId()
+                        payRequestDTO.getRequestInitiatorPlayerId()
                 );
 
         Payment payment = Payment.builder()
                 .amountPaid(payResponseDTO.getAmountPaid())
                 .fromMoneySink(fromMoneySink)
                 .toMoneySink(toMoneySink)
-                .fromUser(fromUser)
-                .toUser(toUser)
-                .requesterUser(requesterUser)
+                .fromPlayer(fromPlayer)
+                .toPlayer(toPlayer)
+                .requesterPlayer(requesterPlayer)
                 .game(game)
                 .isFromSink(payResponseDTO.getIsFromSink())
                 .isToSink(payResponseDTO.getIsToSink())

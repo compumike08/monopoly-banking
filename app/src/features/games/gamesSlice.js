@@ -2,22 +2,22 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { formatNumberAsCurrency } from '../../utils/util';
-import { createNewGame, addNewUserToGame, fetchGameByCode, joinGameAsExistingUser, authenticate, registerSuccessfulLoginForJwt } from "../../api/gamesAPI";
+import { createNewGame, addNewPlayerToGame, fetchGameByCode, joinGameAsExistingPlayer, authenticate, registerSuccessfulLoginForJwt } from "../../api/gamesAPI";
 import { sendPayment, getAllPaymentsList } from '../../api/paymentsAPI';
 
 const initialState = {
     activeGame: {
         gameId: null,
         code: null,
-        users: [],
+        players: [],
         moneySinks: [],
-        loggedInUserId: null,
+        loggedInPlayerId: null,
         paymentRecords: []
     },
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
-    addNewUserToGameStatus: IDLE_STATUS,
-    joinGameAsExistingUserStatus: IDLE_STATUS,
+    addNewPlayerToGameStatus: IDLE_STATUS,
+    joinGameAsExistingPlayerStatus: IDLE_STATUS,
     sendPaymentStatus: IDLE_STATUS,
     getAllPaymentsListStatus: IDLE_STATUS
 };
@@ -29,21 +29,21 @@ export const createNewGameAction = createAsyncThunk(
     }
 );
 
-export const addNewUserToGameAction = createAsyncThunk(
-    'games/addNewUserToGameAction',
+export const addNewPlayerToGameAction = createAsyncThunk(
+    'games/addNewPlayerToGameAction',
     async (data) => {
-        const addUserResponse = await addNewUserToGame(data.gameId, data);
-        const token = await authenticate(addUserResponse.code);
-        registerSuccessfulLoginForJwt(addUserResponse.code, token);
+        const addPlayerResponse = await addNewPlayerToGame(data.gameId, data);
+        const token = await authenticate(addPlayerResponse.code);
+        registerSuccessfulLoginForJwt(addPlayerResponse.code, token);
 
-        return addUserResponse;
+        return addPlayerResponse;
     }
 );
 
-export const joinGameAsExistingUserAction = createAsyncThunk(
-    'games/joinGameAsExistingUserAction',
+export const joinGameAsExistingPlayerAction = createAsyncThunk(
+    'games/joinGameAsExistingPlayerAction',
     async (data) => {
-        const joinGameUserResponse = await joinGameAsExistingUser(data.gameId, data.userCode);
+        const joinGameUserResponse = await joinGameAsExistingPlayer(data.gameId, data.playerCode);
         const token = await authenticate(joinGameUserResponse.code);
         registerSuccessfulLoginForJwt(joinGameUserResponse.code, token);
 
@@ -73,17 +73,17 @@ export const sendPaymentAction = createAsyncThunk(
 );
 
 const processPayment = (state, action, isFromWebsocketMsg) => {
-    const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = action.payload;
+    const { isFromSink, isToSink, fromPlayer, toPlayer, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = action.payload;
     state.sendPaymentStatus = IDLE_STATUS;
 
     let fromObject = null;
     let toObject = null;
     
     if (!isFromSink) {
-        const userIndex = state.activeGame.users.findIndex(user => user.id === fromUser.id);
-        if (userIndex > -1) {
-            state.activeGame.users[userIndex] = fromUser;
-            fromObject = fromUser;
+        const playerIndex = state.activeGame.players.findIndex(player => player.id === fromPlayer.id);
+        if (playerIndex > -1) {
+            state.activeGame.players[playerIndex] = fromPlayer;
+            fromObject = fromPlayer;
         }
     } else {
         const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === fromMoneySink.id);
@@ -94,10 +94,10 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     }
 
     if (!isToSink) {
-        const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
-        if (userIndex > -1) {
-            state.activeGame.users[userIndex] = toUser;
-            toObject = toUser;
+        const playerIndex = state.activeGame.players.findIndex(player => player.id === toPlayer.id);
+        if (playerIndex > -1) {
+            state.activeGame.players[playerIndex] = toPlayer;
+            toObject = toPlayer;
         }
     } else {
         const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === toMoneySink.id);
@@ -130,15 +130,15 @@ const processPaymentRecordList = (state, action) => {
     state.getAllPaymentsListStatus = IDLE_STATUS;
     
     action.payload.forEach(paymentRecord => {
-        const { isFromSink, isToSink, fromUser, toUser, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = paymentRecord;
+        const { isFromSink, isToSink, fromPlayer, toPlayer, fromMoneySink, toMoneySink, amountPaid, payRequestUUID } = paymentRecord;
 
         let fromObject = null;
         let toObject = null;
         
         if (!isFromSink) {
-            const userIndex = state.activeGame.users.findIndex(user => user.id === fromUser.id);
-            if (userIndex > -1) {
-                fromObject = fromUser;
+            const playerIndex = state.activeGame.players.findIndex(player => player.id === fromPlayer.id);
+            if (playerIndex > -1) {
+                fromObject = fromPlayer;
             }
         } else {
             const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === fromMoneySink.id);
@@ -148,9 +148,9 @@ const processPaymentRecordList = (state, action) => {
         }
 
         if (!isToSink) {
-            const userIndex = state.activeGame.users.findIndex(user => user.id === toUser.id);
-            if (userIndex > -1) {
-                toObject = toUser;
+            const playerIndex = state.activeGame.players.findIndex(player => player.id === toPlayer.id);
+            if (playerIndex > -1) {
+                toObject = toPlayer;
             }
         } else {
             const sinkIndex = state.activeGame.moneySinks.findIndex(sink => sink.id === toMoneySink.id);
@@ -178,8 +178,8 @@ export const gamesSlice = createSlice({
     name: 'games',
     initialState,
     reducers: {
-        userReceivedFromWs(state, action) {
-            state.activeGame.users.push(action.payload);
+        playerReceivedFromWs(state, action) {
+            state.activeGame.players.push(action.payload);
         },
         paymentReceivedFromWs(state, action) {
             state = processPayment(state, action, true);
@@ -194,32 +194,32 @@ export const gamesSlice = createSlice({
                 state.createNewGameStatus = IDLE_STATUS;
                 state.activeGame.gameId = action.payload.gameId;
                 state.activeGame.code = action.payload.code;
-                state.activeGame.users = action.payload.users;
+                state.activeGame.players = action.payload.players;
                 state.activeGame.moneySinks = action.payload.moneySinks;
             })
             .addCase(createNewGameAction.rejected, (state) => {
                 state.createNewGameStatus = ERROR_STATUS;
             })
-            .addCase(addNewUserToGameAction.pending, (state) => {
-                state.addNewUserToGameStatus = LOADING_STATUS;
+            .addCase(addNewPlayerToGameAction.pending, (state) => {
+                state.addNewPlayerToGameStatus = LOADING_STATUS;
             })
-            .addCase(addNewUserToGameAction.fulfilled, (state, action) => {
-                state.addNewUserToGameStatus = IDLE_STATUS;
-                state.activeGame.users.push(action.payload);
-                state.activeGame.loggedInUserId = action.payload.id;
+            .addCase(addNewPlayerToGameAction.fulfilled, (state, action) => {
+                state.addNewPlayerToGameStatus = IDLE_STATUS;
+                state.activeGame.players.push(action.payload);
+                state.activeGame.loggedInPlayerId = action.payload.id;
             })
-            .addCase(addNewUserToGameAction.rejected, (state) => {
-                state.addNewUserToGameStatus = ERROR_STATUS;
+            .addCase(addNewPlayerToGameAction.rejected, (state) => {
+                state.addNewPlayerToGameStatus = ERROR_STATUS;
             })
-            .addCase(joinGameAsExistingUserAction.pending, (state) => {
-                state.joinGameAsExistingUserStatus = LOADING_STATUS;
+            .addCase(joinGameAsExistingPlayerAction.pending, (state) => {
+                state.joinGameAsExistingPlayerStatus = LOADING_STATUS;
             })
-            .addCase(joinGameAsExistingUserAction.fulfilled, (state, action) => {
-                state.joinGameAsExistingUserStatus = IDLE_STATUS;
-                state.activeGame.loggedInUserId = action.payload.id;
+            .addCase(joinGameAsExistingPlayerAction.fulfilled, (state, action) => {
+                state.joinGameAsExistingPlayerStatus = IDLE_STATUS;
+                state.activeGame.loggedInPlayerId = action.payload.id;
             })
-            .addCase(joinGameAsExistingUserAction.rejected, (state) => {
-                state.joinGameAsExistingUserStatus = ERROR_STATUS;
+            .addCase(joinGameAsExistingPlayerAction.rejected, (state) => {
+                state.joinGameAsExistingPlayerStatus = ERROR_STATUS;
             })
             .addCase(fetchExistingGameByCodeAction.pending, (state) => {
                 state.fetchExistingGameByCodeStatus = LOADING_STATUS;
@@ -228,7 +228,7 @@ export const gamesSlice = createSlice({
                 state.fetchExistingGameByCodeStatus = IDLE_STATUS;
                 state.activeGame.gameId = action.payload.gameId;
                 state.activeGame.code = action.payload.code;
-                state.activeGame.users = action.payload.users;
+                state.activeGame.players = action.payload.players;
                 state.activeGame.moneySinks = action.payload.moneySinks;
             })
             .addCase(fetchExistingGameByCodeAction.rejected, (state) => {
@@ -257,6 +257,6 @@ export const gamesSlice = createSlice({
 
 const { actions, reducer } = gamesSlice;
 
-export const { userReceivedFromWs, paymentReceivedFromWs } = actions;
+export const { playerReceivedFromWs, paymentReceivedFromWs } = actions;
 
 export default reducer;

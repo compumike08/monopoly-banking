@@ -14,7 +14,7 @@ import {
     FormFeedback,
     ModalFooter
 } from "reactstrap";
-import { selectLoggedInUser } from "../features/gameView/gameUsersSelector";
+import { selectLoggedInPlayer } from "../features/gameView/gamePlayersSelector";
 import { sendPaymentAction } from "../features/games/gamesSlice";
 
 class PayButton extends PureComponent {
@@ -61,19 +61,19 @@ class PayButton extends PureComponent {
         }
 
         if (isValid) {
-            const { gameId, loggedInUserId, userOrSink, isFromSink, fromSink, loggedInUserObject } = this.props;
-            const toId = userOrSink.id;
+            const { gameId, loggedInPlayerId, playerOrSink, isFromSink, fromSink, loggedInPlayerObject } = this.props;
+            const toId = playerOrSink.id;
             const data = {
                 gameId,
                 payRequestUUID: uuid(),
-                fromId: loggedInUserId,
+                fromId: loggedInPlayerId,
                 toId,
-                requestInitiatorUserId: loggedInUserId,
+                requestInitiatorPlayerId: loggedInPlayerId,
                 isFromSink,
-                isToSink: userOrSink.isSink,
+                isToSink: playerOrSink.isSink,
                 amountToPay: parseInt(this.state.amountToPay),
-                originalFromAmount: !isFromSink ? loggedInUserObject.moneyBalance : fromSink.moneyBalance,
-                originalToAmount: userOrSink.moneyBalance
+                originalFromAmount: !isFromSink ? loggedInPlayerObject.moneyBalance : fromSink.moneyBalance,
+                originalToAmount: playerOrSink.moneyBalance
             };
 
             const result = await this.props.actions.sendPaymentAction(data);
@@ -96,7 +96,7 @@ class PayButton extends PureComponent {
     };
 
     render() {
-        const { userOrSink } = this.props;
+        const { playerOrSink } = this.props;
 
         return (
             <>
@@ -104,7 +104,7 @@ class PayButton extends PureComponent {
                     <Button color="primary" onClick={this.togglePayModal}>Pay</Button>
                 </div>
                 <Modal isOpen={this.state.isPayModalOpen} toggle={this.togglePayModal}>
-                    <ModalHeader toggle={this.togglePayModal}>Pay {userOrSink.name}</ModalHeader>
+                    <ModalHeader toggle={this.togglePayModal}>Pay {playerOrSink.name}</ModalHeader>
                     <ModalBody>
                         <Alert color="danger" isOpen={this.state.isResponseError} toggle={this.clearError}>
                             {this.state.responseErrorMsg}
@@ -141,8 +141,8 @@ PayButton.defaultProps = {
 
 PayButton.propTypes = {
     gameId: PropTypes.number.isRequired,
-    loggedInUserId: PropTypes.number.isRequired,
-    userOrSink: PropTypes.shape({
+    loggedInPlayerId: PropTypes.number.isRequired,
+    playerOrSink: PropTypes.shape({
         name: PropTypes.string.isRequired,
         id: PropTypes.number.isRequired,
         isSink: PropTypes.bool.isRequired,
@@ -158,7 +158,7 @@ PayButton.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        loggedInUserObject: selectLoggedInUser(state)
+        loggedInPlayerObject: selectLoggedInPlayer(state)
     };
 };
 

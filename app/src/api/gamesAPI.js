@@ -75,8 +75,8 @@ export async function createNewGame(data) {
     }
 }
 
-export async function addNewUserToGame(gameId, data) {
-    const url = `/games/game/${gameId}/createNewUser`;
+export async function addNewPlayerToGame(gameId, data) {
+    const url = `/games/game/${gameId}/createNewPlayer`;
     try {
         const response = await axios.post(url, data);
         return response.data;
@@ -86,8 +86,8 @@ export async function addNewUserToGame(gameId, data) {
     }
 }
 
-export async function joinGameAsExistingUser(gameId, userCode) {
-    const url = `/games/game/${gameId}/user/${userCode}`;
+export async function joinGameAsExistingPlayer(gameId, playerCode) {
+    const url = `/games/game/${gameId}/player/${playerCode}`;
     try {
         const response = await axios.get(url);
         return response.data;

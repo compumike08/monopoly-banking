@@ -33,11 +33,13 @@ const PaymentRecords = ({ paymentRecords }) => {
 };
 
 PaymentRecords.propTypes = {
-    paymentRecords: PropTypes.arrayOf({
-        fromName: PropTypes.string.isRequired,
-        toName: PropTypes.string.isRequired,
-        formattedAmountPaid: PropTypes.string.isRequired
-    }).isRequired
+    paymentRecords: PropTypes.arrayOf(
+        PropTypes.shape({
+            fromName: PropTypes.string.isRequired,
+            toName: PropTypes.string.isRequired,
+            formattedAmountPaid: PropTypes.string.isRequired
+        })
+    ).isRequired
 };
 
 export default PaymentRecords;

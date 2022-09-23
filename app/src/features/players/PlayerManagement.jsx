@@ -2,13 +2,13 @@ import React, { PureComponent } from "react";
 import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button } from "reactstrap";
 
-class UserManagement extends PureComponent {
-    handleJoinAsNewUser = () => {
-        this.props.history.push('/newUser');
+class PlayerManagement extends PureComponent {
+    handleJoinAsNewPlayer = () => {
+        this.props.history.push('/newPlayer');
     };
 
-    handleJoinAsExistingUser = () => {
-        this.props.history.push('/existingUser');
+    handleJoinAsExistingPlayer = () => {
+        this.props.history.push('/existingPlayer');
     };
 
     render() {
@@ -23,15 +23,15 @@ class UserManagement extends PureComponent {
                 </Row>
                 <Row>
                     <Col>
-                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinAsNewUser}>
-                            Join Game As New User
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinAsNewPlayer}>
+                            Join Game As New Player
                         </Button>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinAsExistingUser}>
-                            Join Game As Existing User
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinAsExistingPlayer}>
+                            Join Game As Existing Player
                         </Button>
                     </Col>
                 </Row>
@@ -40,4 +40,4 @@ class UserManagement extends PureComponent {
     }
 }
 
-export default withRouter(UserManagement);
+export default withRouter(PlayerManagement);

@@ -33,7 +33,7 @@ public class Game {
     private boolean isCollectFromFreeParking;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
-    private List<User> users = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<MoneySink> moneySinks = new ArrayList<>();

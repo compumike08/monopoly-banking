@@ -18,7 +18,7 @@ public class PayRequestDTO implements Serializable {
     private String payRequestUUID;
     private long fromId;
     private long toId;
-    private long requestInitiatorUserId;
+    private long requestInitiatorPlayerId;
     private boolean isFromSink;
     private boolean isToSink;
     private long amountToPay;

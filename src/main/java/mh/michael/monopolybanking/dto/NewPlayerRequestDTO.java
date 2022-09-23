@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mh.michael.monopolybanking.constants.UserRole;
+import mh.michael.monopolybanking.constants.PlayerRole;
 
 import java.io.Serializable;
 
@@ -14,8 +14,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-public class NewUserRequestDTO implements Serializable {
+public class NewPlayerRequestDTO implements Serializable {
     private String name;
-    private UserRole userRole;
+    private PlayerRole playerRole;
     private long gameId;
 }

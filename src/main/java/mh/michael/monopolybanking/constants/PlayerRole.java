@@ -1,6 +1,6 @@
 package mh.michael.monopolybanking.constants;
 
-public enum UserRole {
+public enum PlayerRole {
     PLAYER,
     BANKER
 }

@@ -31,7 +31,7 @@ class JoinGame extends PureComponent {
         } else {
             try {
                 await this.props.actions.fetchExistingGameByCodeAction(this.state.gameCode).unwrap();
-                this.props.history.push('/userManagement');
+                this.props.history.push('/playerManagement');
             } catch (err) {
                 this.setState({
                     backendErrorMsg: err.message

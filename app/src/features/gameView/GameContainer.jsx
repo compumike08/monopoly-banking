@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ToastContainer } from 'react-toastify';
 import SockJsClient from 'react-stomp';
-import { TOPIC_GAME_PREFIX, TOPIC_GAME_USERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
-import { userReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
+import { TOPIC_GAME_PREFIX, TOPIC_GAME_PLAYERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
+import { playerReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
 import GameView from "./GameView";
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,8 +19,8 @@ class GameContainer extends PureComponent {
     }
 
     onWsMessageReceive = (msg, topic) => {
-        if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_USERS}`) {
-            this.props.actions.userReceivedFromWs(msg);
+        if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PLAYERS}`) {
+            this.props.actions.playerReceivedFromWs(msg);
         } else if (topic === `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PAYMENT}`) {
             this.props.actions.paymentReceivedFromWs(msg);
         }
@@ -39,7 +39,7 @@ class GameContainer extends PureComponent {
                 <SockJsClient
                     url={wsSourceUrl}
                     topics={[
-                        `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_USERS}`,
+                        `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PLAYERS}`,
                         `${TOPIC_GAME_PREFIX}/${this.props.activeGameId}/${TOPIC_GAME_PAYMENT}`
                     ]}
                     onConnect={() => { this.setState({ wsClientConnected: true }) }}
@@ -62,7 +62,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            userReceivedFromWs,
+            playerReceivedFromWs,
             paymentReceivedFromWs
         }, dispatch)
     };

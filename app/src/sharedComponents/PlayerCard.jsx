@@ -12,12 +12,12 @@ import {
 import { formatNumberAsCurrency } from "../utils/util";
 import PayButton from "./PayButton";
 
-const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
-    const { name, code, moneyBalance, id } = user;
-    const userRole = user.userRole || "";
-    const isYou = loggedInUserId === id;
-    const mappedUser = {
-        ...user,
+const PlayerCard = ({ player, loggedInPlayerId, showPay, gameId }) => {
+    const { name, code, moneyBalance, id } = player;
+    const playerRole = player.playerRole || "";
+    const isYou = loggedInPlayerId === id;
+    const mappedPlayer = {
+        ...player,
         isSink: false
     };
     const formattedMoneyBalance = formatNumberAsCurrency(moneyBalance);
@@ -44,8 +44,8 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
                             <Col className="align-right" xs="3">
                                 <PayButton
                                     gameId={gameId}
-                                    loggedInUserId={loggedInUserId}
-                                    userOrSink={mappedUser}
+                                    loggedInPlayerId={loggedInPlayerId}
+                                    playerOrSink={mappedPlayer}
                                 />
                             </Col>
                         )}
@@ -53,7 +53,7 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
                     <Row>
                         <Col>
                             <div>
-                                Role: {userRole}
+                                Role: {playerRole}
                             </div>
                             <div>
                                 Balance: {formattedMoneyBalance}
@@ -66,21 +66,21 @@ const UserCard = ({ user, loggedInUserId, showPay, gameId }) => {
     );
 };
 
-UserCard.defaultProps = {
+PlayerCard.defaultProps = {
     showPay: true
 };
 
-UserCard.propTypes = {
+PlayerCard.propTypes = {
     gameId: PropTypes.number.isRequired,
-    user: PropTypes.shape({
+    player: PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         code: PropTypes.string.isRequired,
         moneyBalance: PropTypes.number.isRequired,
-        userRole: PropTypes.string.isRequired
+        playerRole: PropTypes.string.isRequired
     }).isRequired,
-    loggedInUserId: PropTypes.number.isRequired,
+    loggedInPlayerId: PropTypes.number.isRequired,
     showPay: PropTypes.bool
 };
 
-export default UserCard;
+export default PlayerCard;

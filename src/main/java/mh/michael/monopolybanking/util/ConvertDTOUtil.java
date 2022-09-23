@@ -1,14 +1,14 @@
 package mh.michael.monopolybanking.util;
 
-import mh.michael.monopolybanking.constants.UserRole;
+import mh.michael.monopolybanking.constants.PlayerRole;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.dto.MoneySinkDTO;
 import mh.michael.monopolybanking.dto.PayResponseDTO;
-import mh.michael.monopolybanking.dto.UserDTO;
+import mh.michael.monopolybanking.dto.PlayerDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.model.Payment;
-import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 public class ConvertDTOUtil {
     private ConvertDTOUtil() {}
 
-    public static UserDTO convertUserToUserDTO(User user) {
-        return UserDTO.builder()
-                .gameId(user.getGame().getId())
-                .code(user.getCode())
-                .moneyBalance(user.getMoneyBalance())
-                .name(user.getName())
-                .id(user.getId())
-                .userRole(UserRole.valueOf(user.getUserRole()))
+    public static PlayerDTO convertPlayerToPlayerDTO(Player player) {
+        return PlayerDTO.builder()
+                .gameId(player.getGame().getId())
+                .code(player.getCode())
+                .moneyBalance(player.getMoneyBalance())
+                .name(player.getName())
+                .id(player.getId())
+                .playerRole(PlayerRole.valueOf(player.getPlayerRole()))
                 .build();
     }
 
-    public static List<UserDTO> convertUserListToUserDTOList(List<User> userList) {
-        return userList.stream().map(ConvertDTOUtil::convertUserToUserDTO).collect(Collectors.toList());
+    public static List<PlayerDTO> convertPlayerListToPlayerDTOList(List<Player> playerList) {
+        return playerList.stream().map(ConvertDTOUtil::convertPlayerToPlayerDTO).collect(Collectors.toList());
     }
 
     public static MoneySinkDTO convertMoneySinkToMoneySinkDTO(MoneySink moneySink) {
@@ -49,7 +49,7 @@ public class ConvertDTOUtil {
     public static GameDTO convertGameToGameDTO(Game game) {
         return GameDTO.builder()
                 .gameId(game.getId())
-                .users(game.getUsers() != null ? convertUserListToUserDTOList(game.getUsers()) : new ArrayList<>())
+                .players(game.getPlayers() != null ? convertPlayerListToPlayerDTOList(game.getPlayers()) : new ArrayList<>())
                 .moneySinks(game.getMoneySinks() != null ? convertMoneySinkListToMoneySinkDTOList(game.getMoneySinks()) : new ArrayList<>())
                 .code(game.getCode())
                 .isCollectFromFreeParking(game.getIsCollectFromFreeParking())
@@ -64,14 +64,14 @@ public class ConvertDTOUtil {
         return PayResponseDTO.builder()
                 .amountPaid(payment.getAmountPaid())
                 .fromMoneySink(payment.getFromMoneySink() != null ? convertMoneySinkToMoneySinkDTO(payment.getFromMoneySink()) : null)
-                .fromUser(payment.getFromUser() != null ? convertUserToUserDTO(payment.getFromUser()) : null)
+                .fromPlayer(payment.getFromPlayer() != null ? convertPlayerToPlayerDTO(payment.getFromPlayer()) : null)
                 .gameId(payment.getGame().getId())
                 .isFromSink(payment.getIsFromSink())
                 .isToSink(payment.getIsToSink())
                 .payRequestUUID(payment.getPayRequestUuid())
-                .requestInitiatorUserId(payment.getRequesterUser().getId())
+                .requestInitiatorPlayerId(payment.getRequesterPlayer().getId())
                 .toMoneySink(payment.getToMoneySink() != null ? convertMoneySinkToMoneySinkDTO(payment.getToMoneySink()) : null)
-                .toUser(payment.getToUser() != null ? convertUserToUserDTO(payment.getToUser()) : null)
+                .toPlayer(payment.getToPlayer() != null ? convertPlayerToPlayerDTO(payment.getToPlayer()) : null)
                 .build();
     }
 

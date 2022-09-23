@@ -101,13 +101,13 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers(
                         HttpMethod.POST,
-                        "/games/game/**/createNewUser"
+                        "/games/game/**/createNewPlayer"
                 )
                 .and()
                 .ignoring()
                 .antMatchers(
                         HttpMethod.GET,
-                        "/games/game/**/user/**"
+                        "/games/game/**/player/**"
                 )
                 .and()
                 .ignoring()

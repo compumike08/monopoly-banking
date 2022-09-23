@@ -10,13 +10,13 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "user_player")
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class User {
+public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,18 +27,18 @@ public class User {
     private String code;
 
     private long moneyBalance;
-    private String userRole;
+    private String playerRole;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fromPlayer", cascade = CascadeType.ALL)
     private List<Payment> fromUserPayments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "toPlayer", cascade = CascadeType.ALL)
     private List<Payment> toUserPayments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "requesterUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "requesterPlayer", cascade = CascadeType.ALL)
     private List<Payment> requesterUserPayments = new ArrayList<>();
 }

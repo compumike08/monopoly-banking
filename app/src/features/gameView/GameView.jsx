@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col } from "reactstrap";
 import { BANKER_ROLE } from "../../constants/general";
-import UserCard from '../../sharedComponents/UserCard';
+import PlayerCard from '../../sharedComponents/PlayerCard';
 import MoneySinkCard from "../../sharedComponents/MoneySinkCard";
-import PayUserFromSinkButton from "../../sharedComponents/PayUserFromSinkButton";
+import PayPlayerFromSinkButton from "../../sharedComponents/PayPlayerFromSinkButton";
 import PaymentRecords from "../payments/PaymentRecords";
 import { sendPaymentAction, getAllPaymentsAction } from "../games/gamesSlice";
-import { selectActiveGameUsersYouOnTop, selectLoggedInUser } from "./gameUsersSelector";
+import { selectActiveGamePlayersYouOnTop, selectLoggedInPlayer } from "./gamePlayersSelector";
 import { selectActiveGameBankMoneySinkOnTop } from "./gameMoneySinksSelector";
 
 class GameView extends PureComponent {
@@ -17,8 +17,8 @@ class GameView extends PureComponent {
     }
 
     render() {
-        const { loggedInUserId, loggedInUserObject, users, gameCode, gameId, moneySinks, paymentRecords } = this.props;
-        const { userRole } = loggedInUserObject;
+        const { loggedInPlayerId, loggedInPlayerObject, players, gameCode, gameId, moneySinks, paymentRecords } = this.props;
+        const { playerRole } = loggedInPlayerObject;
 
         return (
             <Container>
@@ -29,10 +29,10 @@ class GameView extends PureComponent {
                         </h2>
                     </Col>
                 </Row>
-                {userRole === BANKER_ROLE && (
+                {playerRole === BANKER_ROLE && (
                     <Row>
                         <Col>
-                            <PayUserFromSinkButton />
+                            <PayPlayerFromSinkButton />
                         </Col>
                     </Row>
                 )}
@@ -40,17 +40,17 @@ class GameView extends PureComponent {
                     <Col lg="4">
                         <Row>
                             <Col>
-                                <h3>Users</h3>
+                                <h3>Players</h3>
                             </Col>
                         </Row>
-                        {users.map(user => {
+                        {players.map(player => {
                             return (
-                                <Row key={`user-${user.id}`}>
+                                <Row key={`user-${player.id}`}>
                                     <Col>
-                                        <UserCard
-                                            user={user}
+                                        <PlayerCard
+                                            player={player}
                                             gameId={gameId}
-                                            loggedInUserId={loggedInUserId}
+                                            loggedInPlayerId={loggedInPlayerId}
                                         />
                                     </Col>
                                 </Row>
@@ -69,7 +69,7 @@ class GameView extends PureComponent {
                                     <Col>
                                         <MoneySinkCard
                                             gameId={gameId}
-                                            loggedInUserId={loggedInUserId}
+                                            loggedInPlayerId={loggedInPlayerId}
                                             sink={moneySink}
                                         />
                                     </Col>
@@ -101,10 +101,10 @@ function mapStateToProps(state) {
     return {
         gameId: state.gamesData.activeGame.gameId,
         gameCode: state.gamesData.activeGame.code,
-        loggedInUserId: state.gamesData.activeGame.loggedInUserId,
-        users: selectActiveGameUsersYouOnTop(state),
+        loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId,
+        players: selectActiveGamePlayersYouOnTop(state),
         moneySinks: selectActiveGameBankMoneySinkOnTop(state),
-        loggedInUserObject: selectLoggedInUser(state),
+        loggedInPlayerObject: selectLoggedInPlayer(state),
         paymentRecords: state.gamesData.activeGame.paymentRecords
     };
 };

@@ -8,11 +8,11 @@ import TitleBar from "./features/TitleBar/TitleBar";
 import HomePage from "./features/Home/HomePage";
 import NewGame from './features/games/NewGame';
 import NewGameConfirmation from './features/games/NewGameConfirmation';
-import NewUser from "./features/users/NewUser";
+import NewPlayer from './features/players/NewPlayer';
 import JoinGame from "./features/games/JoinGame";
 import GameContainer from './features/gameView/GameContainer';
-import UserManagement from './features/users/UserManagement';
-import ExistingUser from './features/users/ExistingUser';
+import PlayerManagement from './features/players/PlayerManagement';
+import ExistingPlayer from './features/players/ExistingPlayer';
 
 import './App.css';
 
@@ -31,14 +31,14 @@ function App() {
                   <Route path="/newGameConfirmation">
                     <NewGameConfirmation />
                   </Route>
-                  <Route path="/userManagement">
-                      <UserManagement />
+                  <Route path="/playerManagement">
+                      <PlayerManagement />
                   </Route>
-                  <Route path="/existingUser">
-                      <ExistingUser />
+                  <Route path="/existingPlayer">
+                      <ExistingPlayer />
                   </Route>
-                  <Route path="/newUser">
-                      <NewUser />
+                  <Route path="/newPlayer">
+                      <NewPlayer />
                   </Route>
                   <Route path="/joinGame">
                       <JoinGame />

@@ -2,10 +2,10 @@ package mh.michael.monopolybanking.controller;
 
 import mh.michael.monopolybanking.dto.CreateNewGameDTO;
 import mh.michael.monopolybanking.dto.GameDTO;
-import mh.michael.monopolybanking.dto.NewUserRequestDTO;
-import mh.michael.monopolybanking.dto.UserDTO;
+import mh.michael.monopolybanking.dto.NewPlayerRequestDTO;
+import mh.michael.monopolybanking.dto.PlayerDTO;
 import mh.michael.monopolybanking.service.GameService;
-import mh.michael.monopolybanking.service.UserService;
+import mh.michael.monopolybanking.service.PlayerService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +19,14 @@ import java.util.List;
 @RequestMapping("/games")
 public class GameController {
     private final GameService gameService;
-    private final UserService userService;
+    private final PlayerService playerService;
 
     public GameController(
             GameService gameService,
-            UserService userService
+            PlayerService playerService
     ) {
         this.gameService = gameService;
-        this.userService = userService;
+        this.playerService = playerService;
     }
 
     @GetMapping("/list")
@@ -44,12 +44,12 @@ public class GameController {
         return gameService.getGameByCode(gameCode);
     }
 
-    @GetMapping("/game/{game_id}/user/{user_code}")
-    public UserDTO getUserByCode(
+    @GetMapping("/game/{game_id}/player/{player_code}")
+    public PlayerDTO getPlayerByCode(
             @PathVariable("game_id") long gameId,
-            @PathVariable("user_code") String userCode
+            @PathVariable("player_code") String playerCode
     ) {
-        return userService.getUserByCodeAndGameId(gameId, userCode);
+        return playerService.getPlayerByCodeAndGameId(gameId, playerCode);
     }
 
     @PostMapping("/createNewGame")
@@ -57,8 +57,8 @@ public class GameController {
         return gameService.createGame(createNewGameDTO);
     }
 
-    @PostMapping("/game/{game_id}/createNewUser")
-    public UserDTO createNewUser(@PathVariable("game_id") long gameId, @RequestBody NewUserRequestDTO newUserRequestDTO) {
-        return userService.createNewUser(gameId, newUserRequestDTO);
+    @PostMapping("/game/{game_id}/createNewPlayer")
+    public PlayerDTO createNewPlayer(@PathVariable("game_id") long gameId, @RequestBody NewPlayerRequestDTO newPlayerRequestDTO) {
+        return playerService.createNewPlayer(gameId, newPlayerRequestDTO);
     }
 }

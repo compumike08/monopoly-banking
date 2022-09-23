@@ -18,6 +18,6 @@ public class GameDTO implements Serializable {
     private long gameId;
     private String code;
     private boolean isCollectFromFreeParking;
-    private List<UserDTO> users;
+    private List<PlayerDTO> players;
     private List<MoneySinkDTO> moneySinks;
 }

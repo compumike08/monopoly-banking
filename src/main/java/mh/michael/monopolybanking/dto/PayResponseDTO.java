@@ -16,12 +16,12 @@ import java.io.Serializable;
 public class PayResponseDTO implements Serializable {
     private long gameId;
     private String payRequestUUID;
-    private UserDTO fromUser;
+    private PlayerDTO fromPlayer;
     private MoneySinkDTO fromMoneySink;
-    private UserDTO toUser;
+    private PlayerDTO toPlayer;
     private MoneySinkDTO toMoneySink;
     private boolean isFromSink;
     private boolean isToSink;
-    private long requestInitiatorUserId;
+    private long requestInitiatorPlayerId;
     private long amountPaid;
 }

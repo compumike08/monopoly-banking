@@ -3,29 +3,29 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col, Form, FormGroup, Input, Label, Button, FormFeedback, Alert } from "reactstrap";
-import { addNewUserToGameAction } from "../games/gamesSlice";
+import { addNewPlayerToGameAction } from "../games/gamesSlice";
 
-class NewUser extends PureComponent {
+class NewPlayer extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             name: "",
-            userRole: "PLAYER",
+            playerRole: "PLAYER",
             isNameError: false,
-            isUserRoleError: false,
+            isPlayerRoleError: false,
             backendErrorMsg: null
         };
     }
 
-    handleUserNameChange = evt => {
+    handlePlayerNameChange = evt => {
         this.setState({
             name: evt.target.value
         });
     };
 
-    handleUserRoleChange = evt => {
+    handlePlayerRoleChange = evt => {
         this.setState({
-            userRole: evt.target.value
+            playerRole: evt.target.value
         });
     };
 
@@ -40,13 +40,14 @@ class NewUser extends PureComponent {
             });
         } else {
             try {
-                await this.props.actions.addNewUserToGameAction({
+                await this.props.actions.addNewPlayerToGameAction({
                     name: this.state.name,
-                    userRole: this.state.userRole,
+                    playerRole: this.state.playerRole,
                     gameId: this.props.activeGame.gameId
                 }).unwrap();
                 this.props.history.push('/gameView');
             } catch (err) {
+                console.log(err);
                 this.setState({
                     backendErrorMsg: err.message
                 });
@@ -60,7 +61,7 @@ class NewUser extends PureComponent {
                 <Row>
                     <Col>
                         <div className="glbl-heading">
-                            New User
+                            New Player
                         </div>
                     </Col>
                 </Row>
@@ -75,31 +76,31 @@ class NewUser extends PureComponent {
                     <Col md="5">
                         <Form>
                             <FormGroup>
-                                <Label for="user-name-input">
+                                <Label for="player-name-input">
                                     Name
                                 </Label>
                                 <Input
-                                    id="user-name-input"
-                                    name="user-name-input"
+                                    id="player-name-input"
+                                    name="player-name-input"
                                     type="text"
                                     invalid={this.state.isNameError}
                                     value={this.state.name}
-                                    onChange={this.handleUserNameChange}
+                                    onChange={this.handlePlayerNameChange}
                                 />
                                 <FormFeedback>
                                     Name is required
                                 </FormFeedback>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="user-role-input">
+                                <Label for="player-role-input">
                                     Role
                                 </Label>
                                 <Input
-                                    id="user-role-input"
-                                    name="user-role-input"
+                                    id="player-role-input"
+                                    name="player-role-input"
                                     type="select"
-                                    value={this.state.userRole}
-                                    onChange={this.handleUserRoleChange}
+                                    value={this.state.playerRole}
+                                    onChange={this.handlePlayerRoleChange}
                                 >
                                     <option value="PLAYER">
                                         Player
@@ -127,9 +128,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            addNewUserToGameAction
+            addNewPlayerToGameAction
         }, dispatch)
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewUser));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewPlayer));

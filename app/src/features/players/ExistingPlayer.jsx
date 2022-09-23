@@ -3,14 +3,14 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container, Row, Col, Form, FormGroup, Input, Label, Button, FormFeedback, Alert } from "reactstrap";
-import { joinGameAsExistingUserAction } from "../games/gamesSlice";
+import { joinGameAsExistingPlayerAction } from "../games/gamesSlice";
 
-class ExistingUser extends PureComponent {
+class ExistingPlayer extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            userCode: "",
-            isUserCodeError: false,
+            playerCode: "",
+            isPlayerCodeError: false,
             isResponseError: false,
             responseErrMsg: null
         };
@@ -23,28 +23,28 @@ class ExistingUser extends PureComponent {
         });
     };
 
-    handleUserCodeChange = evt => {
+    handlePlayerCodeChange = evt => {
         this.setState({
-            userCode: evt.target.value
+            playerCode: evt.target.value
         });
     };
 
     handleSubmit = async () => {
         this.setState({
-            isUserCodeError: false
+            isPlayerCodeError: false
         });
 
-        if (this.state.userCode.length < 1) {
+        if (this.state.playerCode.length < 1) {
             this.setState({
-                isUserCodeError: true
+                isPlayerCodeError: true
             });
         } else {
             try {
                 const data = {
                     gameId: this.props.gameId,
-                    userCode: this.state.userCode
+                    playerCode: this.state.playerCode
                 };
-                await this.props.actions.joinGameAsExistingUserAction(data).unwrap();
+                await this.props.actions.joinGameAsExistingPlayerAction(data).unwrap();
                 this.props.history.push('/gameView');
             } catch (err) {
                 this.setState({
@@ -61,7 +61,7 @@ class ExistingUser extends PureComponent {
                 <Row>
                     <Col>
                         <div className="glbl-heading">
-                            Existing User
+                            Existing Player
                         </div>
                     </Col>
                 </Row>
@@ -72,19 +72,19 @@ class ExistingUser extends PureComponent {
                         </Alert>
                         <Form>
                             <FormGroup>
-                                <Label for="user-code-input">
-                                    User Code
+                                <Label for="player-code-input">
+                                    Player Code
                                 </Label>
                                 <Input
-                                    id="user-code-input"
-                                    name="user-code-input"
+                                    id="player-code-input"
+                                    name="player-code-input"
                                     type="text"
-                                    invalid={this.state.isUserCodeError}
-                                    value={this.state.userCode}
-                                    onChange={this.handleUserCodeChange}
+                                    invalid={this.state.isPlayerCodeError}
+                                    value={this.state.playerCode}
+                                    onChange={this.handlePlayerCodeChange}
                                 />
                                 <FormFeedback>
-                                    User Code is required
+                                    Player Code is required
                                 </FormFeedback>
                             </FormGroup>
                             <Button color="primary" onClick={this.handleSubmit}>Submit</Button>
@@ -105,9 +105,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            joinGameAsExistingUserAction
+            joinGameAsExistingPlayerAction
         }, dispatch)
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ExistingUser));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ExistingPlayer));

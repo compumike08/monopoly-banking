@@ -17,7 +17,7 @@ import {
 import { selectActiveGameBankMoneySinkOnTop } from "../features/gameView/gameMoneySinksSelector";
 import { sendPaymentAction } from "../features/games/gamesSlice";
 
-class PayUserFromSinkButton extends PureComponent {
+class PayPlayerFromSinkButton extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -27,8 +27,8 @@ class PayUserFromSinkButton extends PureComponent {
             responseErrorMsg: null,
             fromSinkId: props.moneySinks.length > 0 ? props.moneySinks[0].id : null,
             isFromSinkIdValid: true,
-            toUserId: props.users.length > 0 ? props.users[0].id : null,
-            isToUserIdValid: true,
+            toPlayerId: props.players.length > 0 ? props.players[0].id : null,
+            isToPlayerIdValid: true,
             amountToPay: null,
             isAmountToPayValid: true
         };
@@ -37,7 +37,7 @@ class PayUserFromSinkButton extends PureComponent {
     initializeFormFields = () => {
         this.setState({
             fromSinkId: this.props.moneySinks.length > 0 ? this.props.moneySinks[0].id : null,
-            toUserId: this.props.users.length > 0 ? this.props.users[0].id : null,
+            toPlayerId: this.props.players.length > 0 ? this.props.players[0].id : null,
             amountToPay: null
         });
     };
@@ -71,12 +71,12 @@ class PayUserFromSinkButton extends PureComponent {
         });
     };
 
-    handleToUserSelectChange = event => {
+    handleToPlayerSelectChange = event => {
         const { target } = event;
         const { value } = target;
 
         this.setState({
-            toUserId: value
+            toPlayerId: value
         });
     };
 
@@ -94,7 +94,7 @@ class PayUserFromSinkButton extends PureComponent {
         this.clearError();
         this.setState({
             isFromSinkIdValid: isValid,
-            isToUserIdValid: isValid,
+            isToPlayerIdValid: isValid,
             isAmountToPayValid: isValid
         });
 
@@ -105,10 +105,10 @@ class PayUserFromSinkButton extends PureComponent {
             });
         }
 
-        if (!this.state.toUserId) {
+        if (!this.state.toPlayerId) {
             isValid = false;
             this.setState({
-                isToUserIdValid: false
+                isToPlayerIdValid: false
             })
         }
 
@@ -120,16 +120,16 @@ class PayUserFromSinkButton extends PureComponent {
         }
 
         if (isValid) {
-            const { gameId, loggedInUserId } = this.props;
+            const { gameId, loggedInPlayerId } = this.props;
             const fromSink = this.props.moneySinks.find(sink => sink.id === parseInt(this.state.fromSinkId));
-            const toUser = this.props.users.find(user => user.id === parseInt(this.state.toUserId));
+            const toUser = this.props.players.find(player => player.id === parseInt(this.state.toPlayerId));
             
             const data = {
                 gameId,
                 payRequestUUID: uuid(),
                 fromId: fromSink.id,
                 toId: toUser.id,
-                requestInitiatorUserId: loggedInUserId,
+                requestInitiatorPlayerId: loggedInPlayerId,
                 isFromSink: true,
                 isToSink: false,
                 amountToPay: parseInt(this.state.amountToPay),
@@ -150,15 +150,15 @@ class PayUserFromSinkButton extends PureComponent {
     };
 
     render() {
-        const { moneySinks, users } = this.props;
+        const { moneySinks, players } = this.props;
         return (
             <>
                 <div>
-                    <Button color="primary" onClick={this.showPayModal}>Pay User From Money Sink</Button>
+                    <Button color="primary" onClick={this.showPayModal}>Pay Player From Money Sink</Button>
                 </div>
                 {this.state.showPayModal && (
                     <Modal isOpen={this.state.showPayModal} toggle={this.hidePayModal}>
-                        <ModalHeader toggle={this.togglePayModal}>Pay User From Money Sink</ModalHeader>
+                        <ModalHeader toggle={this.clearError}>Pay Player From Money Sink</ModalHeader>
                         <ModalBody>
                             <Alert color="danger" isOpen={this.state.isResponseError} toggle={this.clearError}>
                                 {this.state.responseErrorMsg}
@@ -188,27 +188,27 @@ class PayUserFromSinkButton extends PureComponent {
                                 </FormFeedback>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="toUserSelectInput">
-                                    Pay To User
+                                <Label for="toPlayerSelectInput">
+                                    Pay To Player
                                 </Label>
                                 <Input
-                                    id="toUserSelectInput"
-                                    name="toUserSelectInput"
+                                    id="toPlayerSelectInput"
+                                    name="toPlayerSelectInput"
                                     type="select"
-                                    onChange={e => this.handleToUserSelectChange(e)}
-                                    valid={this.state.isToUserIdValid}
-                                    invalid={!this.state.isToUserIdValid}
+                                    onChange={e => this.handleToPlayerSelectChange(e)}
+                                    valid={this.state.isToPlayerIdValid}
+                                    invalid={!this.state.isToPlayerIdValid}
                                 >
-                                    {users.map(user => {
+                                    {players.map(player => {
                                         return (
-                                            <option value={user.id}>
-                                                {user.name}
+                                            <option value={player.id}>
+                                                {player.name}
                                             </option>
                                         );
                                     })}
                                 </Input>
                                 <FormFeedback>
-                                    Pay To User is required.
+                                    Pay To Player is required.
                                 </FormFeedback>
                             </FormGroup>
                             <FormGroup>
@@ -243,8 +243,8 @@ const mapStateToProps = state => {
     return {
         gameId: state.gamesData.activeGame.gameId,
         moneySinks: selectActiveGameBankMoneySinkOnTop(state),
-        users: state.gamesData.activeGame.users,
-        loggedInUserId: state.gamesData.activeGame.loggedInUserId
+        players: state.gamesData.activeGame.players,
+        loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId
     };
 };
 
@@ -256,4 +256,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PayUserFromSinkButton);
+export default connect(mapStateToProps, mapDispatchToProps)(PayPlayerFromSinkButton);
