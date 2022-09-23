@@ -76,6 +76,12 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .ignoring()
                 .antMatchers(
+                        HttpMethod.GET,
+                        "/favicon.ico"
+                )
+                .and()
+                .ignoring()
+                .antMatchers(
                         HttpMethod.POST,
                         "/ws/**"
                 )
