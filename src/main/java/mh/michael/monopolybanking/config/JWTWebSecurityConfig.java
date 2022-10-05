@@ -2,13 +2,10 @@ package mh.michael.monopolybanking.config;
 
 import mh.michael.monopolybanking.security.JwtTokenAuthorizationOncePerRequestFilter;
 import mh.michael.monopolybanking.security.JwtUnAuthorizedResponseAuthenticationEntryPoint;
-import mh.michael.monopolybanking.security.UserCodeAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint;
-    private final UserDetailsService jwtInMemoryUserDetailsService;
+    private final UserDetailsService databaseAuthUserDetailsService;
     private final JwtTokenAuthorizationOncePerRequestFilter jwtAuthenticationTokenFilter;
 
     @Value("${jwt.get.token.uri}")
@@ -32,18 +29,18 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public JWTWebSecurityConfig(
             JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint,
-            UserDetailsService jwtInMemoryUserDetailsService,
+            UserDetailsService databaseAuthUserDetailsService,
             JwtTokenAuthorizationOncePerRequestFilter jwtAuthenticationTokenFilter
     ) {
         this.jwtUnAuthorizedResponseAuthenticationEntryPoint = jwtUnAuthorizedResponseAuthenticationEntryPoint;
-        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.databaseAuthUserDetailsService = databaseAuthUserDetailsService;
         this.jwtAuthenticationTokenFilter = jwtAuthenticationTokenFilter;
     }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(jwtInMemoryUserDetailsService);
+                .userDetailsService(databaseAuthUserDetailsService);
     }
 
     @Override

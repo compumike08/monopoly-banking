@@ -20,17 +20,17 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFilter {
-    private final UserDetailsService jwtInMemoryUserDetailsService;
+    private final UserDetailsService databaseAuthUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Value("${jwt.http.request.header}")
     private String tokenHeader;
 
     public JwtTokenAuthorizationOncePerRequestFilter(
-            UserDetailsService jwtInMemoryUserDetailsService,
+            UserDetailsService databaseAuthUserDetailsService,
             JwtTokenUtil jwtTokenUtil
     ) {
-        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.databaseAuthUserDetailsService = databaseAuthUserDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -58,7 +58,7 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
         log.debug("JWT_TOKEN_USERNAME_VALUE '{}'", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtInMemoryUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.databaseAuthUserDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
