@@ -33,6 +33,10 @@ public class Player {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "fromPlayer", cascade = CascadeType.ALL)
     private List<Payment> fromUserPayments = new ArrayList<>();
 

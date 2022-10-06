@@ -1,14 +1,8 @@
 package mh.michael.monopolybanking.util;
 
 import mh.michael.monopolybanking.constants.PlayerRole;
-import mh.michael.monopolybanking.dto.GameDTO;
-import mh.michael.monopolybanking.dto.MoneySinkDTO;
-import mh.michael.monopolybanking.dto.PayResponseDTO;
-import mh.michael.monopolybanking.dto.PlayerDTO;
-import mh.michael.monopolybanking.model.Game;
-import mh.michael.monopolybanking.model.MoneySink;
-import mh.michael.monopolybanking.model.Payment;
-import mh.michael.monopolybanking.model.Player;
+import mh.michael.monopolybanking.dto.*;
+import mh.michael.monopolybanking.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +71,13 @@ public class ConvertDTOUtil {
 
     public static List<PayResponseDTO> convertPaymentListToPayResponseDTOList(List<Payment> paymentList) {
         return paymentList.stream().map(ConvertDTOUtil::convertPaymentToPayResponseDTO).collect(Collectors.toList());
+    }
+
+    public static UserDTO convertUserToUserDTO(User user) {
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .roles(user.getRoles().parallelStream().map(UserRole::getName).collect(Collectors.toSet()))
+                .username(user.getUsername())
+                .build();
     }
 }

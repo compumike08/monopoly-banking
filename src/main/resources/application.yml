@@ -5,12 +5,6 @@ server:
   error:
     include-message: always
 jwt:
-  get:
-    token:
-      uri: /authenticate
-  refresh:
-    token:
-      uri: /refresh
   http:
     request:
       header: Authorization
@@ -32,6 +26,7 @@ spring:
     password: password
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
   h2:
     console:
       enabled: true
@@ -51,3 +46,6 @@ spring:
           dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate:
         ddl-auto: validate
+    sql:
+      init:
+        mode: never

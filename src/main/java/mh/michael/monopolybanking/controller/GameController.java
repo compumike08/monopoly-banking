@@ -4,8 +4,10 @@ import mh.michael.monopolybanking.dto.CreateNewGameDTO;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.dto.NewPlayerRequestDTO;
 import mh.michael.monopolybanking.dto.PlayerDTO;
+import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.service.GameService;
 import mh.michael.monopolybanking.service.PlayerService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,7 +60,11 @@ public class GameController {
     }
 
     @PostMapping("/game/{game_id}/createNewPlayer")
-    public PlayerDTO createNewPlayer(@PathVariable("game_id") long gameId, @RequestBody NewPlayerRequestDTO newPlayerRequestDTO) {
-        return playerService.createNewPlayer(gameId, newPlayerRequestDTO);
+    public PlayerDTO createNewPlayer(
+            @PathVariable("game_id") long gameId,
+            @RequestBody NewPlayerRequestDTO newPlayerRequestDTO,
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails
+    ) {
+        return playerService.createNewPlayer(gameId, newPlayerRequestDTO, jwtUserDetails);
     }
 }

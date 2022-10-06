@@ -5,6 +5,9 @@ import mh.michael.monopolybanking.dto.NewPlayerRequestDTO;
 import mh.michael.monopolybanking.dto.PlayerDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.Player;
+import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.repository.UserRepository;
+import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.OptionalUtil;
 import mh.michael.monopolybanking.constants.PlayerRole;
 import mh.michael.monopolybanking.repository.GameRepository;
@@ -28,20 +31,23 @@ import static mh.michael.monopolybanking.constants.Constants.STARTING_MONEY_AMT;
 public class PlayerService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public PlayerService(
             GameRepository gameRepository,
             PlayerRepository playerRepository,
+            UserRepository userRepository,
             SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+        this.userRepository = userRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Transactional
-    public PlayerDTO createNewPlayer(long gameId, NewPlayerRequestDTO newPlayerRequestDTO) {
+    public PlayerDTO createNewPlayer(long gameId, NewPlayerRequestDTO newPlayerRequestDTO, JwtUserDetails jwtUserDetails) {
         PlayerRole newPlayerRole = newPlayerRequestDTO.getPlayerRole();
         Optional<Game> gameOpt = gameRepository.findById(gameId);
         Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
@@ -49,6 +55,8 @@ public class PlayerService {
                 "Game not found",
                 gameId
         );
+
+        User user = userRepository.getOne(jwtUserDetails.getId());
 
         if (newPlayerRole.equals(PlayerRole.BANKER) && game.getPlayers().stream().anyMatch(player -> player.getPlayerRole().equals(PlayerRole.BANKER.name()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This game already has a banker");
@@ -60,6 +68,7 @@ public class PlayerService {
                 .moneyBalance(STARTING_MONEY_AMT)
                 .name(newPlayerRequestDTO.getName())
                 .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
+                .user(user)
                 .build();
 
         Player updatedPlayer = playerRepository.save(newPlayer);

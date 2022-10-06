@@ -1,8 +1,8 @@
 package mh.michael.monopolybanking.security;
 
 import lombok.extern.slf4j.Slf4j;
-import mh.michael.monopolybanking.model.Player;
-import mh.michael.monopolybanking.repository.PlayerRepository;
+import mh.michael.monopolybanking.model.User;
+import mh.michael.monopolybanking.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,27 +11,17 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class DatabaseAuthUserDetailsService implements UserDetailsService {
-    private final PlayerRepository playerRepository;
+    private final UserRepository userRepository;
 
-    public DatabaseAuthUserDetailsService(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
+    public DatabaseAuthUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
-        Player player = playerRepository.findByCode(userCode);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-        if (player == null) {
-            log.error(String.format("USER NOT FOUND '%s'.", userCode));
-            throw new UsernameNotFoundException("User Not Found");
-        }
-
-        return new JwtUserDetails(
-                player.getId(),
-                player.getCode(),
-                player.getCode(),
-                player.getPlayerRole(),
-                player.getGame().getId()
-        );
+        return JwtUserDetails.build(user);
     }
 }

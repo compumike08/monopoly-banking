@@ -65,12 +65,12 @@ public class PayService {
     @Transactional
     public PayResponseDTO payMoney(PayRequestDTO payRequestDTO, JwtUserDetails jwtUserDetails) {
         log.info("Initiating payment...");
-        Long authRequesterUserId = jwtUserDetails.getId();
-        Long authGameId = jwtUserDetails.getGameId();
+        List<Long> authGameIdList = jwtUserDetails.getGameIdList();
+        List<Long> authPlayerIdList = jwtUserDetails.getPlayerIdList();
 
         long gameId = payRequestDTO.getGameId();
 
-        if (!authGameId.equals(gameId)) {
+        if (!authGameIdList.contains(gameId)) {
             log.error("User attempted to forge the game id in their pay request");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
@@ -80,15 +80,20 @@ public class PayService {
         Player fromPlayer = null;
         Player toPlayer = null;
 
-        if (payRequestDTO.getIsFromSink()) {
-            Optional<Player> requesterUserOpt = playerRepository.findById(payRequestDTO.getRequestInitiatorPlayerId());
-            Player requesterPlayer = OptionalUtil
-                    .getTypeFromOptionalOrThrowNotFound(
-                            requesterUserOpt,
-                            "Requester user not found",
-                            payRequestDTO.getRequestInitiatorPlayerId()
-                    );
+        Optional<Player> requesterUserOpt = playerRepository.findById(payRequestDTO.getRequestInitiatorPlayerId());
+        Player requesterPlayer = OptionalUtil
+                .getTypeFromOptionalOrThrowNotFound(
+                        requesterUserOpt,
+                        "Requester player not found",
+                        payRequestDTO.getRequestInitiatorPlayerId()
+                );
 
+        if (!authPlayerIdList.contains(payRequestDTO.getRequestInitiatorPlayerId())) {
+            log.error("User attempted to forge the requestInitiatorPlayerId in their pay request");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        if (payRequestDTO.getIsFromSink()) {
             if (!requesterPlayer.getPlayerRole().equals(PlayerRole.BANKER.name())) {
                 String errMsg = "Only the banker can pay from a money sink";
                 log.error(errMsg);
@@ -121,7 +126,7 @@ public class PayService {
 
             fromMoneySink.setMoneyBalance(balanceRemaining);
         } else {
-            if (!authRequesterUserId.equals(payRequestDTO.getFromId())) {
+            if (payRequestDTO.getRequestInitiatorPlayerId() != payRequestDTO.getFromId()) {
                 log.error("User attempted to pay from a source they don't have access to");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
@@ -244,14 +249,6 @@ public class PayService {
                 "Game not found",
                 gameId
         );
-
-        Optional<Player> requesterUserOpt = playerRepository.findById(payRequestDTO.getRequestInitiatorPlayerId());
-        Player requesterPlayer = OptionalUtil
-                .getTypeFromOptionalOrThrowNotFound(
-                        requesterUserOpt,
-                        "Requester user not found",
-                        payRequestDTO.getRequestInitiatorPlayerId()
-                );
 
         Payment payment = Payment.builder()
                 .amountPaid(payResponseDTO.getAmountPaid())
