@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
 import HomePage from "./features/Home/HomePage";
+import AuthLanding from './features/auth/AuthLanding';
+import RegisterUser from './features/auth/RegisterUser';
 import NewGame from './features/games/NewGame';
 import NewGameConfirmation from './features/games/NewGameConfirmation';
 import NewPlayer from './features/players/NewPlayer';
@@ -23,6 +25,12 @@ function App() {
               <TitleBar />
               <Switch>
                   <Route exact path="/">
+                      <AuthLanding />
+                  </Route>
+                  <Route path="/registerUser">
+                    <RegisterUser />
+                  </Route>
+                  <Route path="/home">
                       <HomePage />
                   </Route>
                   <Route path="/newGame">

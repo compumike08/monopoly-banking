@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { formatNumberAsCurrency } from '../../utils/util';
-import { createNewGame, addNewPlayerToGame, fetchGameByCode, joinGameAsExistingPlayer, authenticate, registerSuccessfulLoginForJwt } from "../../api/gamesAPI";
+import { createNewGame, addNewPlayerToGame, fetchGameByCode, joinGameAsExistingPlayer } from "../../api/gamesAPI";
 import { sendPayment, getAllPaymentsList } from '../../api/paymentsAPI';
 
 const initialState = {
@@ -32,22 +32,14 @@ export const createNewGameAction = createAsyncThunk(
 export const addNewPlayerToGameAction = createAsyncThunk(
     'games/addNewPlayerToGameAction',
     async (data) => {
-        const addPlayerResponse = await addNewPlayerToGame(data.gameId, data);
-        const token = await authenticate(addPlayerResponse.code);
-        registerSuccessfulLoginForJwt(addPlayerResponse.code, token);
-
-        return addPlayerResponse;
+        return await addNewPlayerToGame(data.gameId, data);
     }
 );
 
 export const joinGameAsExistingPlayerAction = createAsyncThunk(
     'games/joinGameAsExistingPlayerAction',
     async (data) => {
-        const joinGameUserResponse = await joinGameAsExistingPlayer(data.gameId, data.playerCode);
-        const token = await authenticate(joinGameUserResponse.code);
-        registerSuccessfulLoginForJwt(joinGameUserResponse.code, token);
-
-        return joinGameUserResponse;
+        return await joinGameAsExistingPlayer(data.gameId, data.playerCode);
     }
 );
 
