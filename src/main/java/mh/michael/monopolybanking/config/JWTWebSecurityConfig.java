@@ -57,10 +57,16 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf().disable()
+                .httpBasic().disable()
+                .cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers(
+                        HttpMethod.POST,
+                        "/authenticate",
+                        "/registerUser"
+                ).permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity
