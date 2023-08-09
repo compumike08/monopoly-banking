@@ -8,6 +8,7 @@ import TitleBar from "./features/TitleBar/TitleBar";
 import HomePage from "./features/Home/HomePage";
 import AuthLanding from './features/auth/AuthLanding';
 import RegisterUser from './features/auth/RegisterUser';
+import LoginPage from './features/auth/LoginPage';
 import NewGame from './features/games/NewGame';
 import NewGameConfirmation from './features/games/NewGameConfirmation';
 import NewPlayer from './features/players/NewPlayer';
@@ -29,6 +30,9 @@ function App() {
                   </Route>
                   <Route path="/registerUser">
                     <RegisterUser />
+                  </Route>
+                  <Route path="/login" >
+                    <LoginPage />
                   </Route>
                   <Route path="/home">
                       <HomePage />

@@ -3,34 +3,23 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button, Alert, Form, FormGroup, Label, Input, FormFeedback } from "reactstrap";
-import { registerUserAction } from "./authSlice";
+import { loginAction } from "./authSlice";
 
-class RegisterUser extends PureComponent {
+class LoginPage extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             username: "",
-            email: "",
             password: "",
-            reenteredPassword: "",
             isUsernameError: false,
-            isEmailError: false,
             isPasswordError: false,
-            isReenteredPasswordError: false,
-            isPasswordsNotMatch: false,
             backendErrorMsg: null
-        }
+        };
     }
 
     handleUsernameChange = evt => {
         this.setState({
             username: evt.target.value
-        });
-    };
-
-    handleEmailChange = evt => {
-        this.setState({
-            email: evt.target.value
         });
     };
 
@@ -40,21 +29,12 @@ class RegisterUser extends PureComponent {
         });
     };
 
-    handleReenteredPasswordChange = evt => {
-        this.setState({
-            reenteredPassword: evt.target.value
-        });
-    };
-
     handleSubmit = async () => {
         let isError = false;
 
         this.setState({
             isUsernameError: false,
-            isEmailError: false,
             isPasswordError: false,
-            isReenteredPasswordError: false,
-            isPasswordsNotMatch: false,
             backendErrorMsg: null
         });
 
@@ -65,13 +45,6 @@ class RegisterUser extends PureComponent {
             });
         }
 
-        if (this.state.email === null || this.state.email.length < 1) {
-            isError = false;
-            this.setState({
-                isEmailError: true
-            });
-        }
-
         if (this.state.password === null || this.state.password.length < 1) {
             isError = true;
             this.setState({
@@ -79,30 +52,14 @@ class RegisterUser extends PureComponent {
             });
         }
 
-        if (this.state.reenteredPassword === null || this.state.reenteredPassword.length < 1) {
-            isError = true;
-            this.setState({
-                isReenteredPasswordError: true
-            });
-        }
-
-        if (this.state.password !== this.state.reenteredPassword) {
-            isError = true;
-            this.setState({
-                isReenteredPasswordError: true,
-                isPasswordsNotMatch: true
-            });
-        }
-
         if (isError === false) {
             try {
-                await this.props.actions.registerUserAction({
+                await this.props.actions.loginAction({
                     username: this.state.username,
-                    email: this.state.email,
                     password: this.state.password
                 }).unwrap();
                 
-                this.props.history.push('/login');
+                this.props.history.push('/home');
             } catch (err) {
                 this.setState({
                     backendErrorMsg: err.message
@@ -117,7 +74,7 @@ class RegisterUser extends PureComponent {
                 <Row>
                     <Col>
                         <div className="glbl-heading">
-                            Register New User
+                            Login
                         </div>
                     </Col>
                 </Row>
@@ -148,22 +105,6 @@ class RegisterUser extends PureComponent {
                                 </FormFeedback>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="email-input">
-                                    Email
-                                </Label>
-                                <Input
-                                    id="email-input"
-                                    name="email-input"
-                                    type="text"
-                                    invalid={this.state.isEmailError}
-                                    value={this.state.email}
-                                    onChange={this.handleEmailChange}
-                                />
-                                <FormFeedback>
-                                    Email is required
-                                </FormFeedback>
-                            </FormGroup>
-                            <FormGroup>
                                 <Label for="password-input">
                                     Password
                                 </Label>
@@ -179,22 +120,6 @@ class RegisterUser extends PureComponent {
                                     Password is required
                                 </FormFeedback>
                             </FormGroup>
-                            <FormGroup>
-                                <Label for="reentered-password-input">
-                                    Re-enter Password
-                                </Label>
-                                <Input
-                                    id="reentered-password-input"
-                                    name="reentered-password-input"
-                                    type="password"
-                                    invalid={this.state.isReenteredPasswordError}
-                                    value={this.state.reenteredPassword}
-                                    onChange={this.handleReenteredPasswordChange}
-                                />
-                                <FormFeedback>
-                                    {this.state.isPasswordsNotMatch ? "Passwords do not match" : "Re-enter password is required"}
-                                </FormFeedback>
-                            </FormGroup>
                             <Button color="primary" onClick={this.handleSubmit}>Submit</Button>
                         </Form>
                     </Col>
@@ -207,9 +132,9 @@ class RegisterUser extends PureComponent {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            registerUserAction
+            loginAction
         }, dispatch)
     };
 };
 
-export default withRouter(connect(undefined, mapDispatchToProps)(RegisterUser));
+export default withRouter(connect(undefined, mapDispatchToProps)(LoginPage));

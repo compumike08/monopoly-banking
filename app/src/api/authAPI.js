@@ -3,6 +3,8 @@ import axios from 'axios';
 export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticatedUser';
 export const TOKEN_SESSION_ATTRIBUTE_NAME = 'token';
 
+let axiosHeaderInterceptor = null;
+
 function createJWTToken(token) {
     return 'Bearer ' + token;
 };
@@ -14,7 +16,7 @@ function isUserLoggedIn() {
 };
 
 function setupAxiosInterceptors(token) {
-    axios.interceptors.request.use(
+    axiosHeaderInterceptor = axios.interceptors.request.use(
         (config) => {
             if (isUserLoggedIn()) {
                 config.headers.authorization = token;
@@ -59,3 +61,9 @@ export async function authenticate(data) {
         throw new Error(err.response.data.message);
     }
 };
+
+export function logout() {
+    sessionStorage.clear();
+    axios.interceptors.request.eject(axiosHeaderInterceptor);
+    axiosHeaderInterceptor = null;
+}
