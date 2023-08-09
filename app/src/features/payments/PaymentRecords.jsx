@@ -19,7 +19,7 @@ const PaymentRecords = ({ paymentRecords }) => {
                 <tbody>
                     {paymentRecords.map(paymentRecord => {
                         return (
-                            <tr>
+                            <tr key={`pay-record-key-${paymentRecord.payRequestUUID}`}>
                                 <td>{paymentRecord.fromName}</td>
                                 <td>{paymentRecord.toName}</td>
                                 <td>{paymentRecord.formattedAmountPaid}</td>
@@ -35,6 +35,7 @@ const PaymentRecords = ({ paymentRecords }) => {
 PaymentRecords.propTypes = {
     paymentRecords: PropTypes.arrayOf(
         PropTypes.shape({
+            payRequestUUID: PropTypes.string.isRequired,
             fromName: PropTypes.string.isRequired,
             toName: PropTypes.string.isRequired,
             formattedAmountPaid: PropTypes.string.isRequired
