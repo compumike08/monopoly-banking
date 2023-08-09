@@ -13,9 +13,8 @@ import NewGame from './features/games/NewGame';
 import NewGameConfirmation from './features/games/NewGameConfirmation';
 import NewPlayer from './features/players/NewPlayer';
 import JoinGame from "./features/games/JoinGame";
+import GamesList from './features/games/GamesList';
 import GameContainer from './features/gameView/GameContainer';
-import PlayerManagement from './features/players/PlayerManagement';
-import ExistingPlayer from './features/players/ExistingPlayer';
 
 import './App.css';
 
@@ -43,17 +42,14 @@ function App() {
                   <Route path="/newGameConfirmation">
                     <NewGameConfirmation />
                   </Route>
-                  <Route path="/playerManagement">
-                      <PlayerManagement />
-                  </Route>
-                  <Route path="/existingPlayer">
-                      <ExistingPlayer />
-                  </Route>
                   <Route path="/newPlayer">
                       <NewPlayer />
                   </Route>
                   <Route path="/joinGame">
                       <JoinGame />
+                  </Route>
+                  <Route path="/listGames">
+                      <GamesList />
                   </Route>
                   <Route path="/gameView">
                       <GameContainer />

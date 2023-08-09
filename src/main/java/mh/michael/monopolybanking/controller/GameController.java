@@ -32,26 +32,31 @@ public class GameController {
     }
 
     @GetMapping("/list")
-    public List<GameDTO> getAllGames() {
-        return gameService.getAllGames();
+    public List<GameDTO> getAllGamesUserBelongsTo(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+        return gameService.getAllGamesUserBelongsTo(jwtUserDetails);
     }
 
     @GetMapping("/game/{game_id}")
-    public GameDTO getGameById(@PathVariable("game_id") long gameId) {
-        return gameService.getGameById(gameId);
+    public GameDTO getGameById(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("game_id") long gameId
+    ) {
+        return gameService.getGameById(gameId, jwtUserDetails);
     }
 
+    // This endpoint allows any authenticated user to access any game by code;
+    // authorization for a specific game is not required.
     @GetMapping("/gameCode/{game_code}")
     public GameDTO getGameByCode(@PathVariable("game_code") String gameCode) {
         return gameService.getGameByCode(gameCode);
     }
 
-    @GetMapping("/game/{game_id}/player/{player_code}")
+    @GetMapping("/game/{game_id}/player")
     public PlayerDTO getPlayerByCode(
-            @PathVariable("game_id") long gameId,
-            @PathVariable("player_code") String playerCode
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("game_id") long gameId
     ) {
-        return playerService.getPlayerByCodeAndGameId(gameId, playerCode);
+        return playerService.getPlayerByCodeAndGameId(gameId, jwtUserDetails);
     }
 
     @PostMapping("/createNewGame")

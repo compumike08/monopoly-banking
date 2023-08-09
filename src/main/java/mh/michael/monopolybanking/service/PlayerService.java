@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 
 import static mh.michael.monopolybanking.constants.Constants.CODE_LENGTH;
@@ -56,9 +55,18 @@ public class PlayerService {
                 gameId
         );
 
+        if (game.getPlayers().parallelStream()
+                .anyMatch(player -> player.getUser().getId().equals(jwtUserDetails.getId()))
+        ) {
+            log.info("User attempted to join game as new player when user is already a different player in the game");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You already are part of this game as a different player. Please go back and rejoin game as same player.");
+        }
+
         User user = userRepository.getOne(jwtUserDetails.getId());
 
-        if (newPlayerRole.equals(PlayerRole.BANKER) && game.getPlayers().stream().anyMatch(player -> player.getPlayerRole().equals(PlayerRole.BANKER.name()))) {
+        if (newPlayerRole.equals(PlayerRole.BANKER) && game.getPlayers().stream()
+                .anyMatch(player -> player.getPlayerRole().equals(PlayerRole.BANKER.name()))
+        ) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This game already has a banker");
         }
 
@@ -93,17 +101,18 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerDTO getPlayerByCodeAndGameId(long gameId, String userCode) {
-        Player foundPlayer = playerRepository.findByGame_IdAndCode(gameId, userCode.toUpperCase());
+    public PlayerDTO getPlayerByCodeAndGameId(long gameId, JwtUserDetails jwtUserDetails) {
+        if (jwtUserDetails.getGameIdList().parallelStream().noneMatch(thisGameId -> thisGameId.equals(gameId))) {
+            log.error("User tried to re-join existing game that user is not part of");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        Player foundPlayer = playerRepository.findByGame_IdAndUser_Id(gameId, jwtUserDetails.getId());
+
         if (foundPlayer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
         }
-        return ConvertDTOUtil.convertPlayerToPlayerDTO(foundPlayer);
-    }
 
-    @Transactional
-    public List<PlayerDTO> getPlayersByGameId(long gameId) {
-        List<Player> playerList = playerRepository.findAllByGameId(gameId);
-        return ConvertDTOUtil.convertPlayerListToPlayerDTOList(playerList);
+        return ConvertDTOUtil.convertPlayerToPlayerDTO(foundPlayer);
     }
 }

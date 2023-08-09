@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function fetchGames() {
+export async function fetchGamesByUser() {
     const url = `/games/list`;
     try {
         const response = await axios.get(url);
@@ -44,8 +44,8 @@ export async function addNewPlayerToGame(gameId, data) {
     }
 }
 
-export async function joinGameAsExistingPlayer(gameId, playerCode) {
-    const url = `/games/game/${gameId}/player/${playerCode}`;
+export async function joinGameAsExistingPlayer(gameId) {
+    const url = `/games/game/${gameId}/player`;
     try {
         const response = await axios.get(url);
         return response.data;

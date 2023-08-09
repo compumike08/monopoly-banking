@@ -57,7 +57,11 @@ public class PayService {
     }
 
     @Transactional
-    public List<PayResponseDTO> getPaymentList(long gameId) {
+    public List<PayResponseDTO> getPaymentList(long gameId, JwtUserDetails jwtUserDetails) {
+        if (jwtUserDetails.getGameIdList().parallelStream().noneMatch(thisGameId -> thisGameId.equals(gameId))) {
+            log.error("User attempted to access list of payments for game that user does not belong to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
         List<Payment> paymentList = paymentRepository.findAllByGame_Id(gameId);
         return ConvertDTOUtil.convertPaymentListToPayResponseDTOList(paymentList);
     }

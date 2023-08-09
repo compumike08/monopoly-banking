@@ -19,8 +19,11 @@ public class PayController {
     }
 
     @GetMapping("/game/{gameId}/list")
-    public List<PayResponseDTO> getAllPayments(@PathVariable("gameId") long gameId) {
-        return payService.getPaymentList(gameId);
+    public List<PayResponseDTO> getAllPayments(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("gameId") long gameId
+    ) {
+        return payService.getPaymentList(gameId, jwtUserDetails);
     }
 
     @PutMapping()

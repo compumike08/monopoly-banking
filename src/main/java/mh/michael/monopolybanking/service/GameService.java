@@ -7,6 +7,7 @@ import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
+import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import mh.michael.monopolybanking.util.OptionalUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -67,13 +68,19 @@ public class GameService {
     }
 
     @Transactional
-    public List<GameDTO> getAllGames() {
-        List<Game> gameList = gameRepository.findAll();
+    public List<GameDTO> getAllGamesUserBelongsTo(JwtUserDetails jwtUserDetails) {
+        List<Long> gameIdList = jwtUserDetails.getGameIdList();
+        List<Game> gameList = gameRepository.findGamesByIdIn(gameIdList);
         return ConvertDTOUtil.convertGameListToGameDTOList(gameList);
     }
 
     @Transactional
-    public GameDTO getGameById(long gameId) {
+    public GameDTO getGameById(long gameId, JwtUserDetails jwtUserDetails) {
+        if (jwtUserDetails.getGameIdList().parallelStream().noneMatch(thisGameId -> thisGameId.equals(gameId))) {
+            log.error("User attempted to access game by id for a game user does not belong to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
         Optional<Game> gameOpt = gameRepository.findById(gameId);
         Game game = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
                 gameOpt,

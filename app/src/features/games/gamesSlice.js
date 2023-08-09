@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
 import { formatNumberAsCurrency } from '../../utils/util';
-import { createNewGame, addNewPlayerToGame, fetchGameByCode, joinGameAsExistingPlayer } from "../../api/gamesAPI";
+import { fetchGamesByUser, createNewGame, addNewPlayerToGame, fetchGameByCode, joinGameAsExistingPlayer } from "../../api/gamesAPI";
 import { sendPayment, getAllPaymentsList } from '../../api/paymentsAPI';
 
 const initialState = {
@@ -14,6 +14,8 @@ const initialState = {
         loggedInPlayerId: null,
         paymentRecords: []
     },
+    userGamesList: [],
+    getAllGamesForUserStatus: IDLE_STATUS,
     fetchExistingGameByCodeStatus: IDLE_STATUS,
     createNewGameStatus: IDLE_STATUS,
     addNewPlayerToGameStatus: IDLE_STATUS,
@@ -21,6 +23,13 @@ const initialState = {
     sendPaymentStatus: IDLE_STATUS,
     getAllPaymentsListStatus: IDLE_STATUS
 };
+
+export const getAllGamesForUser = createAsyncThunk(
+    'games/getAllGamesForUserAction',
+    async (data) => {
+        return await fetchGamesByUser();
+    }
+);
 
 export const createNewGameAction = createAsyncThunk(
     'games/createNewGameAction',
@@ -38,8 +47,8 @@ export const addNewPlayerToGameAction = createAsyncThunk(
 
 export const joinGameAsExistingPlayerAction = createAsyncThunk(
     'games/joinGameAsExistingPlayerAction',
-    async (data) => {
-        return await joinGameAsExistingPlayer(data.gameId, data.playerCode);
+    async (gameId) => {
+        return await joinGameAsExistingPlayer(gameId);
     }
 );
 
@@ -179,6 +188,16 @@ export const gamesSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(getAllGamesForUser.pending, (state) => {
+                state.getAllGamesForUserStatus = LOADING_STATUS;
+            })
+            .addCase(getAllGamesForUser.fulfilled, (state, action) => {
+                state.getAllGamesForUserStatus = IDLE_STATUS;
+                state.userGamesList = action.payload;
+            })
+            .addCase(getAllGamesForUser.rejected, (state) => {
+                state.getAllGamesForUserStatus = ERROR_STATUS;
+            })
             .addCase(createNewGameAction.pending, (state) => {
                 state.createNewGameStatus = LOADING_STATUS;
             })

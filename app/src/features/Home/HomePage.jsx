@@ -3,12 +3,16 @@ import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Button } from "reactstrap";
 
 class HomePage extends React.Component {
-    handleJoinExistingGame = () => {
+    handleJoinExistingGameAsNewPlayer = () => {
         this.props.history.push('/joinGame');
     };
 
     handleCreateNewGame = async () => {
         this.props.history.push('/newGame');
+    };
+
+    handleRejoinGameAsSamePlayer = async () => {
+        this.props.history.push('/listGames');
     };
 
     render() {
@@ -30,8 +34,15 @@ class HomePage extends React.Component {
                 </Row>
                 <Row>
                     <Col>
-                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinExistingGame}>
-                            Join Existing Game
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleJoinExistingGameAsNewPlayer}>
+                            Join Existing Game As New Player
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Button color="primary" className="btn-menu-cmd" size="lg" onClick={this.handleRejoinGameAsSamePlayer}>
+                            Rejoin Game As Same Player
                         </Button>
                     </Col>
                 </Row>
