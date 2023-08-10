@@ -6,7 +6,7 @@ import GameCard from "../../sharedComponents/GameCard";
 
 class NewGameConfirmation extends React.Component {
     handleContinue = () => {
-        this.props.history.push('/playerManagement');
+        this.props.history.push('/newPlayer');
     };
 
     render() {
