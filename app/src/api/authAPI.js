@@ -1,7 +1,5 @@
 import axios from 'axios';
-
-export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticatedUser';
-export const TOKEN_SESSION_ATTRIBUTE_NAME = 'token';
+import { USER_NAME_SESSION_ATTRIBUTE_NAME, TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
 
 let axiosHeaderInterceptor = null;
 
@@ -10,7 +8,7 @@ function createJWTToken(token) {
 };
 
 function isUserLoggedIn() {
-    let token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
+    const token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
     if (token === null) return false;
     return true;
 };
@@ -27,9 +25,10 @@ function setupAxiosInterceptors(token) {
 };
 
 export function registerSuccessfulLoginForJwt(username, token) {
+    const bearerToken = createJWTToken(token);
     sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
-    sessionStorage.setItem(TOKEN_SESSION_ATTRIBUTE_NAME, token);
-    setupAxiosInterceptors(createJWTToken(token));
+    sessionStorage.setItem(TOKEN_SESSION_ATTRIBUTE_NAME, bearerToken);
+    setupAxiosInterceptors(bearerToken);
 };
 
 export async function registerUser(data) {
