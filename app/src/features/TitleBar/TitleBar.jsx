@@ -1,7 +1,10 @@
-import React from "react";
-import { Navbar, NavbarBrand } from "reactstrap";
+import React, { useState } from "react";
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink } from "reactstrap";
 
 const TitleBar = () => {
+    const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+    const toggle = () => setIsNavbarOpen(!isNavbarOpen);
+
     return (
         <Navbar
             className="mb-3"
@@ -11,6 +14,19 @@ const TitleBar = () => {
             <NavbarBrand href="/">
                 Monopoly Banking
             </NavbarBrand>
+            <NavbarToggler onClick={toggle} />
+            <Collapse isOpen={isNavbarOpen} navbar>
+                <Nav className="me-auto" navbar>
+                    <NavItem>
+                        <NavLink href="/">Home</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="/about">
+                            About
+                        </NavLink>
+                    </NavItem>
+                </Nav>
+            </Collapse>
         </Navbar>
     );
 }

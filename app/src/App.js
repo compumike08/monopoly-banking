@@ -5,6 +5,7 @@ import {
     Route
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
+import AboutPage from './features/about/AboutPage';
 import HomePage from "./features/Home/HomePage";
 import AuthLanding from './features/auth/AuthLanding';
 import RegisterUser from './features/auth/RegisterUser';
@@ -32,6 +33,9 @@ function App() {
                   </Route>
                   <Route path="/login" >
                     <LoginPage />
+                  </Route>
+                  <Route path="/about" >
+                    <AboutPage />
                   </Route>
                   <Route path="/home">
                       <HomePage />
