@@ -3,6 +3,8 @@ package mh.michael.monopolybanking.config;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import mh.michael.monopolybanking.security.JwtTokenUtil;
+import mh.michael.monopolybanking.security.JwtUserDetails;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -52,7 +54,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     boolean isAuthSuccess = false;
-                    log.debug("Authentication Request For Websocket '{}'", accessor.getDestination());
+                    log.debug("Authentication Request For Websocket: " + accessor.getDestination());
 
                     final String requestTokenHeader = accessor.getNativeHeader(STOMP_TOKEN_AUTHORIZATION_HEADER_NAME).get(0);
 
@@ -91,9 +93,32 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         throw new MessagingException("Access Denied");
                     }
                 }
+
+                if (StompCommand.SUBSCRIBE.equals(accessor.getCommand()) &&
+                        accessor.getHeader("simpUser") != null &&
+                        accessor.getHeader("simpUser") instanceof UsernamePasswordAuthenticationToken
+                ) {
+                    UsernamePasswordAuthenticationToken userToken = (UsernamePasswordAuthenticationToken) accessor
+                            .getHeader("simpUser");
+                    JwtUserDetails principal = (JwtUserDetails) userToken.getPrincipal();
+
+                    if (!isUserAuthorizedForTopic(principal, accessor.getDestination())) {
+                        log.warn("User is not authorized to subscribe to this channel. Channel: " + accessor.getDestination());
+                        throw new MessagingException("Access Denied");
+                    }
+                }
+
                 return message;
             }
         });
+    }
+
+    private boolean isUserAuthorizedForTopic(JwtUserDetails principal, String topic) {
+        String stringAfterPrefix = StringUtils.substringAfter(topic, "/topic/game/");
+        String strGameId = StringUtils.substringBefore(stringAfterPrefix, "/");
+        Long gameIdFromTopic = Long.parseLong(strGameId);
+
+        return principal.getGameIdList().contains(gameIdFromTopic);
     }
 
     @Override
