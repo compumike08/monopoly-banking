@@ -10,14 +10,6 @@ import GameView from "./GameView";
 import 'react-toastify/dist/ReactToastify.css';
 
 class GameContainer extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            wsClientConnected: false
-        }
-    }
-
     componentDidMount() {
         const colonIndex = window.location.host.indexOf(":");
         let hostName = window.location.host;
