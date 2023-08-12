@@ -39,13 +39,15 @@ const MoneySinkCard = ({ sink, loggedInPlayerId, showPay, gameId }) => {
                             </Col>
                         )}
                     </Row>
-                    <Row>
-                        <Col>
-                            <div>
-                                Balance: {formattedMoneyBalance}
-                            </div>
-                        </Col>
-                    </Row>
+                    {!sink.isBank && (
+                        <Row>
+                            <Col>
+                                <div>
+                                    Balance: {formattedMoneyBalance}
+                                </div>
+                            </Col>
+                        </Row>
+                    )}
                 </Container>
             </CardBody>
         </Card>
@@ -62,6 +64,7 @@ MoneySinkCard.propTypes = {
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         moneyBalance: PropTypes.number.isRequired,
+        isBank: PropTypes.bool.isRequired
     }).isRequired,
     loggedInPlayerId: PropTypes.number.isRequired,
     showPay: PropTypes.bool
