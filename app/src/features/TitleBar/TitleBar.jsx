@@ -10,6 +10,7 @@ const TitleBar = () => {
             className="mb-3"
             color="primary"
             dark
+            expand="md"
         >
             <NavbarBrand href="/">
                 Monopoly Banking
