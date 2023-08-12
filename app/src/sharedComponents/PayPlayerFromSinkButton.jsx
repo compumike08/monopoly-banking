@@ -177,7 +177,7 @@ class PayPlayerFromSinkButton extends PureComponent {
                                 >
                                     {moneySinks.map(sink => {
                                         return (
-                                            <option value={sink.id}>
+                                            <option key={`sink-key-${sink.id}`} value={sink.id}>
                                                 {sink.name}
                                             </option>
                                         );
@@ -201,7 +201,7 @@ class PayPlayerFromSinkButton extends PureComponent {
                                 >
                                     {players.map(player => {
                                         return (
-                                            <option value={player.id}>
+                                            <option key={`player-key-${player.id}`} value={player.id}>
                                                 {player.name}
                                             </option>
                                         );
