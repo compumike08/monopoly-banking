@@ -11,7 +11,7 @@ jwt:
   token:
     expiration:
       in:
-        seconds: 216000
+        seconds: 86400
   signing:
     key:
       secret: ${MONOPOLY_APP_JWT_SECRET}
