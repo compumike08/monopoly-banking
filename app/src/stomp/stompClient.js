@@ -2,9 +2,6 @@ import { Client } from '@stomp/stompjs';
 import { TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
 
 const singleStompClient = new Client({
-    debug: function (str) {
-        console.log(str);
-    },
     reconnectDelay: 1000,
     heartbeatIncoming: 1000,
     heartbeatOutgoing: 1000
