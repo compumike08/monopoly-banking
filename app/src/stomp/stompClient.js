@@ -29,3 +29,13 @@ export const stompClient = () => {
 
     return singleStompClient;
 };
+
+export const updateStompClientAuthTokenFromStorage = () => {
+    const token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
+
+    singleStompClient.connectHeaders = {
+        authorization: token
+    };
+
+    return singleStompClient;
+};

@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { USER_NAME_SESSION_ATTRIBUTE_NAME, TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
+import IdTokenVerifier from 'idtoken-verifier';
+import { TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
+import { updateStompClientAuthTokenFromStorage } from "../stomp/stompClient";
 
 let axiosHeaderInterceptor = null;
 
@@ -24,11 +26,27 @@ function setupAxiosInterceptors(token) {
     );
 };
 
-export function registerSuccessfulLoginForJwt(username, token) {
+export function registerSuccessfulLoginForJwt(token) {
     const bearerToken = createJWTToken(token);
-    sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
     sessionStorage.setItem(TOKEN_SESSION_ATTRIBUTE_NAME, bearerToken);
     setupAxiosInterceptors(bearerToken);
+
+    const verifier = new IdTokenVerifier({});
+
+    const decodedToken = verifier.decode(token).payload;
+
+    const secsUntilExpiration = decodedToken.exp - Math.floor(Date.now() / 1000);
+    
+    // The value of 120 represents 120 seconds, or two minutes
+    const timerValueForRefresh = secsUntilExpiration - 120;
+
+    // The value of 60 represents 60 seconds, or one minute
+    if (timerValueForRefresh < 60) {
+        console.log("Unable to set refresh token timer due to token expiring too soon");
+        throw new Error("Error setting refresh token timer");
+    }
+
+    setTimeout(refreshToken, timerValueForRefresh * 1000);
 };
 
 export async function registerUser(data) {
@@ -53,13 +71,26 @@ export async function authenticate(data) {
             username: data.username,
             password: data.password
         });
-        registerSuccessfulLoginForJwt(data.username, response.data.token);
+        registerSuccessfulLoginForJwt(response.data.token);
         return response.data.token;
     } catch (err) {
         console.log(err);
         throw new Error(err.response.data.message);
     }
 };
+
+export async function refreshToken() {
+    const url = `/refresh`;
+    try {
+        const response = await axios.post(url);
+        registerSuccessfulLoginForJwt(response.data.token);
+        updateStompClientAuthTokenFromStorage();
+        return response.data.token;
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
+    }
+}
 
 export function logout() {
     sessionStorage.clear();
