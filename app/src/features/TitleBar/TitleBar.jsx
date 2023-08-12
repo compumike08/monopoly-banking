@@ -1,13 +1,17 @@
 import React from "react";
-import "./TitleBar.css";
+import { Navbar, NavbarBrand } from "reactstrap";
 
-function TitleBar() {
+const TitleBar = () => {
     return (
-        <div className="title-bar">
-            <div className="title-text">
+        <Navbar
+            className="mb-3"
+            color="primary"
+            dark
+        >
+            <NavbarBrand href="/">
                 Monopoly Banking
-            </div>
-        </div>
+            </NavbarBrand>
+        </Navbar>
     );
 }
 
