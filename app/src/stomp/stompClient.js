@@ -1,6 +1,7 @@
 import { Client } from '@stomp/stompjs';
+import { TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
 
-export const stompClient = new Client({
+const singleStompClient = new Client({
     debug: function (str) {
         console.log(str);
     },
@@ -8,3 +9,23 @@ export const stompClient = new Client({
     heartbeatIncoming: 1000,
     heartbeatOutgoing: 1000
 });
+
+export const stompClient = () => {
+    const colonIndex = window.location.host.indexOf(":");
+    let hostName = window.location.host;
+    
+    // Check for front-end running in dev mode
+    if (colonIndex >= 0 && window.location.host.substring(colonIndex) === ":3000") {
+        hostName = `${window.location.host.slice(0, colonIndex)}:8080`;
+    }
+
+    const wsSourceUrl = "ws://" + hostName + "/ws";
+    const token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
+
+    singleStompClient.brokerURL = wsSourceUrl;
+    singleStompClient.connectHeaders = {
+        authorization: token
+    };
+
+    return singleStompClient;
+};

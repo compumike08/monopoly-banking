@@ -3,33 +3,25 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ToastContainer } from 'react-toastify';
 import { stompClient } from "../../stomp/stompClient";
-import { TOPIC_GAME_PREFIX, TOPIC_GAME_PLAYERS, TOPIC_GAME_PAYMENT, TOKEN_SESSION_ATTRIBUTE_NAME } from "../../constants/general";
+import { TOPIC_GAME_PREFIX, TOPIC_GAME_PLAYERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
 import { playerReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
 import GameView from "./GameView";
 
 import 'react-toastify/dist/ReactToastify.css';
 
 class GameContainer extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.stompClient = null;
+    }
+
     componentDidMount() {
-        const colonIndex = window.location.host.indexOf(":");
-        let hostName = window.location.host;
-        
-        // Check for front-end running in dev mode
-        if (colonIndex >= 0 && window.location.host.substring(colonIndex) === ":3000") {
-            hostName = `${window.location.host.slice(0, colonIndex)}:8080`;
-        }
-
-        const wsSourceUrl = "ws://" + hostName + "/ws";
-        const token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
-
-        stompClient.brokerURL = wsSourceUrl;
-        stompClient.connectHeaders = {
-            authorization: token
-        };
+        this.stompClient = stompClient();
 
         const componentThis = this;
-        stompClient.onConnect = function (_frame) {
-            stompClient.subscribe(`${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_PLAYERS}`, (message) => {
+        this.stompClient.onConnect = function (_frame) {
+            componentThis.stompClient.subscribe(`${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_PLAYERS}`, (message) => {
                 // called when the client receives a STOMP message from the server
                 if (message.body) {
                     componentThis.props.actions.playerReceivedFromWs(JSON.parse(message.body));
@@ -38,7 +30,7 @@ class GameContainer extends PureComponent {
                 }
             });
 
-            stompClient.subscribe(`${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_PAYMENT}`, (message) => {
+            componentThis.stompClient.subscribe(`${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_PAYMENT}`, (message) => {
                 // called when the client receives a STOMP message from the server
                 if (message.body) {
                     componentThis.props.actions.paymentReceivedFromWs(JSON.parse(message.body));
@@ -48,7 +40,7 @@ class GameContainer extends PureComponent {
             });
         };
 
-        stompClient.onStompError = function (frame) {
+        this.stompClient.onStompError = function (frame) {
             // Will be invoked in case of error encountered at Broker
             // Complaint brokers will set `message` header with a brief message. Body may contain details.
             // Compliant brokers will terminate the connection after any error
@@ -56,11 +48,11 @@ class GameContainer extends PureComponent {
             console.log('Additional details: ' + frame.body);
         };
 
-        stompClient.activate();
+        this.stompClient.activate();
     }
 
     componentWillUnmount() {
-        stompClient.deactivate();
+        this.stompClient.deactivate();
     }
 
     render() {
