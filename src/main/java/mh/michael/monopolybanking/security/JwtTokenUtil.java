@@ -1,15 +1,15 @@
 package mh.michael.monopolybanking.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Clock;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,10 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+        JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
+        return jwtParser.parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -67,8 +70,11 @@ public class JwtTokenUtil implements Serializable {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(createdDate)
-                .setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
+                .setExpiration(expirationDate).signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
     public Boolean canTokenBeRefreshed(String token) {
@@ -83,7 +89,10 @@ public class JwtTokenUtil implements Serializable {
         claims.setIssuedAt(createdDate);
         claims.setExpiration(expirationDate);
 
-        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
+        return Jwts.builder().setClaims(claims).signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
