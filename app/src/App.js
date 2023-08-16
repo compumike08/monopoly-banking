@@ -5,6 +5,7 @@ import {
     Route
 } from "react-router-dom";
 import TitleBar from "./features/TitleBar/TitleBar";
+import UserProfile from './features/userProfile/UserProfile';
 import AboutPage from './features/about/AboutPage';
 import HomePage from "./features/Home/HomePage";
 import AuthLanding from './features/auth/AuthLanding';
@@ -36,6 +37,9 @@ function App() {
                   </Route>
                   <Route path="/about" >
                     <AboutPage />
+                  </Route>
+                  <Route path="/userProfile" >
+                    <UserProfile />
                   </Route>
                   <Route path="/home">
                       <HomePage />

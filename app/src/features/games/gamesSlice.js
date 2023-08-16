@@ -184,6 +184,9 @@ export const gamesSlice = createSlice({
         },
         paymentReceivedFromWs(state, action) {
             state = processPayment(state, action, true);
+        },
+        resetGameData() {
+            return initialState;
         }
     },
     extraReducers: (builder) => {
@@ -268,6 +271,6 @@ export const gamesSlice = createSlice({
 
 const { actions, reducer } = gamesSlice;
 
-export const { playerReceivedFromWs, paymentReceivedFromWs } = actions;
+export const { playerReceivedFromWs, paymentReceivedFromWs, resetGameData } = actions;
 
 export default reducer;

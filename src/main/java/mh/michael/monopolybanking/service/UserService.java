@@ -8,6 +8,8 @@ import mh.michael.monopolybanking.model.User;
 import mh.michael.monopolybanking.model.UserRole;
 import mh.michael.monopolybanking.repository.UserRoleRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
+import mh.michael.monopolybanking.security.JwtUserDetails;
+import mh.michael.monopolybanking.util.EmailValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static mh.michael.monopolybanking.constants.Constants.INTERNAL_SERVER_ERROR_MSG;
 import static mh.michael.monopolybanking.util.ConvertDTOUtil.convertUserToUserDTO;
 
 @Service
@@ -37,19 +40,49 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    @Transactional
-    public UserDTO createNewUser(NewUserRequestDTO newUserRequestDTO) {
-        if (userRepository.existsByUsername(newUserRequestDTO.getUsername())) {
-            String errMsg = "Username '" + newUserRequestDTO.getUsername() + "' already exists";
+    private void validateUsernameAndEmail(String username, String email) {
+        validateUsernameAndEmail(username, email, null);
+    }
+
+    private void validateUsernameAndEmail(String username, String email, JwtUserDetails jwtUserDetails) {
+        // Validate new username is between 3 and 25 characters long
+        if (username.length() < 3 || username.length() > 25) {
+            String errMsg = "Username must be at between 3 and 25 characters long";
             log.debug(errMsg);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errMsg);
         }
 
-        if (userRepository.existsByEmail(newUserRequestDTO.getEmail())) {
-            String errMsg = "Email '" + newUserRequestDTO.getEmail() + "' already exists";
-            log.debug(errMsg);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, errMsg);
+        if (email.length() < 1 || !EmailValidationUtil.emailPatternMatches(email)) {
+            log.debug("Email '" + email + "' is missing or invalid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is missing or invalid");
         }
+
+        if (jwtUserDetails != null) {
+            if (!jwtUserDetails.getUsername().equals(username) && userRepository.existsByUsername(username)) {
+                log.debug("Username '" + username + "' already exists");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+            }
+
+            if (!jwtUserDetails.getEmail().equals(email) && userRepository.existsByEmail(email)) {
+                log.debug("Email '" + email + "' already exists");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            }
+        } else {
+            if (userRepository.existsByUsername(username)) {
+                log.debug("Username '" + username + "' already exists");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+            }
+
+            if (userRepository.existsByEmail(email)) {
+                log.debug("Email '" + email + "' already exists");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            }
+        }
+    }
+
+    @Transactional
+    public UserDTO createNewUser(NewUserRequestDTO newUserRequestDTO) {
+        validateUsernameAndEmail(newUserRequestDTO.getUsername(), newUserRequestDTO.getEmail());
 
         User newUser = User.builder()
                 .username(newUserRequestDTO.getUsername())
@@ -62,7 +95,7 @@ public class UserService {
 
         if (optUserUserRole.isEmpty()) {
             log.error("Unable to find user role with name of: " + EUserRole.ROLE_USER.name());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
         }
 
         roles.add(optUserUserRole.get());
@@ -70,5 +103,31 @@ public class UserService {
 
         User savedNewUser = userRepository.save(newUser);
         return convertUserToUserDTO(savedNewUser);
+    }
+
+    @Transactional
+    public UserDTO getCurrentUser(JwtUserDetails jwtUserDetails) {
+        Optional<User> optUser = userRepository.findByUsername(jwtUserDetails.getUsername());
+
+        if (optUser.isEmpty()) {
+            log.error("Unable to find user with username of: " + jwtUserDetails.getUsername());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        User user = optUser.get();
+        return convertUserToUserDTO(user);
+    }
+
+    @Transactional
+    public UserDTO editUser(UserDTO requestDTO, JwtUserDetails jwtUserDetails) {
+        validateUsernameAndEmail(requestDTO.getUsername(), requestDTO.getEmail(), jwtUserDetails);
+
+        User user = userRepository.getOne(jwtUserDetails.getId());
+
+        user.setUsername(requestDTO.getUsername());
+        user.setEmail(requestDTO.getEmail());
+
+        User savedUser = userRepository.save(user);
+        return convertUserToUserDTO(savedUser);
     }
 }

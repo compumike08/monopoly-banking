@@ -10,4 +10,5 @@ public class Constants {
     public static final int CODE_LENGTH = 5;
 
     public static final String OUT_OF_SYNC_ERR_MSG = "The application is out of sync. Please close webpage and log in again.";
+    public static final String INTERNAL_SERVER_ERROR_MSG = "An internal server error has occurred";
 }
