@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink } from "reactstrap";
+import { NavLink } from "react-router-dom";
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem } from "reactstrap";
 
 const TitleBar = () => {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
@@ -12,17 +13,17 @@ const TitleBar = () => {
             dark
             expand="md"
         >
-            <NavbarBrand href="/">
+            <NavbarBrand>
                 Monopoly Banking
             </NavbarBrand>
             <NavbarToggler onClick={toggle} />
             <Collapse isOpen={isNavbarOpen} navbar>
                 <Nav className="me-auto" navbar>
                     <NavItem>
-                        <NavLink href="/">Home</NavLink>
+                        <NavLink activeClassName="active-link" className="nav-link" to="/">Home</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink href="/about">
+                        <NavLink activeClassName="active-link" className="nav-link" to="/about">
                             About
                         </NavLink>
                     </NavItem>
