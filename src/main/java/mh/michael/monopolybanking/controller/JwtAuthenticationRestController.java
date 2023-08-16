@@ -15,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,18 +26,15 @@ public class JwtAuthenticationRestController {
     private String tokenHeader;
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final UserDetailsService databaseAuthUserDetailsService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
     public JwtAuthenticationRestController(
             JwtTokenUtil jwtTokenUtil,
-            UserDetailsService databaseAuthUserDetailsService,
             AuthenticationManager authenticationManager,
             UserService userService
     ) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.databaseAuthUserDetailsService = databaseAuthUserDetailsService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
     }
