@@ -210,6 +210,7 @@ export const gamesSlice = createSlice({
                 state.activeGame.code = action.payload.code;
                 state.activeGame.players = action.payload.players;
                 state.activeGame.moneySinks = action.payload.moneySinks;
+                state.activeGame.paymentRecords = [];
             })
             .addCase(createNewGameAction.rejected, (state) => {
                 state.createNewGameStatus = ERROR_STATUS;
@@ -244,6 +245,7 @@ export const gamesSlice = createSlice({
                 state.activeGame.code = action.payload.code;
                 state.activeGame.players = action.payload.players;
                 state.activeGame.moneySinks = action.payload.moneySinks;
+                state.activeGame.paymentRecords = [];
             })
             .addCase(fetchExistingGameByCodeAction.rejected, (state) => {
                 state.fetchExistingGameByCodeStatus = ERROR_STATUS;
