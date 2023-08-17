@@ -26,7 +26,7 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.token.expiration.in.seconds}")
     private Long expiration;
 
-    public String getUsernameFromToken(String token) {
+    public String getSubjectFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
@@ -61,9 +61,9 @@ public class JwtTokenUtil implements Serializable {
         return false;
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(JwtUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername());
+        return doGenerateToken(claims, userDetails.getUserUuid().toString());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
@@ -97,8 +97,8 @@ public class JwtTokenUtil implements Serializable {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         JwtUserDetails user = (JwtUserDetails) userDetails;
-        final String username = getUsernameFromToken(token);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+        final String subject = getSubjectFromToken(token);
+        return (subject.equals(user.getUserUuid().toString()) && !isTokenExpired(token));
     }
 
     private Date calculateExpirationDate(Date createdDate) {

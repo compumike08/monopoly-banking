@@ -6,6 +6,7 @@ import mh.michael.monopolybanking.exceptions.AuthenticationException;
 import mh.michael.monopolybanking.security.JwtTokenRequest;
 import mh.michael.monopolybanking.security.JwtTokenResponse;
 import mh.michael.monopolybanking.security.JwtTokenUtil;
+import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class JwtAuthenticationRestController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        final JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtTokenResponse(token));
     }

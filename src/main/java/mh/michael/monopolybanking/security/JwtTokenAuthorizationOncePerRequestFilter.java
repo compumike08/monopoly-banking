@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,18 +14,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 @Slf4j
 public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFilter {
-    private final UserDetailsService databaseAuthUserDetailsService;
+    private final DatabaseAuthUserDetailsService databaseAuthUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Value("${jwt.http.request.header}")
     private String tokenHeader;
 
     public JwtTokenAuthorizationOncePerRequestFilter(
-            UserDetailsService databaseAuthUserDetailsService,
+            DatabaseAuthUserDetailsService databaseAuthUserDetailsService,
             JwtTokenUtil jwtTokenUtil
     ) {
         this.databaseAuthUserDetailsService = databaseAuthUserDetailsService;
@@ -40,14 +39,14 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
 
         final String requestTokenHeader = request.getHeader(this.tokenHeader);
 
-        String username = null;
+        String uuid = null;
         String jwtToken = null;
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                uuid = jwtTokenUtil.getSubjectFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                log.error("JWT_TOKEN_UNABLE_TO_GET_USERNAME", e);
+                log.error("JWT_TOKEN_UNABLE_TO_GET_USER_UUID", e);
             } catch (ExpiredJwtException e) {
                 log.warn("JWT_TOKEN_EXPIRED", e);
             }
@@ -55,13 +54,14 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
             log.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");
         }
 
-        log.debug("JWT_TOKEN_USERNAME_VALUE '{}'", username);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        log.debug("JWT_TOKEN_USER_UUID_VALUE '{}'", uuid);
+        if (uuid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.databaseAuthUserDetailsService.loadUserByUsername(username);
+            JwtUserDetails jwtUserDetails = this.databaseAuthUserDetailsService
+                    .loadUserByUuid(UUID.fromString(uuid));
 
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (jwtTokenUtil.validateToken(jwtToken, jwtUserDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(jwtUserDetails, null, jwtUserDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }

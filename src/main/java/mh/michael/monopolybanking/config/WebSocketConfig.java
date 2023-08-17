@@ -2,6 +2,7 @@ package mh.michael.monopolybanking.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import mh.michael.monopolybanking.security.DatabaseAuthUserDetailsService;
 import mh.michael.monopolybanking.security.JwtTokenUtil;
 import mh.michael.monopolybanking.security.JwtUserDetails;
 import org.apache.commons.lang3.StringUtils;
@@ -19,11 +20,11 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import java.util.UUID;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -34,11 +35,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final String TOKEN_INVALID_MSG_STRING = "Token invalid";
     private static final String TOKEN_EXPIRED_MSG_STRING = "Token expired";
 
-    private final UserDetailsService databaseAuthUserDetailsService;
+    private final DatabaseAuthUserDetailsService databaseAuthUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     public WebSocketConfig(
-            UserDetailsService databaseAuthUserDetailsService,
+            DatabaseAuthUserDetailsService databaseAuthUserDetailsService,
             JwtTokenUtil jwtTokenUtil
     ) {
         this.databaseAuthUserDetailsService = databaseAuthUserDetailsService;
@@ -58,14 +59,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
                     final String requestTokenHeader = accessor.getNativeHeader(STOMP_TOKEN_AUTHORIZATION_HEADER_NAME).get(0);
 
-                    String username = null;
+                    String uuid = null;
                     String jwtToken = null;
                     if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                         jwtToken = requestTokenHeader.substring(7);
                         try {
-                            username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                            uuid = jwtTokenUtil.getSubjectFromToken(jwtToken);
                         } catch (IllegalArgumentException e) {
-                            log.error("JWT_TOKEN_UNABLE_TO_GET_USERNAME", e);
+                            log.error("JWT_TOKEN_UNABLE_TO_GET_USER_UUID", e);
                             throw new MessagingException(TOKEN_INVALID_MSG_STRING);
                         } catch (ExpiredJwtException e) {
                             log.warn("JWT_TOKEN_EXPIRED", e);
@@ -75,10 +76,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         log.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");
                     }
 
-                    log.debug("JWT_TOKEN_USERNAME_VALUE '{}'", username);
-                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    log.debug("JWT_TOKEN_USER_UUID_VALUE '{}'", uuid);
+                    if (uuid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                        UserDetails userDetails = databaseAuthUserDetailsService.loadUserByUsername(username);
+                        JwtUserDetails userDetails = databaseAuthUserDetailsService.loadUserByUuid(UUID.fromString(uuid));
 
                         if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

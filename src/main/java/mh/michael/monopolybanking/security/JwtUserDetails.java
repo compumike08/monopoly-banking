@@ -9,12 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class JwtUserDetails implements UserDetails {
     private static final long serialVersionUID = -8535605411284956079L;
 
     private final Long id;
+    private final UUID userUuid;
     private final String username;
     private final String email;
     private final String password;
@@ -22,10 +24,11 @@ public class JwtUserDetails implements UserDetails {
     private final List<Long> playerIdList;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUserDetails(Long id, String username, String email, String password,
+    public JwtUserDetails(Long id, UUID userUuid, String username, String email, String password,
                           List<Long> gameIdList, List<Long> playerIdList,
                           Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
+        this.userUuid = userUuid;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -49,6 +52,7 @@ public class JwtUserDetails implements UserDetails {
 
         return new JwtUserDetails(
                 user.getId(),
+                user.getUserUuid(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
@@ -61,6 +65,8 @@ public class JwtUserDetails implements UserDetails {
     public Long getId() {
         return id;
     }
+
+    public UUID getUserUuid() { return userUuid; }
 
     @Override
     public String getUsername() {

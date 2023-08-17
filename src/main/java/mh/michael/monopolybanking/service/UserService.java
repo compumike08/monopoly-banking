@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static mh.michael.monopolybanking.constants.Constants.INTERNAL_SERVER_ERROR_MSG;
 import static mh.michael.monopolybanking.util.ConvertDTOUtil.convertUserToUserDTO;
@@ -88,6 +89,7 @@ public class UserService {
                 .username(newUserRequestDTO.getUsername())
                 .email(newUserRequestDTO.getEmail())
                 .password(encoder.encode(newUserRequestDTO.getPassword()))
+                .userUuid(UUID.randomUUID())
                 .build();
 
         Set<UserRole> roles = new HashSet<>();

@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @Builder
 public class UserDTO {
+    private String userUuid;
     private String username;
     private String email;
     private Set<EUserRole> roles;

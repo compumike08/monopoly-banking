@@ -78,6 +78,7 @@ public class ConvertDTOUtil {
                 .email(user.getEmail())
                 .roles(user.getRoles().parallelStream().map(UserRole::getName).collect(Collectors.toSet()))
                 .username(user.getUsername())
+                .userUuid(user.getUserUuid().toString())
                 .build();
     }
 }
