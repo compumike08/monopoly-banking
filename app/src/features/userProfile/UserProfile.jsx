@@ -1,12 +1,8 @@
 import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Alert, Form, FormGroup, Label, Input, FormFeedback, Button } from 'reactstrap';
 import { isEmailValid } from "../../utils/util";
-import { logout } from "../../api/authAPI";
-import { resetGameData } from "../games/gamesSlice";
-import { resetAuthData } from "../auth/authSlice";
 import { getUserProfileAction, editUserProfileAction } from "./userProfileSlice";
 
 class UserProfile extends PureComponent {
@@ -97,19 +93,8 @@ class UserProfile extends PureComponent {
                     email: this.state.email
                 }).unwrap();
 
-                await this.props.actions.resetGameData();
-                await this.props.actions.resetAuthData();
-
-                const currentThis = this;
-
                 this.setState({
                     isShowSuccessMsg: true
-                }, () => {
-                    // Redirect to /login page after 3 seconds
-                    setTimeout(() => {
-                        logout();
-                        currentThis.props.history.push('/login');
-                    }, 3000);
                 });
             } catch (err) {
                 this.setState({
@@ -137,7 +122,7 @@ class UserProfile extends PureComponent {
                 {this.state.isShowSuccessMsg && (
                     <Row>
                         <Col>
-                            <Alert color="success">User successfully updated. Redirecting to login page...</Alert>
+                            <Alert color="success">User successfully updated</Alert>
                         </Col>
                     </Row>
                 )}
@@ -198,11 +183,9 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
             getUserProfileAction,
-            editUserProfileAction,
-            resetGameData,
-            resetAuthData
+            editUserProfileAction
         }, dispatch)
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserProfile));
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);
