@@ -60,7 +60,7 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
             JwtUserDetails jwtUserDetails = this.databaseAuthUserDetailsService
                     .loadUserByUuid(UUID.fromString(uuid));
 
-            if (jwtTokenUtil.validateToken(jwtToken, jwtUserDetails)) {
+            if (jwtTokenUtil.validateTokenForAuthentication(jwtToken, jwtUserDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(jwtUserDetails, null, jwtUserDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

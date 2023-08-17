@@ -4,8 +4,9 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -3301605591108950415L;
     private final Clock clock = DefaultClock.INSTANCE;
@@ -26,8 +28,15 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.token.expiration.in.seconds}")
     private Long expiration;
 
+    private static final String AUTH_AUD = "monopoly-banking--auth";
+    private static final String FORGOT_PASSWORD_AUD = "monopoly-banking--forgot-password";
+
     public String getSubjectFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getAudienceFromToken(String token) {
+        return getClaimFromToken(token, Claims::getAudience);
     }
 
     public Date getIssuedAtDateFromToken(String token) {
@@ -61,8 +70,9 @@ public class JwtTokenUtil implements Serializable {
         return false;
     }
 
-    public String generateToken(JwtUserDetails userDetails) {
+    public String generateTokenForAuthentication(JwtUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("aud", AUTH_AUD);
         return doGenerateToken(claims, userDetails.getUserUuid().toString());
     }
 
@@ -95,10 +105,26 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder().setClaims(claims).signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        JwtUserDetails user = (JwtUserDetails) userDetails;
-        final String subject = getSubjectFromToken(token);
-        return (subject.equals(user.getUserUuid().toString()) && !isTokenExpired(token));
+    public Boolean validateTokenForAuthentication(String token, JwtUserDetails userDetails) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
+        try {
+            Jwts.parserBuilder().setSigningKey(key)
+                    .requireSubject(userDetails.getUserUuid().toString())
+                    .requireAudience(AUTH_AUD).build().parseClaimsJws(token);
+        } catch (
+                ExpiredJwtException |
+                        UnsupportedJwtException |
+                        MalformedJwtException |
+                        SignatureException |
+                        IllegalArgumentException e
+        ) {
+            log.error("validateTokenForAuthentication error: ", e);
+            return false;
+        }
+
+        return true;
     }
 
     private Date calculateExpirationDate(Date createdDate) {

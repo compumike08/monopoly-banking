@@ -49,7 +49,7 @@ public class JwtAuthenticationRestController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = jwtTokenUtil.generateTokenForAuthentication(userDetails);
         return ResponseEntity.ok(new JwtTokenResponse(token));
     }
 

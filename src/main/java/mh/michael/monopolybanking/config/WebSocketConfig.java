@@ -81,7 +81,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
                         JwtUserDetails userDetails = databaseAuthUserDetailsService.loadUserByUuid(UUID.fromString(uuid));
 
-                        if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                        if (jwtTokenUtil.validateTokenForAuthentication(jwtToken, userDetails)) {
                             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                             accessor.setUser(usernamePasswordAuthenticationToken);
