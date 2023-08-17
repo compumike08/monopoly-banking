@@ -86,6 +86,14 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.POST,
                         "/registerUser"
                 )
+                .antMatchers(
+                        HttpMethod.POST,
+                        "/sendForgotPasswordEmail"
+                )
+                .antMatchers(
+                        HttpMethod.POST,
+                        "/resetPassword"
+                )
                 .antMatchers(HttpMethod.OPTIONS, "/**")
                 .and()
                 .ignoring()

@@ -1,8 +1,12 @@
 # monopoly-banking
 
 ## Running App
-You must set the following environment variable prior to running:
+You must set the following environment variables prior to running:
 - MONOPOLY_APP_JWT_SECRET (this value should be base64 encoded)
+- MAILJET_API_KEY
+- MAILJET_SECRET_KEY
+- MAILJET_SENDER_EMAIL_ADDRESS
+- MAILJET_SENDER_EMAIL_NAME
 
 ### For Dev
 Run the following command: `mvn spring-boot:run`

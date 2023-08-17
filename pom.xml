@@ -119,6 +119,14 @@
 			<version>${jsonwebtoken.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.mailjet/mailjet-client -->
+		<dependency>
+			<groupId>com.mailjet</groupId>
+			<artifactId>mailjet-client</artifactId>
+			<version>5.2.3</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

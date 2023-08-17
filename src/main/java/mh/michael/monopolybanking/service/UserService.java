@@ -3,11 +3,13 @@ package mh.michael.monopolybanking.service;
 import lombok.extern.slf4j.Slf4j;
 import mh.michael.monopolybanking.constants.EUserRole;
 import mh.michael.monopolybanking.dto.NewUserRequestDTO;
+import mh.michael.monopolybanking.dto.ResetPasswordRequestDTO;
 import mh.michael.monopolybanking.dto.UserDTO;
 import mh.michael.monopolybanking.model.User;
 import mh.michael.monopolybanking.model.UserRole;
 import mh.michael.monopolybanking.repository.UserRoleRepository;
 import mh.michael.monopolybanking.repository.UserRepository;
+import mh.michael.monopolybanking.security.JwtTokenUtil;
 import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.EmailValidationUtil;
 import org.springframework.http.HttpStatus;
@@ -30,15 +32,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder encoder;
+    private final JwtTokenUtil jwtTokenUtil;
 
     public UserService(
             UserRepository userRepository,
             UserRoleRepository userRoleRepository,
-            PasswordEncoder encoder
+            PasswordEncoder encoder,
+            JwtTokenUtil jwtTokenUtil
     ) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.encoder = encoder;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     private void validateUsernameAndEmail(String username, String email) {
@@ -129,6 +134,29 @@ public class UserService {
         user.setUsername(requestDTO.getUsername());
         user.setEmail(requestDTO.getEmail());
 
+        User savedUser = userRepository.save(user);
+        return convertUserToUserDTO(savedUser);
+    }
+
+    @Transactional
+    public UserDTO changeUserPassword(ResetPasswordRequestDTO resetPasswordRequestDTO) {
+        String email = jwtTokenUtil.getSubjectFromToken(resetPasswordRequestDTO.getForgotPasswordToken());
+
+        Optional<User> optUser = userRepository.findByEmail(email);
+
+        if (optUser.isEmpty()) {
+            log.error("Cannot find email from forgot password token");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        User user = optUser.get();
+
+        if (!jwtTokenUtil.validateTokenForForgotPassword(resetPasswordRequestDTO.getForgotPasswordToken(), user)) {
+            log.error("Forgot password token is invalid");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        user.setPassword(encoder.encode(resetPasswordRequestDTO.getNewPassword()));
         User savedUser = userRepository.save(user);
         return convertUserToUserDTO(savedUser);
     }

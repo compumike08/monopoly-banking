@@ -33,4 +33,11 @@ public class DatabaseAuthUserDetailsService implements UserDetailsService {
 
         return JwtUserDetails.build(user);
     }
+
+    public JwtUserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return JwtUserDetails.build(user);
+    }
 }

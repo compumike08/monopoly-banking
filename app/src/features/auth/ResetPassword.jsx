@@ -2,26 +2,23 @@ import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
-import { Container, Row, Col, Button, Alert, Form, FormGroup, Label, Input, FormFeedback } from "reactstrap";
-import { loginAction } from "./authSlice";
+import { Container, Row, Col, Alert, Form, FormGroup, Label, Input, FormFeedback, Button } from 'reactstrap';
+import { resetPasswordAction } from "./authSlice";
 
-class LoginPage extends PureComponent {
+class ResetPassword extends PureComponent {
     constructor(props) {
         super(props);
+
         this.state = {
-            username: "",
+            forgotPasswordToken: null,
             password: "",
-            isUsernameError: false,
+            reenteredPassword: "",
             isPasswordError: false,
+            isReenteredPasswordError: false,
+            isPasswordsNotMatch: false,
             backendErrorMsg: null
         };
     }
-
-    handleUsernameChange = evt => {
-        this.setState({
-            username: evt.target.value
-        });
-    };
 
     handlePasswordChange = evt => {
         this.setState({
@@ -29,25 +26,31 @@ class LoginPage extends PureComponent {
         });
     };
 
-    handleGoToForgotPassword = () => {
-        this.props.history.push('/requestPasswordReset');
+    handleReenteredPasswordChange = evt => {
+        this.setState({
+            reenteredPassword: evt.target.value
+        });
     };
+
+    componentDidMount() {
+        const queryParams = new URLSearchParams(this.props.location.search);
+        const forgotPasswordToken = queryParams.get("token");
+
+        this.setState({
+            forgotPasswordToken
+        });
+    }
 
     handleSubmit = async () => {
         let isError = false;
 
         this.setState({
-            isUsernameError: false,
             isPasswordError: false,
+            isReenteredPasswordError: false,
+            isPasswordsNotMatch: false,
             backendErrorMsg: null
         });
 
-        if (this.state.username === null || this.state.username.length < 1) {
-            isError = true;
-            this.setState({
-                isUsernameError: true
-            });
-        }
 
         if (this.state.password === null || this.state.password.length < 1) {
             isError = true;
@@ -56,14 +59,29 @@ class LoginPage extends PureComponent {
             });
         }
 
+        if (this.state.reenteredPassword === null || this.state.reenteredPassword.length < 1) {
+            isError = true;
+            this.setState({
+                isReenteredPasswordError: true
+            });
+        }
+
+        if (this.state.password !== this.state.reenteredPassword) {
+            isError = true;
+            this.setState({
+                isReenteredPasswordError: true,
+                isPasswordsNotMatch: true
+            });
+        }
+
         if (isError === false) {
             try {
-                await this.props.actions.loginAction({
-                    username: this.state.username,
-                    password: this.state.password
+                await this.props.actions.resetPasswordAction({
+                    forgotPasswordToken: this.state.forgotPasswordToken,
+                    newPassword: this.state.password
                 }).unwrap();
                 
-                this.props.history.push('/home');
+                this.props.history.push('/login');
             } catch (err) {
                 this.setState({
                     backendErrorMsg: err.message
@@ -78,7 +96,7 @@ class LoginPage extends PureComponent {
                 <Row>
                     <Col>
                         <div className="glbl-heading">
-                            Login
+                            Reset Password
                         </div>
                     </Col>
                 </Row>
@@ -92,22 +110,6 @@ class LoginPage extends PureComponent {
                 <Row>
                     <Col md="5">
                         <Form>
-                            <FormGroup>
-                                <Label for="username-input">
-                                    Username
-                                </Label>
-                                <Input
-                                    id="username-input"
-                                    name="username-input"
-                                    type="text"
-                                    invalid={this.state.isUsernameError}
-                                    value={this.state.username}
-                                    onChange={this.handleUsernameChange}
-                                />
-                                <FormFeedback>
-                                    Username is required
-                                </FormFeedback>
-                            </FormGroup>
                             <FormGroup>
                                 <Label for="password-input">
                                     Password
@@ -124,9 +126,23 @@ class LoginPage extends PureComponent {
                                     Password is required
                                 </FormFeedback>
                             </FormGroup>
+                            <FormGroup>
+                                <Label for="reentered-password-input">
+                                    Re-enter Password
+                                </Label>
+                                <Input
+                                    id="reentered-password-input"
+                                    name="reentered-password-input"
+                                    type="password"
+                                    invalid={this.state.isReenteredPasswordError}
+                                    value={this.state.reenteredPassword}
+                                    onChange={this.handleReenteredPasswordChange}
+                                />
+                                <FormFeedback>
+                                    {this.state.isPasswordsNotMatch ? "Passwords do not match" : "Re-enter password is required"}
+                                </FormFeedback>
+                            </FormGroup>
                             <Button color="primary" onClick={this.handleSubmit}>Submit</Button>
-                            {' '}
-                            <Button color="link" onClick={this.handleGoToForgotPassword}>Forgot Password</Button>
                         </Form>
                     </Col>
                 </Row>
@@ -138,9 +154,9 @@ class LoginPage extends PureComponent {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            loginAction
+            resetPasswordAction
         }, dispatch)
     };
 };
 
-export default withRouter(connect(undefined, mapDispatchToProps)(LoginPage));
+export default withRouter(connect(undefined, mapDispatchToProps)(ResetPassword));

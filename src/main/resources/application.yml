@@ -15,6 +15,11 @@ jwt:
   signing:
     key:
       secret: ${MONOPOLY_APP_JWT_SECRET}
+mailjet:
+  apiKey: ${MAILJET_API_KEY}
+  secretKey: ${MAILJET_SECRET_KEY}
+  senderEmailAddress: ${MAILJET_SENDER_EMAIL_ADDRESS}
+  senderEmailName: ${MAILJET_SENDER_EMAIL_NAME}
 
 ---
 spring:

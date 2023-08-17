@@ -17,6 +17,8 @@ import NewPlayer from './features/players/NewPlayer';
 import JoinGame from "./features/games/JoinGame";
 import GamesList from './features/games/GamesList';
 import GameContainer from './features/gameView/GameContainer';
+import RequestPasswordReset from './features/auth/RequestPasswordReset';
+import ResetPassword from './features/auth/ResetPassword';
 
 import './App.css';
 
@@ -37,6 +39,12 @@ function App() {
                   </Route>
                   <Route path="/about" >
                     <AboutPage />
+                  </Route>
+                  <Route path="/requestPasswordReset" >
+                    <RequestPasswordReset />
+                  </Route>
+                  <Route path="/resetPassword" >
+                    <ResetPassword />
                   </Route>
                   <Route path="/userProfile" >
                     <UserProfile />

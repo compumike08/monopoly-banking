@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
-import { registerUser, authenticate } from '../../api/authAPI';
+import { registerUser, authenticate, sendPasswordResetEmail, resetPassword } from '../../api/authAPI';
 
 const initialState = {
     isUserLoggedIn: null,
     registerUserStatus: IDLE_STATUS,
-    loginStatus: IDLE_STATUS
+    loginStatus: IDLE_STATUS,
+    requestPasswordResetStatus: IDLE_STATUS,
+    resetPasswordStatus: IDLE_STATUS
 };
 
 export const registerUserAction = createAsyncThunk(
@@ -19,6 +21,20 @@ export const loginAction = createAsyncThunk(
     'auth/loginAction',
     async (data) => {
         return await authenticate(data);
+    }
+);
+
+export const requestPasswordResetAction = createAsyncThunk(
+    'auth/requestPasswordResetAction',
+    async (data) => {
+        return await sendPasswordResetEmail(data);
+    }
+);
+
+export const resetPasswordAction = createAsyncThunk(
+    'auth/resetPasswordAction',
+    async (data) => {
+        return await resetPassword(data);
     }
 );
 
@@ -51,6 +67,26 @@ export const authSlice = createSlice({
             })
             .addCase(loginAction.rejected, (state) => {
                 state.loginStatus = ERROR_STATUS;
+            })
+            .addCase(requestPasswordResetAction.pending, (state) => {
+                state.requestPasswordResetStatus = LOADING_STATUS;
+            })
+            .addCase(requestPasswordResetAction.fulfilled, (state) => {
+                state.requestPasswordResetStatus = IDLE_STATUS;
+
+            })
+            .addCase(requestPasswordResetAction.rejected, (state) => {
+                state.requestPasswordResetStatus = ERROR_STATUS;
+            })
+            .addCase(resetPasswordAction.pending, (state) => {
+                state.resetPasswordStatus = LOADING_STATUS;
+            })
+            .addCase(resetPasswordAction.fulfilled, (state) => {
+                state.resetPasswordStatus = IDLE_STATUS;
+
+            })
+            .addCase(resetPasswordAction.rejected, (state) => {
+                state.resetPasswordStatus = ERROR_STATUS;
             });
     }
 });

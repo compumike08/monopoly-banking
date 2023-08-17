@@ -92,6 +92,31 @@ export async function refreshToken() {
     }
 }
 
+export async function sendPasswordResetEmail(data) {
+    const url = `/sendForgotPasswordEmail`;
+    try {
+        await axios.post(url, {
+            email: data.email
+        });
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
+    }
+}
+
+export async function resetPassword(data) {
+    const url = `/resetPassword`;
+    try {
+        await axios.post(url, {
+            forgotPasswordToken: data.forgotPasswordToken,
+            newPassword: data.newPassword
+        });
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
+    }
+}
+
 export function logout() {
     sessionStorage.clear();
     axios.interceptors.request.eject(axiosHeaderInterceptor);

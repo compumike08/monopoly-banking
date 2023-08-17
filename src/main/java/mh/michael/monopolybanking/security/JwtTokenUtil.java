@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import mh.michael.monopolybanking.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -76,6 +77,13 @@ public class JwtTokenUtil implements Serializable {
         return doGenerateToken(claims, userDetails.getUserUuid().toString());
     }
 
+    public String generateTokenForForgotPassword(User user) {
+        String emailAddress = user.getEmail();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("aud", FORGOT_PASSWORD_AUD);
+        return doGenerateToken(claims, emailAddress);
+    }
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
@@ -121,6 +129,28 @@ public class JwtTokenUtil implements Serializable {
                         IllegalArgumentException e
         ) {
             log.error("validateTokenForAuthentication error: ", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public Boolean validateTokenForForgotPassword(String token, User user) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
+        try {
+            Jwts.parserBuilder().setSigningKey(key)
+                    .requireSubject(user.getEmail())
+                    .requireAudience(FORGOT_PASSWORD_AUD).build().parseClaimsJws(token);
+        } catch (
+                ExpiredJwtException |
+                        UnsupportedJwtException |
+                        MalformedJwtException |
+                        SignatureException |
+                        IllegalArgumentException e
+        ) {
+            log.error("validateTokenForForgotPassword error: ", e);
             return false;
         }
 
