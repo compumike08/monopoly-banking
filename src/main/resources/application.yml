@@ -37,6 +37,9 @@ spring:
       enabled: true
   flyway:
     enabled: false
+logging:
+  level:
+    mh.michael.*: DEBUG
 
 ---
 spring:
