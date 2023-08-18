@@ -34,6 +34,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final String STOMP_TOKEN_AUTHORIZATION_HEADER_NAME = "authorization";
     private static final String TOKEN_INVALID_MSG_STRING = "Token invalid";
     private static final String TOKEN_EXPIRED_MSG_STRING = "Token expired";
+    private static final String TOPIC_GAME_PREFIX = "/topic/game/";
+    private static final String TOPIC_PLAYER_PREFIX = "/topic/player/";
 
     private final DatabaseAuthUserDetailsService databaseAuthUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -115,11 +117,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     private boolean isUserAuthorizedForTopic(JwtUserDetails principal, String topic) {
-        String stringAfterPrefix = StringUtils.substringAfter(topic, "/topic/game/");
-        String strGameId = StringUtils.substringBefore(stringAfterPrefix, "/");
-        Long gameIdFromTopic = Long.parseLong(strGameId);
+        if (topic.startsWith(TOPIC_GAME_PREFIX)) {
+            String stringAfterPrefix = StringUtils.substringAfter(topic, TOPIC_GAME_PREFIX);
+            String strGameId = StringUtils.substringBefore(stringAfterPrefix, "/");
+            Long gameIdFromTopic = Long.parseLong(strGameId);
 
-        return principal.getGameIdList().contains(gameIdFromTopic);
+            return principal.getGameIdList().contains(gameIdFromTopic);
+        }
+
+        if (topic.startsWith(TOPIC_PLAYER_PREFIX)) {
+            String stringAfterPrefix = StringUtils.substringAfter(topic, TOPIC_PLAYER_PREFIX);
+            String strPlayerId = StringUtils.substringBefore(stringAfterPrefix, "/");
+            Long playerIdFromTopic = Long.parseLong(strPlayerId);
+
+            return principal.getPlayerIdList().contains(playerIdFromTopic);
+        }
+
+        return false;
     }
 
     @Override
