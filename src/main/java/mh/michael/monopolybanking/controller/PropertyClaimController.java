@@ -43,11 +43,11 @@ public class PropertyClaimController {
         return propertyClaimService.getAllUnclaimedPropertyClaimsInGame(gameId, jwtUserDetails);
     }
 
-    @PutMapping("/purchasePropertyClaim")
-    public PropertyClaimDTO purchasePropertyClaim(
+    @PutMapping("/purchasePropertyClaimFromBank")
+    public PropertyClaimDTO purchasePropertyClaimFromBank(
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
             @RequestBody PurchasePropertyClaimRequestDTO requestDTO
     ) {
-        return propertyClaimService.purchasePropertyClaim(requestDTO, jwtUserDetails);
+        return propertyClaimService.purchasePropertyClaimFromBank(requestDTO, jwtUserDetails);
     }
 }

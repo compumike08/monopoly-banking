@@ -85,7 +85,7 @@ public class PropertyClaimService {
     }
 
     @Transactional
-    public PropertyClaimDTO purchasePropertyClaim(
+    public PropertyClaimDTO purchasePropertyClaimFromBank(
             PurchasePropertyClaimRequestDTO requestDTO,
             JwtUserDetails jwtUserDetails
     ) {
