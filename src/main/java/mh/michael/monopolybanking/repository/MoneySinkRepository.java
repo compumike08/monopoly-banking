@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface MoneySinkRepository extends JpaRepository<MoneySink, Long> {
     List<MoneySink> findAllByGameId(long gameId);
+    MoneySink findByGame_IdAndIsBankIsTrue(long gameId);
 }

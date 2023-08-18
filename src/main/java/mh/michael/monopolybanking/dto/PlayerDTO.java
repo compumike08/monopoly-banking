@@ -8,6 +8,7 @@ import lombok.Setter;
 import mh.michael.monopolybanking.constants.PlayerRole;
 
 import java.io.Serializable;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +22,5 @@ public class PlayerDTO implements Serializable {
     private long moneyBalance;
     private PlayerRole playerRole;
     private long gameId;
+    private List<PropertyClaimDTO> ownedPropertyClaimList;
 }

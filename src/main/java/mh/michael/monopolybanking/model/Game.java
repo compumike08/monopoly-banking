@@ -40,4 +40,7 @@ public class Game {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<PropertyClaim> propertyClaims = new ArrayList<>();
 }

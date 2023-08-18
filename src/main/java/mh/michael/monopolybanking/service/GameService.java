@@ -5,8 +5,12 @@ import mh.michael.monopolybanking.dto.CreateNewGameDTO;
 import mh.michael.monopolybanking.dto.GameDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.MoneySink;
+import mh.michael.monopolybanking.model.Property;
+import mh.michael.monopolybanking.model.PropertyClaim;
 import mh.michael.monopolybanking.repository.GameRepository;
 import mh.michael.monopolybanking.repository.MoneySinkRepository;
+import mh.michael.monopolybanking.repository.PropertyClaimRepository;
+import mh.michael.monopolybanking.repository.PropertyRepository;
 import mh.michael.monopolybanking.security.JwtUserDetails;
 import mh.michael.monopolybanking.util.ConvertDTOUtil;
 import mh.michael.monopolybanking.util.OptionalUtil;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,10 +31,19 @@ import static mh.michael.monopolybanking.constants.Constants.*;
 public class GameService {
     private final GameRepository gameRepository;
     private final MoneySinkRepository moneySinkRepository;
+    private final PropertyRepository propertyRepository;
+    private final PropertyClaimRepository propertyClaimRepository;
 
-    public GameService(GameRepository gameRepository, MoneySinkRepository moneySinkRepository) {
+    public GameService(
+            GameRepository gameRepository,
+            MoneySinkRepository moneySinkRepository,
+            PropertyRepository propertyRepository,
+            PropertyClaimRepository propertyClaimRepository
+    ) {
         this.gameRepository = gameRepository;
         this.moneySinkRepository = moneySinkRepository;
+        this.propertyRepository = propertyRepository;
+        this.propertyClaimRepository = propertyClaimRepository;
     }
 
     @Transactional
@@ -60,9 +74,22 @@ public class GameService {
             moneySinkRepository.save(freeParking);
         }
 
-        List<MoneySink> moneySinkList = moneySinkRepository.findAllByGameId(savedGame.getId());
+        List<Property> propertyList = propertyRepository.findAll();
+        List<PropertyClaim> propertyClaimList = new ArrayList<>();
 
+        propertyList.forEach(property -> {
+            PropertyClaim newPropertyClaim = PropertyClaim.builder()
+                    .game(savedGame)
+                    .property(property)
+                    .build();
+            propertyClaimList.add(newPropertyClaim);
+        });
+
+        List<PropertyClaim> updatedPropertyClaimList = propertyClaimRepository.saveAll(propertyClaimList);
+
+        List<MoneySink> moneySinkList = moneySinkRepository.findAllByGameId(savedGame.getId());
         savedGame.setMoneySinks(moneySinkList);
+        savedGame.setPropertyClaims(updatedPropertyClaimList);
 
         return ConvertDTOUtil.convertGameToGameDTO(savedGame);
     }

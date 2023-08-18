@@ -270,7 +270,7 @@ public class PayService {
         paymentRepository.save(payment);
 
         simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
-        log.debug("Websocket message sent");
+        log.debug("Payment websocket message sent");
         log.info("...payment complete");
 
         return payResponseDTO;

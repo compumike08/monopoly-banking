@@ -1,0 +1,29 @@
+package mh.michael.monopolybanking.model;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+public class PropertyClaim {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "game_id")
+    private Game game;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "owned_by_player_id")
+    private Player ownedByPlayer;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "property_id")
+    private Property property;
+}

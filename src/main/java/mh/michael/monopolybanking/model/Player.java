@@ -45,4 +45,7 @@ public class Player {
 
     @OneToMany(mappedBy = "requesterPlayer", cascade = CascadeType.ALL)
     private List<Payment> requesterUserPayments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ownedByPlayer", cascade = CascadeType.ALL)
+    private List<PropertyClaim> ownedPropertyClaims = new ArrayList<>();
 }

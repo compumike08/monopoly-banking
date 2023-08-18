@@ -19,6 +19,8 @@ public class ConvertDTOUtil {
                 .name(player.getName())
                 .id(player.getId())
                 .playerRole(PlayerRole.valueOf(player.getPlayerRole()))
+                .ownedPropertyClaimList(ConvertDTOUtil
+                        .convertPropertyClaimListToPropertyClaimDTOList(player.getOwnedPropertyClaims()))
                 .build();
     }
 
@@ -82,29 +84,36 @@ public class ConvertDTOUtil {
                 .build();
     }
 
-    public static List<PropertyDTO> convertPropertyListToPropertyDTOList(List<Property> propertyList) {
-        return propertyList.stream().map(ConvertDTOUtil::convertPropertyToPropertyDTO).collect(Collectors.toList());
+    public static List<PropertyClaimDTO> convertPropertyClaimListToPropertyClaimDTOList(
+            List<PropertyClaim> propertyClaimList
+    ) {
+        return propertyClaimList.stream()
+                .map(ConvertDTOUtil::convertPropertyClaimToPropertyClaimDTO).collect(Collectors.toList());
     }
 
-    public static PropertyDTO convertPropertyToPropertyDTO(Property property) {
-        return PropertyDTO.builder()
-                .buildingCost(property.getBuildingCost())
-                .color(property.getColor())
-                .cost(property.getCost())
-                .id(property.getId())
-                .isRailroad(property.getIsRailroad())
-                .isRegularProperty(property.getIsRegularProperty())
-                .isUtility(property.getIsUtility())
-                .mortgageValue(property.getMortgageValue())
-                .name(property.getName())
-                .rentForColorGroup(property.getRentForColorGroup())
-                .rentForSite(property.getRentForSite())
-                .rentFourHouseOrRailroad(property.getRentFourHouseOrRailroad())
-                .rentHotel(property.getRentHotel())
-                .rentOneHouseOrRailroad(property.getRentOneHouseOrRailroad())
-                .rentThreeHouseOrRailroad(property.getRentThreeHouseOrRailroad())
-                .rentTwoHouseOrRailroad(property.getRentTwoHouseOrRailroad())
-                .unmortgageValue(property.getUnmortgageValue())
+    public static PropertyClaimDTO convertPropertyClaimToPropertyClaimDTO(PropertyClaim propertyClaim) {
+        return PropertyClaimDTO.builder()
+                .ownedByPlayerId(propertyClaim.getOwnedByPlayer() != null ?
+                        propertyClaim.getOwnedByPlayer().getId() : null)
+                .buildingCost(propertyClaim.getProperty().getBuildingCost())
+                .rentForColorGroup(propertyClaim.getProperty().getRentForColorGroup())
+                .rentForSite(propertyClaim.getProperty().getRentForSite())
+                .color(propertyClaim.getProperty().getColor())
+                .cost(propertyClaim.getProperty().getCost())
+                .rentOneHouseOrRailroad(propertyClaim.getProperty().getRentOneHouseOrRailroad())
+                .gameId(propertyClaim.getGame().getId())
+                .propertyClaimId(propertyClaim.getId())
+                .isRailroad(propertyClaim.getProperty().getIsRailroad())
+                .isRegularProperty(propertyClaim.getProperty().getIsRegularProperty())
+                .isUtility(propertyClaim.getProperty().getIsUtility())
+                .mortgageValue(propertyClaim.getProperty().getMortgageValue())
+                .name(propertyClaim.getProperty().getName())
+                .rentFourHouseOrRailroad(propertyClaim.getProperty().getRentFourHouseOrRailroad())
+                .rentHotel(propertyClaim.getProperty().getRentHotel())
+                .rentThreeHouseOrRailroad(propertyClaim.getProperty().getRentThreeHouseOrRailroad())
+                .rentTwoHouseOrRailroad(propertyClaim.getProperty().getRentTwoHouseOrRailroad())
+                .unmortgageValue(propertyClaim.getProperty().getUnmortgageValue())
+                .unmortgageValue(propertyClaim.getProperty().getUnmortgageValue())
                 .build();
     }
 }

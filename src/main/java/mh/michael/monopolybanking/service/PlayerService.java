@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static mh.michael.monopolybanking.constants.Constants.CODE_LENGTH;
@@ -76,6 +77,7 @@ public class PlayerService {
                 .moneyBalance(STARTING_MONEY_AMT)
                 .name(newPlayerRequestDTO.getName())
                 .code(RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase())
+                .ownedPropertyClaims(new ArrayList<>())
                 .user(user)
                 .build();
 

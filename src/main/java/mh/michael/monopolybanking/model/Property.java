@@ -19,40 +19,40 @@ public class Property {
     private String name;
 
     @Column(nullable = false)
-    private long cost;
+    private Long cost;
 
     @Column(nullable = true)
     private String color;
 
     @Column(nullable = true)
-    private long rentForSite;
+    private Long rentForSite;
 
     @Column(nullable = true)
-    private long rentForColorGroup;
+    private Long rentForColorGroup;
 
     @Column(nullable = true)
-    private long rentOneHouseOrRailroad;
+    private Long rentOneHouseOrRailroad;
 
     @Column(nullable = true)
-    private long rentTwoHouseOrRailroad;
+    private Long rentTwoHouseOrRailroad;
 
     @Column(nullable = true)
-    private long rentThreeHouseOrRailroad;
+    private Long rentThreeHouseOrRailroad;
 
     @Column(nullable = true)
-    private long rentFourHouseOrRailroad;
+    private Long rentFourHouseOrRailroad;
 
     @Column(nullable = true)
-    private long rentHotel;
+    private Long rentHotel;
 
     @Column(nullable = true)
-    private long buildingCost;
+    private Long buildingCost;
 
     @Column(nullable = false)
-    private long mortgageValue;
+    private Long mortgageValue;
 
     @Column(nullable = false)
-    private long unmortgageValue;
+    private Long unmortgageValue;
 
     @Column(nullable = false)
     private boolean isRegularProperty;
