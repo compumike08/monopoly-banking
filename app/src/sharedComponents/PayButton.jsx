@@ -33,7 +33,10 @@ class PayButton extends PureComponent {
     togglePayModal = () => {
         this.clearError();
         this.setState({
-            isPayModalOpen: !this.state.isPayModalOpen
+            isPayModalOpen: !this.state.isPayModalOpen,
+            isAmountToPayValid: true,
+            isResponseError: false,
+            responseErrorMsg: null
         });
     };
 
@@ -117,7 +120,6 @@ class PayButton extends PureComponent {
                             name="amountToPayInput"
                             type="number"
                             onChange={e => this.handleAmountToPayChange(e)}
-                            valid={this.state.isAmountToPayValid}
                             invalid={!this.state.isAmountToPayValid}
                         />
                         <FormFeedback>

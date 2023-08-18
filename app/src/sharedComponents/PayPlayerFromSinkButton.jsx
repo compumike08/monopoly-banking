@@ -49,9 +49,25 @@ class PayPlayerFromSinkButton extends PureComponent {
         });
     };
 
+    togglePayModal = () => {
+        this.setState({
+            showPayModal: !this.state.showPayModal,
+            isResponseError: false,
+            responseErrorMsg: null,
+            isAmountToPayValid: true,
+            isToPlayerIdValid: true,
+            isFromSinkIdValid: true
+        });
+    };
+
     hidePayModal = () => {
         this.setState({
-            showPayModal: false
+            showPayModal: false,
+            isResponseError: false,
+            responseErrorMsg: null,
+            isAmountToPayValid: true,
+            isToPlayerIdValid: true,
+            isFromSinkIdValid: true
         });
     };
 
@@ -157,8 +173,8 @@ class PayPlayerFromSinkButton extends PureComponent {
                     <Button color="primary" onClick={this.showPayModal}>Pay Player From Money Sink</Button>
                 </div>
                 {this.state.showPayModal && (
-                    <Modal isOpen={this.state.showPayModal} toggle={this.hidePayModal}>
-                        <ModalHeader toggle={this.clearError}>Pay Player From Money Sink</ModalHeader>
+                    <Modal isOpen={this.state.showPayModal} toggle={this.togglePayModal}>
+                        <ModalHeader toggle={this.togglePayModal}>Pay Player From Money Sink</ModalHeader>
                         <ModalBody>
                             <Alert color="danger" isOpen={this.state.isResponseError} toggle={this.clearError}>
                                 {this.state.responseErrorMsg}
@@ -172,7 +188,6 @@ class PayPlayerFromSinkButton extends PureComponent {
                                     name="fromSinkSelectInput"
                                     type="select"
                                     onChange={e => this.handleFromSinkSelectChange(e)}
-                                    valid={this.state.isFromSinkIdValid}
                                     invalid={!this.state.isFromSinkIdValid}
                                 >
                                     {moneySinks.map(sink => {
@@ -196,7 +211,6 @@ class PayPlayerFromSinkButton extends PureComponent {
                                     name="toPlayerSelectInput"
                                     type="select"
                                     onChange={e => this.handleToPlayerSelectChange(e)}
-                                    valid={this.state.isToPlayerIdValid}
                                     invalid={!this.state.isToPlayerIdValid}
                                 >
                                     {players.map(player => {
@@ -220,7 +234,6 @@ class PayPlayerFromSinkButton extends PureComponent {
                                     name="amountToPayInput"
                                     type="number"
                                     onChange={e => this.handleAmountToPayChange(e)}
-                                    valid={this.state.isAmountToPayValid}
                                     invalid={!this.state.isAmountToPayValid}
                                 />
                                 <FormFeedback>
