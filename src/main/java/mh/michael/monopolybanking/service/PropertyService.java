@@ -29,9 +29,9 @@ public class PropertyService {
 
     @Transactional
     public PropertyDTO getPropertyById(long id) {
-        Optional<Property> optPropery = propertyRepository.findById(id);
+        Optional<Property> optProperty = propertyRepository.findById(id);
         Property foundProperty = OptionalUtil.getTypeFromOptionalOrThrowNotFound(
-                optPropery,
+                optProperty,
                 "Property not found",
                 id
         );
