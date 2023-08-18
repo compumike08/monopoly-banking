@@ -81,4 +81,30 @@ public class ConvertDTOUtil {
                 .userUuid(user.getUserUuid().toString())
                 .build();
     }
+
+    public static List<PropertyDTO> convertPropertyListToPropertyDTOList(List<Property> propertyList) {
+        return propertyList.stream().map(ConvertDTOUtil::convertPropertyToPropertyDTO).collect(Collectors.toList());
+    }
+
+    public static PropertyDTO convertPropertyToPropertyDTO(Property property) {
+        return PropertyDTO.builder()
+                .buildingCost(property.getBuildingCost())
+                .color(property.getColor())
+                .cost(property.getCost())
+                .id(property.getId())
+                .isRailroad(property.getIsRailroad())
+                .isRegularProperty(property.getIsRegularProperty())
+                .isUtility(property.getIsUtility())
+                .mortgageValue(property.getMortgageValue())
+                .name(property.getName())
+                .rentForColorGroup(property.getRentForColorGroup())
+                .rentForSite(property.getRentForSite())
+                .rentFourHouseOrRailroad(property.getRentFourHouseOrRailroad())
+                .rentHotel(property.getRentHotel())
+                .rentOneHouseOrRailroad(property.getRentOneHouseOrRailroad())
+                .rentThreeHouseOrRailroad(property.getRentThreeHouseOrRailroad())
+                .rentTwoHouseOrRailroad(property.getRentTwoHouseOrRailroad())
+                .unmortgageValue(property.getUnmortgageValue())
+                .build();
+    }
 }

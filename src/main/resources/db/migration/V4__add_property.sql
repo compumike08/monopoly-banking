@@ -1,0 +1,20 @@
+CREATE TABLE property (
+    id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(100) NOT NULL,
+    cost BIGINT NOT NULL,
+    color VARCHAR(100),
+    rent_for_site BIGINT,
+    rent_for_color_group BIGINT,
+    rent_one_house_or_railroad BIGINT,
+    rent_two_house_or_railroad BIGINT,
+    rent_three_house_or_railroad BIGINT,
+    rent_four_house_or_railroad BIGINT,
+    rent_hotel BIGINT,
+    building_cost BIGINT,
+    mortgage_value BIGINT NOT NULL,
+    unmortgage_value BIGINT NOT NULL,
+    is_regular_property BOOLEAN NOT NULL,
+    is_railroad BOOLEAN NOT NULL,
+    is_utility BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
