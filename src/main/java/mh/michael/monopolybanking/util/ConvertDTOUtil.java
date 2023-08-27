@@ -95,6 +95,8 @@ public class ConvertDTOUtil {
         return PropertyClaimDTO.builder()
                 .ownedByPlayerId(propertyClaim.getOwnedByPlayer() != null ?
                         propertyClaim.getOwnedByPlayer().getId() : null)
+                .ownedByPlayerName(propertyClaim.getOwnedByPlayer() != null ?
+                        propertyClaim.getOwnedByPlayer().getName() : null)
                 .buildingCost(propertyClaim.getProperty().getBuildingCost())
                 .rentForColorGroup(propertyClaim.getProperty().getRentForColorGroup())
                 .rentForSite(propertyClaim.getProperty().getRentForSite())

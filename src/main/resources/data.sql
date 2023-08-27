@@ -20,7 +20,7 @@ INSERT INTO property (
 ) VALUES (
              'Mediterranean Avenue',
              60,
-             'dark purple',
+             'indigo',
              2,
              4,
              10,
@@ -56,7 +56,7 @@ INSERT INTO property (
 ) VALUES (
              'Baltic Avenue',
              60,
-             'dark purple',
+             'indigo',
              4,
              8,
              20,
@@ -118,7 +118,7 @@ INSERT INTO property (
 ) VALUES (
              'Oriental Avenue',
              100,
-             'light blue',
+             'deep_sky_blue',
              6,
              12,
              30,
@@ -154,7 +154,7 @@ INSERT INTO property (
 ) VALUES (
              'Vermont Avenue',
              100,
-             'light blue',
+             'deep_sky_blue',
              6,
              12,
              30,
@@ -190,7 +190,7 @@ INSERT INTO property (
 ) VALUES (
              'Connecticut Avenue',
              120,
-             'light blue',
+             'deep_sky_blue',
              8,
              16,
              40,
@@ -226,7 +226,7 @@ INSERT INTO property (
 ) VALUES (
              'St. Charles Place',
              140,
-             'light purple',
+             'deep_pink',
              10,
              20,
              50,
@@ -280,7 +280,7 @@ INSERT INTO property (
 ) VALUES (
              'States Avenue',
              140,
-             'light purple',
+             'deep_pink',
              10,
              20,
              50,
@@ -316,7 +316,7 @@ INSERT INTO property (
 ) VALUES (
              'Virginia Avenue',
              160,
-             'light purple',
+             'deep_pink',
              12,
              24,
              60,
@@ -844,7 +844,7 @@ INSERT INTO property (
 ) VALUES (
              'Park Place',
              350,
-             'dark blue',
+             'blue',
              35,
              70,
              175,
@@ -880,7 +880,7 @@ INSERT INTO property (
 ) VALUES (
              'Boardwalk',
              400,
-             'dark blue',
+             'blue',
              50,
              100,
              200,

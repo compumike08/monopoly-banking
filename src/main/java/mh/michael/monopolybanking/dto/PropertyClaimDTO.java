@@ -29,4 +29,5 @@ public class PropertyClaimDTO implements Serializable {
     private boolean isUtility;
     private Long gameId;
     private Long ownedByPlayerId;
+    private String ownedByPlayerName;
 }
