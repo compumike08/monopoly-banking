@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ToastContainer } from 'react-toastify';
 import { stompClient } from "../../stomp/stompClient";
-import { TOPIC_GAME_PREFIX, TOPIC_GAME_PLAYERS, TOPIC_GAME_PAYMENT } from "../../constants/general";
+import { TOPIC_GAME_PREFIX, TOPIC_GAME_PLAYERS, TOPIC_GAME_PAYMENT, TOPIC_GAME_PROPERTY_UPDATE } from "../../constants/general";
 import { playerReceivedFromWs, paymentReceivedFromWs } from "../games/gamesSlice";
+import { propertyClaimUpdateReceivedFromWs } from "../properties/propertiesSlice";
 import GameView from "./GameView";
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -38,6 +39,15 @@ class GameContainer extends PureComponent {
                     console.log('got empty message');
                 }
             });
+
+            componentThis.stompClient.subscribe(`${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_PROPERTY_UPDATE}`, (message) => {
+                // called when the client receives a STOMP message from the server
+                if (message.body) {
+                    componentThis.props.actions.propertyClaimUpdateReceivedFromWs(JSON.parse(message.body));
+                } else {
+                    console.log('got empty message');
+                }
+            })
         };
 
         this.stompClient.onStompError = function (frame) {
@@ -79,7 +89,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
             playerReceivedFromWs,
-            paymentReceivedFromWs
+            paymentReceivedFromWs,
+            propertyClaimUpdateReceivedFromWs
         }, dispatch)
     };
 };

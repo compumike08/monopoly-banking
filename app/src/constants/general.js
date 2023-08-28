@@ -7,5 +7,6 @@ export const ERROR_STATUS = "errored";
 export const TOPIC_GAME_PREFIX = "/topic/game";
 export const TOPIC_GAME_PLAYERS = "players";
 export const TOPIC_GAME_PAYMENT = "payment";
+export const TOPIC_GAME_PROPERTY_UPDATE = "propertyUpdate";
 
 export const BANKER_ROLE = "BANKER";

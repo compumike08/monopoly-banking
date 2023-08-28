@@ -1,0 +1,41 @@
+.text-bold > .accordion-button {
+    font-weight: bold !important;
+}
+
+.color_deep_pink > .accordion-button {
+    background-color: #ff1493 !important;
+    color: white !important;
+}
+
+.color_orange > .accordion-button {
+    background-color: #ffa500 !important;
+    color: white !important;
+}
+
+.color_red > .accordion-button {
+    background-color: #ff0000 !important;
+    color: white !important;
+}
+
+.color_yellow > .accordion-button {
+    background-color: #ffff00 !important;
+}
+
+.color_green > .accordion-button {
+    background-color: #008000 !important;
+    color: white !important;
+}
+
+.color_blue > .accordion-button {
+    background-color: #0000ff !important;
+    color: white !important;
+}
+
+.color_indigo > .accordion-button {
+    background-color: #4b0082 !important;
+    color: white !important;
+}
+
+.color_deep_sky_blue > .accordion-button {
+    background-color: #00bfff !important;
+}
