@@ -7,6 +7,7 @@ import { getAllPropertyClaimsAction } from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
 
 import "./PropertyTabView.css";
+import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
 class PropertyTabView extends PureComponent {
     constructor(props) {
@@ -72,6 +73,7 @@ class PropertyTabView extends PureComponent {
                             <h3>Selected Player Owned Properties</h3>
                         </Col>
                     </Row>
+                    <SelectedPlayerOwnedPropertiesList />
                 </Col>
             </Row>
         );
