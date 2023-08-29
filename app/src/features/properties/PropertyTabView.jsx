@@ -51,7 +51,7 @@ class PropertyTabView extends PureComponent {
                                         <AccordionItem key={`property-claim-${property.propertyClaimId}`}>
                                             <AccordionHeader
                                                 targetId={property.propertyClaimId.toString()}
-                                                className={property.color ? `text-bold color_${property.color}` : "text-bold"}
+                                                className={property.color ? `text-bold color_${property.color}` : "text-bold color_white"}
                                             >
                                                 {property.name} <Badge className="ms-2">{formatNumberAsCurrency(property.cost)}</Badge>
                                             </AccordionHeader>
