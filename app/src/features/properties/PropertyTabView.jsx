@@ -12,10 +12,11 @@ import {
     Form,
     Label,
     Input,
-    FormGroup
+    FormGroup,
+    Alert
  } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
-import { getAllPropertyClaimsAction } from "./propertiesSlice";
+import { getAllPropertyClaimsAction, purchasePropertyClaimFromBankAction } from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
 import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
@@ -27,7 +28,9 @@ class PropertyTabView extends PureComponent {
 
         this.state = {
             openAccordionId: "",
-            selectedPlayerId: null
+            selectedPlayerId: props.activeGamePlayers[0].id,
+            isBuyPropertyResponseError: false,
+            buyPropertyResponseErrorMsg: null
         };
     }
 
@@ -56,6 +59,30 @@ class PropertyTabView extends PureComponent {
         });
     };
 
+    buyProperty = async claimId => {
+        const data = {
+            propertyClaimId: claimId,
+            gameId: this.props.gameId,
+            playerId: this.props.loggedInPlayerId
+        };
+        
+        const response = await this.props.actions.purchasePropertyClaimFromBankAction(data);
+
+        if (response.error && response.error.message) {
+            this.setState({
+                isBuyPropertyResponseError: true,
+                buyPropertyResponseErrorMsg: response.error.message
+            });
+        }
+    };
+
+    clearBuyPropertyError = () => {
+        this.setState({
+            isBuyPropertyResponseError: false,
+            buyPropertyResponseErrorMsg: null
+        });
+    };
+
     render() {
         return (
             <Row>
@@ -65,6 +92,9 @@ class PropertyTabView extends PureComponent {
                             <h3>All Properties</h3>
                         </Col>
                     </Row>
+                    <Alert color="danger" isOpen={this.state.isBuyPropertyResponseError} toggle={this.clearBuyPropertyError}>
+                        {this.state.buyPropertyResponseErrorMsg}
+                    </Alert>
                     <Row>
                         <Col>
                             <Accordion open={this.state.openAccordionId} toggle={this.toggleAccordion} >
@@ -80,6 +110,8 @@ class PropertyTabView extends PureComponent {
                                             <AccordionBody accordionId={property.propertyClaimId.toString()}>
                                                 <PropertyCard
                                                     propertyData={property}
+                                                    buyPropertyFunction={claimId => this.buyProperty(claimId)}
+                                                    showBuyButton
                                                 />
                                             </AccordionBody>
                                         </AccordionItem>
@@ -139,7 +171,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
-            getAllPropertyClaimsAction
+            getAllPropertyClaimsAction,
+            purchasePropertyClaimFromBankAction
         }, dispatch)
     };
 };

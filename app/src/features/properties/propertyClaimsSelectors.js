@@ -9,6 +9,6 @@ export const selectCurrentlySelectedPlayerOwnedProperties = createSelector(
     ],
     (allPropertyClaimsList, selectedPlayerId) => {
         return allPropertyClaimsList
-            .filter(propertyClaim => propertyClaim.ownedByPlayerId && propertyClaim.ownedByPlayerId === selectedPlayerId);
+            .filter(propertyClaim => propertyClaim.ownedByPlayerId && propertyClaim.ownedByPlayerId === parseInt(selectedPlayerId));
     }
 );
