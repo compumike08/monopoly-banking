@@ -1,20 +1,33 @@
 import React, { PureComponent } from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Row, Accordion, AccordionBody, AccordionHeader, AccordionItem, Badge } from "reactstrap";
+import {
+    Col,
+    Row,
+    Accordion,
+    AccordionBody,
+    AccordionHeader,
+    AccordionItem,
+    Badge,
+    Form,
+    Label,
+    Input,
+    FormGroup
+ } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
 import { getAllPropertyClaimsAction } from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
+import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
 import "./PropertyTabView.css";
-import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
 class PropertyTabView extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            openAccordionId: ""
+            openAccordionId: "",
+            selectedPlayerId: null
         };
     }
 
@@ -32,6 +45,15 @@ class PropertyTabView extends PureComponent {
                 openAccordionId: id
             });
         }
+    };
+
+    handlePlayerSelectChange = event => {
+        const { target } = event;
+        const { value } = target;
+
+        this.setState({
+            selectedPlayerId: value
+        });
     };
 
     render() {
@@ -73,7 +95,32 @@ class PropertyTabView extends PureComponent {
                             <h3>Selected Player Owned Properties</h3>
                         </Col>
                     </Row>
-                    <SelectedPlayerOwnedPropertiesList />
+                    <Row>
+                        <Col>
+                            <Form>
+                                <FormGroup>
+                                    <Label for="selectedPlayerInput">
+                                        Select Player
+                                    </Label>
+                                    <Input
+                                        id="selectedPlayerInput"
+                                        name="selectedPlayerInput"
+                                        type="select"
+                                        onChange={e => this.handlePlayerSelectChange(e)}
+                                    >
+                                        {this.props.activeGamePlayers.map(player => {
+                                            return (
+                                                <option key={`player-key-${player.id}`} value={player.id}>
+                                                    {player.name}
+                                                </option>
+                                            );
+                                        })}
+                                    </Input>
+                                </FormGroup>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <SelectedPlayerOwnedPropertiesList selectedPlayerId={this.state.selectedPlayerId} />
                 </Col>
             </Row>
         );
@@ -84,6 +131,7 @@ function mapStateToProps(state) {
     return {
         gameId: state.gamesData.activeGame.gameId,
         loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId,
+        activeGamePlayers: state.gamesData.activeGame.players,
         allPropertyClaimsList: state.propertyClaimsData.allPropertyClaimsList
     };
 };
