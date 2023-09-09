@@ -8,11 +8,20 @@ import {
     Container,
     Row,
     Col,
-    Button
+    Button,
+    Badge
 } from "reactstrap";
 import { formatNumberAsCurrency } from "../utils/util";
 
-const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyPropertyFunction }) => {
+const PropertyCard = ({
+    showCardHeader,
+    showBuyButton,
+    showMortgageButton,
+    propertyData,
+    buyPropertyFunction,
+    mortgagePropertyFunction,
+    loggedInPlayerId
+}) => {
     const {
         propertyClaimId,
         name,
@@ -29,6 +38,7 @@ const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyProperty
         unmortgageValue,
         ownedByPlayerName,
         ownedByPlayerId,
+        isMortgaged,
         isRailroad,
         isUtility
     } = propertyData;
@@ -44,6 +54,9 @@ const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyProperty
     const formattedMortgageValue = formatNumberAsCurrency(mortgageValue);
     const formattedUnmortgageValue = formatNumberAsCurrency(unmortgageValue);
 
+    const isShowBuyButton = showBuyButton && !ownedByPlayerId;
+    const isShowMortgageButton = showMortgageButton && loggedInPlayerId === ownedByPlayerId && !isMortgaged;
+
     return (
         <Card>
             <CardBody>
@@ -52,7 +65,7 @@ const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyProperty
                         <Row>
                             <Col>
                                 <CardTitle tag="h4">
-                                    {name}
+                                    {name} {isMortgaged ? <Badge color="dark" className="ms-2">Mortgaged</Badge> : ""}
                                 </CardTitle>
                                 <CardSubtitle tag="h5">
                                     Purchase Cost: {formattedCost}
@@ -136,12 +149,15 @@ const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyProperty
                             </Col>
                         </Row>
                     )}
-                    {showBuyButton && !ownedByPlayerId && (
+                    {(isShowBuyButton || isShowMortgageButton) && (
                         <Row>
                             <Col>
-                                <div>
+                                {isShowBuyButton && (
                                     <Button color="primary" onClick={() => buyPropertyFunction(propertyClaimId)}>Buy</Button>
-                                </div>
+                                )}
+                                {isShowMortgageButton && (
+                                    <Button color="primary" onClick={() => mortgagePropertyFunction(propertyClaimId)}>Mortgage</Button>
+                                )}
                             </Col>
                         </Row>
                     )}
@@ -153,8 +169,10 @@ const PropertyCard = ({ showCardHeader, showBuyButton, propertyData, buyProperty
 
 PropertyCard.defaultProps = {
     showBuyButton: false,
+    showMortgageButton: false,
     showCardHeader: true,
-    buyPropertyFunction: () => { /* noop */ }
+    buyPropertyFunction: () => { /* noop */ },
+    mortgagePropertyFunction: () => { /* noop */ }
 };
 
 PropertyCard.propTypes = {
@@ -180,9 +198,12 @@ PropertyCard.propTypes = {
         ownedByPlayerId: PropTypes.number,
         ownedByPlayerName: PropTypes.string
     }).isRequired,
+    loggedInPlayerId: PropTypes.number.isRequired,
     showBuyButton: PropTypes.bool,
+    showMortgageButton: PropTypes.bool,
     showCardHeader: PropTypes.bool,
-    buyPropertyFunction: PropTypes.func
+    buyPropertyFunction: PropTypes.func,
+    mortgagePropertyFunction: PropTypes.func
 };
 
 export default PropertyCard;

@@ -37,32 +37,32 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
 
     render() {
         return (
-            <>
-                
-                <Row>
-                    <Col>
-                        <Accordion open={this.state.openAccordionId} toggle={this.toggleAccordion} >
-                            {this.props.selectedPlayerOwnedPropertyClaimsList.map(property => {
-                                return (
-                                    <AccordionItem key={`selected-player-property-claim-${property.propertyClaimId}`}>
-                                        <AccordionHeader
-                                            targetId={property.propertyClaimId.toString()}
-                                            className={property.color ? `text-bold color_${property.color}` : "text-bold color_white"}
-                                        >
-                                            {property.name} <Badge className="ms-2">{formatNumberAsCurrency(property.cost)}</Badge>
-                                        </AccordionHeader>
-                                        <AccordionBody accordionId={property.propertyClaimId.toString()}>
-                                            <PropertyCard
-                                                propertyData={property}
-                                            />
-                                        </AccordionBody>
-                                    </AccordionItem>
-                                );
-                            })}
-                        </Accordion>
-                    </Col>
-                </Row>
-            </>
+            <Row>
+                <Col>
+                    <Accordion open={this.state.openAccordionId} toggle={this.toggleAccordion} >
+                        {this.props.selectedPlayerOwnedPropertyClaimsList.map(property => {
+                            return (
+                                <AccordionItem key={`selected-player-property-claim-${property.propertyClaimId}`}>
+                                    <AccordionHeader
+                                        targetId={property.propertyClaimId.toString()}
+                                        className={property.color ? `text-bold color_${property.color}` : "text-bold color_white"}
+                                    >
+                                        {property.name} <Badge className="ms-2">{formatNumberAsCurrency(property.cost)}</Badge> {property.isMortgaged ? <Badge color="dark" className="ms-2">Mortgaged</Badge> : ""}
+                                    </AccordionHeader>
+                                    <AccordionBody accordionId={property.propertyClaimId.toString()}>
+                                        <PropertyCard
+                                            propertyData={property}
+                                            loggedInPlayerId={this.props.loggedInPlayerId}
+                                            showMortgageButton
+                                            mortgagePropertyFunction={this.props.mortgagePropertyFunction}
+                                        />
+                                    </AccordionBody>
+                                </AccordionItem>
+                            );
+                        })}
+                    </Accordion>
+                </Col>
+            </Row>
         );
     }
 }
@@ -80,6 +80,7 @@ SelectedPlayerOwnedPropertiesList.defaultProps = {
 };
 
 SelectedPlayerOwnedPropertiesList.propTypes = {
+    mortgagePropertyFunction: PropTypes.func.isRequired,
     selectedPlayerId: PropTypes.string
 };
 

@@ -21,3 +21,14 @@ export async function purchasePropertyClaimFromBank(data) {
         throw new Error(err.response.data.message);
     }
 }
+
+export async function mortgageProperty(data) {
+    const url = `/propertyClaims/game/${data.gameId}/playerId/${data.playerId}/mortgageProperty/${data.propertyClaimId}`;
+    try {
+        const response = await axios.put(url);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw new Error(err.response.data.message);
+    }
+}

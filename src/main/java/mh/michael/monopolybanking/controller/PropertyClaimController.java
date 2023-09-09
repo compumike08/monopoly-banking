@@ -50,4 +50,14 @@ public class PropertyClaimController {
     ) {
         return propertyClaimService.purchasePropertyClaimFromBank(requestDTO, jwtUserDetails);
     }
+
+    @PutMapping("/game/{gameId}/playerId/{playerId}/mortgageProperty/{propertyClaimId}")
+    public PropertyClaimDTO mortgageProperty(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("gameId") long gameId,
+            @PathVariable("playerId") long playerId,
+            @PathVariable("propertyClaimId") long propertyClaimId
+    ) {
+        return propertyClaimService.mortgageProperty(gameId, playerId, propertyClaimId, jwtUserDetails);
+    }
 }

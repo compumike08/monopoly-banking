@@ -108,6 +108,7 @@ public class ConvertDTOUtil {
                 .isRailroad(propertyClaim.getProperty().getIsRailroad())
                 .isRegularProperty(propertyClaim.getProperty().getIsRegularProperty())
                 .isUtility(propertyClaim.getProperty().getIsUtility())
+                .isMortgaged(propertyClaim.getIsMortgaged())
                 .mortgageValue(propertyClaim.getProperty().getMortgageValue())
                 .name(propertyClaim.getProperty().getName())
                 .rentFourHouseOrRailroad(propertyClaim.getProperty().getRentFourHouseOrRailroad())

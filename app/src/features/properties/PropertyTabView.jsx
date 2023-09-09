@@ -16,7 +16,7 @@ import {
     Alert
  } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
-import { getAllPropertyClaimsAction, purchasePropertyClaimFromBankAction } from "./propertiesSlice";
+import { getAllPropertyClaimsAction, purchasePropertyClaimFromBankAction, mortgagePropertyAction } from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
 import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
@@ -30,7 +30,9 @@ class PropertyTabView extends PureComponent {
             openAccordionId: "",
             selectedPlayerId: props.activeGamePlayers[0].id.toString(),
             isBuyPropertyResponseError: false,
-            buyPropertyResponseErrorMsg: null
+            buyPropertyResponseErrorMsg: null,
+            isMortgagePropertyError: false,
+            mortgagePropertyErrorMsg: null
         };
     }
 
@@ -60,6 +62,8 @@ class PropertyTabView extends PureComponent {
     };
 
     buyProperty = async claimId => {
+        this.clearAllErrors();
+
         const data = {
             propertyClaimId: claimId,
             gameId: this.props.gameId,
@@ -83,78 +87,132 @@ class PropertyTabView extends PureComponent {
         });
     };
 
+    clearMortgagePropertyError = () => {
+        this.setState({
+            isMortgagePropertyError: false,
+            mortgagePropertyErrorMsg: null
+        });
+    };
+
+    clearAllErrors = () => {
+        this.clearBuyPropertyError();
+        this.clearMortgagePropertyError();
+    };
+
+    mortgagePropertyFunction = async propertyClaimId => {
+        this.clearAllErrors();
+
+        const data = {
+            gameId: this.props.gameId,
+            playerId: this.props.loggedInPlayerId,
+            propertyClaimId
+        };
+
+        const response = await this.props.actions.mortgagePropertyAction(data);
+
+        if (response.error && response.error.message) {
+            this.setState({
+                isMortgagePropertyError: true,
+                mortgagePropertyErrorMsg: response.error.message
+            });
+        }
+    };
+
     render() {
         return (
-            <Row>
-                <Col lg="6">
+            <>
+                {this.state.isBuyPropertyResponseError && (
                     <Row>
                         <Col>
-                            <h3>All Properties</h3>
+                            <Alert color="danger" isOpen={this.state.isBuyPropertyResponseError} toggle={this.clearBuyPropertyError}>
+                                {this.state.buyPropertyResponseErrorMsg}
+                            </Alert>
                         </Col>
                     </Row>
-                    <Alert color="danger" isOpen={this.state.isBuyPropertyResponseError} toggle={this.clearBuyPropertyError}>
-                        {this.state.buyPropertyResponseErrorMsg}
-                    </Alert>
+                )}
+                {this.state.isMortgagePropertyError && (
                     <Row>
                         <Col>
-                            <Accordion open={this.state.openAccordionId} toggle={this.toggleAccordion} >
-                                {this.props.allPropertyClaimsList.map(property => {
-                                    return (
-                                        <AccordionItem key={`property-claim-${property.propertyClaimId}`}>
-                                            <AccordionHeader
-                                                targetId={property.propertyClaimId.toString()}
-                                                className={property.color ? `text-bold color_${property.color}` : "text-bold color_white"}
-                                            >
-                                                {property.name} <Badge className="ms-2">{formatNumberAsCurrency(property.cost)}</Badge>
-                                            </AccordionHeader>
-                                            <AccordionBody accordionId={property.propertyClaimId.toString()}>
-                                                <PropertyCard
-                                                    propertyData={property}
-                                                    buyPropertyFunction={claimId => this.buyProperty(claimId)}
-                                                    showBuyButton
-                                                />
-                                            </AccordionBody>
-                                        </AccordionItem>
-                                    );
-                                })}
-                            </Accordion>
+                            <Alert color="danger" isOpen={this.state.isMortgagePropertyError} toggle={this.clearMortgagePropertyError}>
+                                {this.state.mortgagePropertyErrorMsg}
+                            </Alert>
                         </Col>
                     </Row>
-                </Col>
-                <Col lg="6">
-                    <Row>
-                        <Col>
-                            <h3>Selected Player Owned Properties</h3>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Form>
-                                <FormGroup>
-                                    <Label for="selectedPlayerInput">
-                                        Select Player
-                                    </Label>
-                                    <Input
-                                        id="selectedPlayerInput"
-                                        name="selectedPlayerInput"
-                                        type="select"
-                                        onChange={e => this.handlePlayerSelectChange(e)}
-                                    >
-                                        {this.props.activeGamePlayers.map(player => {
-                                            return (
-                                                <option key={`player-key-${player.id}`} value={player.id}>
-                                                    {player.name}
-                                                </option>
-                                            );
-                                        })}
-                                    </Input>
-                                </FormGroup>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <SelectedPlayerOwnedPropertiesList selectedPlayerId={this.state.selectedPlayerId} />
-                </Col>
-            </Row>
+                )}
+                <Row>
+                    <Col lg="6">
+                        <Row>
+                            <Col>
+                                <h3>All Properties</h3>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Accordion open={this.state.openAccordionId} toggle={this.toggleAccordion} >
+                                    {this.props.allPropertyClaimsList.map(property => {
+                                        return (
+                                            <AccordionItem key={`property-claim-${property.propertyClaimId}`}>
+                                                <AccordionHeader
+                                                    targetId={property.propertyClaimId.toString()}
+                                                    className={property.color ? `text-bold color_${property.color}` : "text-bold color_white"}
+                                                >
+                                                    {property.name} <Badge className="ms-2">{formatNumberAsCurrency(property.cost)}</Badge> {property.isMortgaged ? <Badge color="dark" className="ms-2">Mortgaged</Badge> : ""}
+                                                </AccordionHeader>
+                                                <AccordionBody accordionId={property.propertyClaimId.toString()}>
+                                                    <PropertyCard
+                                                        propertyData={property}
+                                                        buyPropertyFunction={claimId => this.buyProperty(claimId)}
+                                                        loggedInPlayerId={this.props.loggedInPlayerId}
+                                                        showBuyButton
+                                                        showMortgageButton
+                                                        mortgagePropertyFunction={this.mortgagePropertyFunction}
+                                                    />
+                                                </AccordionBody>
+                                            </AccordionItem>
+                                        );
+                                    })}
+                                </Accordion>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col lg="6">
+                        <Row>
+                            <Col>
+                                <h3>Selected Player Owned Properties</h3>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Form>
+                                    <FormGroup>
+                                        <Label for="selectedPlayerInput">
+                                            Select Player
+                                        </Label>
+                                        <Input
+                                            id="selectedPlayerInput"
+                                            name="selectedPlayerInput"
+                                            type="select"
+                                            onChange={e => this.handlePlayerSelectChange(e)}
+                                        >
+                                            {this.props.activeGamePlayers.map(player => {
+                                                return (
+                                                    <option key={`player-key-${player.id}`} value={player.id}>
+                                                        {player.name}
+                                                    </option>
+                                                );
+                                            })}
+                                        </Input>
+                                    </FormGroup>
+                                </Form>
+                            </Col>
+                        </Row>
+                        <SelectedPlayerOwnedPropertiesList
+                            selectedPlayerId={this.state.selectedPlayerId}
+                            mortgagePropertyFunction={this.mortgagePropertyFunction}
+                        />
+                    </Col>
+                </Row>
+            </>
         );
     }
 }
@@ -172,7 +230,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
             getAllPropertyClaimsAction,
-            purchasePropertyClaimFromBankAction
+            purchasePropertyClaimFromBankAction,
+            mortgagePropertyAction
         }, dispatch)
     };
 };

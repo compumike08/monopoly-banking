@@ -146,7 +146,7 @@ public class PropertyClaimService {
                 .requestInitiatorPlayerId(player.getId())
                 .build();
 
-        payService.payMoney(payRequestDTO, jwtUserDetails);
+        payService.payMoney(payRequestDTO, jwtUserDetails, false);
 
         propertyClaim.setOwnedByPlayer(player);
 
@@ -156,6 +156,81 @@ public class PropertyClaimService {
 
         simpMessagingTemplate.convertAndSend(
                 "/topic/game/" + requestDTO.getGameId() + "/propertyUpdate", propertyClaimDTO);
+        log.debug("Property update websocket message sent");
+
+        return propertyClaimDTO;
+    }
+
+    @Transactional
+    public PropertyClaimDTO mortgageProperty(
+            long gameId,
+            long playerId,
+            long propertyClaimId,
+            JwtUserDetails jwtUserDetails
+    ) {
+        if (!jwtUserDetails.getGameIdList().contains(gameId)) {
+            log.error("User attempted to mortgage property claim in game they don't have access to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        if (!jwtUserDetails.getPlayerIdList().contains(playerId)) {
+            log.error("User attempted to mortgage property claim as player they don't have access to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        Optional<PropertyClaim> optPropertyClaim = propertyClaimRepository.findById(propertyClaimId);
+
+        if (optPropertyClaim.isEmpty()) {
+            log.error("Unable to find property claim with requested id of: " + propertyClaimId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        PropertyClaim propertyClaim = optPropertyClaim.get();
+
+        if (propertyClaim.getOwnedByPlayer().getId() != playerId) {
+            log.error("Player tried to mortgage a property claim owned by another player");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        Optional<Player> optPlayer = playerRepository.findById(playerId);
+
+        if (optPlayer.isEmpty()) {
+            log.error("Unable to find player with id of: " + playerId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        propertyClaim.setIsMortgaged(true);
+
+        log.debug("Saving updated PropertyClaim...");
+        PropertyClaim savedPropertyClaim = propertyClaimRepository.save(propertyClaim);
+
+        Player player = optPlayer.get();
+
+        MoneySink bankMoneySink = moneySinkRepository.findByGame_IdAndIsBankIsTrue(gameId);
+
+        // Create payment request to pay player for mortgaging property
+        PayRequestDTO payRequestDTO = PayRequestDTO.builder()
+                .payRequestUUID(UUID.randomUUID().toString())
+                .amountToPay(propertyClaim.getProperty().getMortgageValue())
+                .isToSink(false)
+                .isFromSink(true)
+                .fromId(bankMoneySink.getId())
+                .toId(player.getId())
+                .gameId(gameId)
+                .originalFromAmount(bankMoneySink.getMoneyBalance())
+                .originalToAmount(player.getMoneyBalance())
+                .requestInitiatorPlayerId(player.getId())
+                .build();
+
+        log.debug("Paying player for mortgaging property...");
+        payService.payMoney(payRequestDTO, jwtUserDetails, true);
+
+        PropertyClaimDTO propertyClaimDTO = ConvertDTOUtil.convertPropertyClaimToPropertyClaimDTO(savedPropertyClaim);
+
+        propertyClaimDTO.setIsMortgagingPropertyMsg(true);
+
+        simpMessagingTemplate.convertAndSend(
+                "/topic/game/" + gameId + "/propertyUpdate", propertyClaimDTO);
         log.debug("Property update websocket message sent");
 
         return propertyClaimDTO;

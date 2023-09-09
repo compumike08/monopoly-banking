@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
-import { getAllPropertyClaimsList, purchasePropertyClaimFromBank } from '../../api/propertiesAPI';
+import { getAllPropertyClaimsList, purchasePropertyClaimFromBank, mortgageProperty } from '../../api/propertiesAPI';
 
 const initialState = {
     allPropertyClaimsList: [],
     getAllPropertyClaimsListStatus: IDLE_STATUS,
-    purchasePropertyClaimFromBankStatus: IDLE_STATUS
+    purchasePropertyClaimFromBankStatus: IDLE_STATUS,
+    mortgagePropertyStatus: IDLE_STATUS
 };
 
 export const getAllPropertyClaimsAction = createAsyncThunk(
@@ -23,19 +24,30 @@ export const purchasePropertyClaimFromBankAction = createAsyncThunk(
     }
 );
 
-const processPropertyClaimUpdate = (state, action, isReceivedFromWs) => {
-    if (!isReceivedFromWs) {
-        state.purchasePropertyClaimFromBankStatus = IDLE_STATUS;
+export const mortgagePropertyAction = createAsyncThunk(
+    'propertyClaims/mortgageProperty',
+    async (data) => {
+        return mortgageProperty(data);
     }
+)
 
+const processPropertyClaimUpdate = (state, action, isReceivedFromWs) => {
     const data = action.payload;
 
     const propertyClaimArrayIndex = state.allPropertyClaimsList.findIndex(element => element.propertyClaimId === data.propertyClaimId);
     state.allPropertyClaimsList[propertyClaimArrayIndex] = data;
 
     if (isReceivedFromWs) {
-        const toastMessage = `${data.ownedByPlayerName} now owns ${data.name}`;
-        toast.success(toastMessage);
+        if (data.isMortgagingPropertyMsg) {
+            const toastMessage = `${data.ownedByPlayerName} has mortgaged ${data.name}`;
+            toast.success(toastMessage);
+        } else if (data.isUnmortgagingPropertyMsg) {
+            const toastMessage = `${data.ownedByPlayerName} has unmortgaged ${data.name}`;
+            toast.success(toastMessage);
+        } else {
+            const toastMessage = `${data.ownedByPlayerName} now owns ${data.name}`;
+            toast.success(toastMessage);
+        }
     }
 
     return state;
@@ -69,9 +81,20 @@ export const propertyClaimsSlice = createSlice({
             })
             .addCase(purchasePropertyClaimFromBankAction.fulfilled, (state, action) => {
                 state = processPropertyClaimUpdate(state, action, false);
+                state.purchasePropertyClaimFromBankStatus = IDLE_STATUS
             })
             .addCase(purchasePropertyClaimFromBankAction.rejected, (state) => {
                 state.purchasePropertyClaimFromBankStatus = ERROR_STATUS;
+            })
+            .addCase(mortgagePropertyAction.pending, (state) => {
+                state.mortgagePropertyStatus = LOADING_STATUS;
+            })
+            .addCase(mortgagePropertyAction.fulfilled, (state, action) => {
+                state = processPropertyClaimUpdate(state, action, false);
+                state.mortgagePropertyStatus = IDLE_STATUS;
+            })
+            .addCase(mortgagePropertyAction.rejected, (state) => {
+                state.mortgagePropertyStatus = ERROR_STATUS;
             });
     }
 });

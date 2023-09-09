@@ -67,7 +67,11 @@ public class PayService {
     }
 
     @Transactional
-    public PayResponseDTO payMoney(PayRequestDTO payRequestDTO, JwtUserDetails jwtUserDetails) {
+    public PayResponseDTO payMoney(
+            PayRequestDTO payRequestDTO,
+            JwtUserDetails jwtUserDetails,
+            boolean isSystemBankPayment
+    ) {
         log.info("Initiating payment...");
         List<Long> authGameIdList = jwtUserDetails.getGameIdList();
         List<Long> authPlayerIdList = jwtUserDetails.getPlayerIdList();
@@ -98,7 +102,7 @@ public class PayService {
         }
 
         if (payRequestDTO.getIsFromSink()) {
-            if (!requesterPlayer.getPlayerRole().equals(PlayerRole.BANKER.name())) {
+            if (!requesterPlayer.getPlayerRole().equals(PlayerRole.BANKER.name()) && !isSystemBankPayment) {
                 String errMsg = "Only the banker can pay from a money sink";
                 log.error(errMsg);
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, errMsg);

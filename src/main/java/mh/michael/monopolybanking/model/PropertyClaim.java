@@ -15,6 +15,9 @@ public class PropertyClaim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(nullable = false)
+    private boolean isMortgaged = false;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "game_id")
     private Game game;
