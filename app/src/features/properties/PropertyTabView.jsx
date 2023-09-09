@@ -28,7 +28,7 @@ class PropertyTabView extends PureComponent {
 
         this.state = {
             openAccordionId: "",
-            selectedPlayerId: props.activeGamePlayers[0].id,
+            selectedPlayerId: props.activeGamePlayers[0].id.toString(),
             isBuyPropertyResponseError: false,
             buyPropertyResponseErrorMsg: null
         };
