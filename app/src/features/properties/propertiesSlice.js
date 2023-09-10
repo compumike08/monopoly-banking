@@ -29,7 +29,7 @@ export const mortgagePropertyAction = createAsyncThunk(
     async (data) => {
         return mortgageProperty(data);
     }
-)
+);
 
 const processPropertyClaimUpdate = (state, action, isReceivedFromWs) => {
     const data = action.payload;
