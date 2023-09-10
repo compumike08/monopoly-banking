@@ -11,4 +11,5 @@ public interface PropertyClaimRepository extends JpaRepository<PropertyClaim, Lo
     List<PropertyClaim> findByGame_Id(long gameId);
     List<PropertyClaim> findByOwnedByPlayer_Id(Long playerId);
     List<PropertyClaim> findByGame_IdAndOwnedByPlayerIsNull(long gameId);
+    List<PropertyClaim> findByIdIn(List<Long> idList);
 }

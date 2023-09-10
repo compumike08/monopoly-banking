@@ -119,4 +119,25 @@ public class ConvertDTOUtil {
                 .unmortgageValue(propertyClaim.getProperty().getUnmortgageValue())
                 .build();
     }
+
+    public static List<ProposedTradeDTO> convertProposedTradeListToProposedTradeDTOList(
+            List<ProposedTrade> proposedTradeList
+    ) {
+        return proposedTradeList.stream()
+                .map(ConvertDTOUtil::convertProposedTradeToProposedTradeDTO).collect(Collectors.toList());
+    }
+
+    public static ProposedTradeDTO convertProposedTradeToProposedTradeDTO(ProposedTrade proposedTrade) {
+        return ProposedTradeDTO.builder()
+                .proposedTradeId(proposedTrade.getId())
+                .offeredPropertyClaims(
+                        convertPropertyClaimListToPropertyClaimDTOList(proposedTrade.getOfferedPropertyClaims())
+                )
+                .proposingPlayerId(proposedTrade.getProposingPlayer().getId())
+                .requestedPlayerId(proposedTrade.getRequestedPlayer().getId())
+                .requestedPropertyClaims(
+                        convertPropertyClaimListToPropertyClaimDTOList(proposedTrade.getRequestedPropertyClaims())
+                )
+                .build();
+    }
 }

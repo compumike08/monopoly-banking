@@ -29,4 +29,12 @@ public class PropertyClaim {
     @ManyToOne(optional = false)
     @JoinColumn(name = "property_id")
     private Property property;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "offered_in_proposed_trade_id")
+    private ProposedTrade offeredInProposedTrade;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "requested_in_proposed_trade_id")
+    private ProposedTrade requestedInProposedTrade;
 }

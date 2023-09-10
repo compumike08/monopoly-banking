@@ -48,4 +48,10 @@ public class Player {
 
     @OneToMany(mappedBy = "ownedByPlayer", cascade = CascadeType.ALL)
     private List<PropertyClaim> ownedPropertyClaims = new ArrayList<>();
+
+    @OneToMany(mappedBy = "proposingPlayer", cascade = CascadeType.ALL)
+    private List<ProposedTrade> proposedTrades = new ArrayList<>();
+
+    @OneToMany(mappedBy = "requestedPlayer", cascade = CascadeType.ALL)
+    private List<ProposedTrade> requestedProposedTrades = new ArrayList<>();
 }
