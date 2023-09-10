@@ -3,4 +3,3 @@
 
 cd app
 npm run format
-git add .
