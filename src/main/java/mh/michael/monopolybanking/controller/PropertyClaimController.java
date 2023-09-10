@@ -60,4 +60,14 @@ public class PropertyClaimController {
     ) {
         return propertyClaimService.mortgageProperty(gameId, playerId, propertyClaimId, jwtUserDetails);
     }
+
+    @PutMapping("/game/{gameId}/playerId/{playerId}/unmortgageProperty/{propertyClaimId}")
+    public PropertyClaimDTO unmortgageProperty(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("gameId") long gameId,
+            @PathVariable("playerId") long playerId,
+            @PathVariable("propertyClaimId") long propertyClaimId
+    ) {
+        return propertyClaimService.unmortgageProperty(gameId, playerId, propertyClaimId, jwtUserDetails);
+    }
 }

@@ -54,7 +54,9 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
                                             propertyData={property}
                                             loggedInPlayerId={this.props.loggedInPlayerId}
                                             showMortgageButton
+                                            showUnmortgageButton
                                             mortgagePropertyFunction={this.props.mortgagePropertyFunction}
+                                            unmortgagePropertyFunction={this.props.unmortgagePropertyFunction}
                                         />
                                     </AccordionBody>
                                 </AccordionItem>
@@ -81,6 +83,7 @@ SelectedPlayerOwnedPropertiesList.defaultProps = {
 
 SelectedPlayerOwnedPropertiesList.propTypes = {
     mortgagePropertyFunction: PropTypes.func.isRequired,
+    unmortgagePropertyFunction: PropTypes.func.isRequired,
     selectedPlayerId: PropTypes.string
 };
 

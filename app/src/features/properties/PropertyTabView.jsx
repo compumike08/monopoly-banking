@@ -16,7 +16,12 @@ import {
     Alert
  } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
-import { getAllPropertyClaimsAction, purchasePropertyClaimFromBankAction, mortgagePropertyAction } from "./propertiesSlice";
+import {
+    getAllPropertyClaimsAction,
+    purchasePropertyClaimFromBankAction,
+    mortgagePropertyAction,
+    unmortgagePropertyAction
+} from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
 import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
 
@@ -32,7 +37,9 @@ class PropertyTabView extends PureComponent {
             isBuyPropertyResponseError: false,
             buyPropertyResponseErrorMsg: null,
             isMortgagePropertyError: false,
-            mortgagePropertyErrorMsg: null
+            mortgagePropertyErrorMsg: null,
+            isUnmortgagePropertyError: false,
+            unmortgagePropertyErrorMsg: null
         };
     }
 
@@ -94,9 +101,17 @@ class PropertyTabView extends PureComponent {
         });
     };
 
+    clearUnmortgagePropertyError = () => {
+        this.setState({
+            isUnmortgagePropertyError: false,
+            unmortgagePropertyErrorMsg: null
+        });
+    };
+
     clearAllErrors = () => {
         this.clearBuyPropertyError();
         this.clearMortgagePropertyError();
+        this.clearUnmortgagePropertyError();
     };
 
     mortgagePropertyFunction = async propertyClaimId => {
@@ -118,6 +133,25 @@ class PropertyTabView extends PureComponent {
         }
     };
 
+    unmortgagePropertyFunction = async propertyClaimId => {
+        this.clearAllErrors();
+
+        const data = {
+            gameId: this.props.gameId,
+            playerId: this.props.loggedInPlayerId,
+            propertyClaimId
+        };
+
+        const response = await this.props.actions.unmortgagePropertyAction(data);
+
+        if (response.error && response.error.message) {
+            this.setState({
+                isUnmortgagePropertyError: true,
+                unmortgagePropertyErrorMsg: response.error.message
+            });
+        }
+    };
+
     render() {
         return (
             <>
@@ -135,6 +169,15 @@ class PropertyTabView extends PureComponent {
                         <Col>
                             <Alert color="danger" isOpen={this.state.isMortgagePropertyError} toggle={this.clearMortgagePropertyError}>
                                 {this.state.mortgagePropertyErrorMsg}
+                            </Alert>
+                        </Col>
+                    </Row>
+                )}
+                {this.state.isUnmortgagePropertyError && (
+                    <Row>
+                        <Col>
+                            <Alert color="danger" isOpen={this.state.isUnmortgagePropertyError} toggle={this.clearUnmortgagePropertyError}>
+                                {this.state.unmortgagePropertyErrorMsg}
                             </Alert>
                         </Col>
                     </Row>
@@ -165,7 +208,9 @@ class PropertyTabView extends PureComponent {
                                                         loggedInPlayerId={this.props.loggedInPlayerId}
                                                         showBuyButton
                                                         showMortgageButton
+                                                        showUnmortgageButton
                                                         mortgagePropertyFunction={this.mortgagePropertyFunction}
+                                                        unmortgagePropertyFunction={this.unmortgagePropertyFunction}
                                                     />
                                                 </AccordionBody>
                                             </AccordionItem>
@@ -209,6 +254,7 @@ class PropertyTabView extends PureComponent {
                         <SelectedPlayerOwnedPropertiesList
                             selectedPlayerId={this.state.selectedPlayerId}
                             mortgagePropertyFunction={this.mortgagePropertyFunction}
+                            unmortgagePropertyFunction={this.unmortgagePropertyFunction}
                         />
                     </Col>
                 </Row>
@@ -231,7 +277,8 @@ function mapDispatchToProps(dispatch) {
         actions: bindActionCreators({
             getAllPropertyClaimsAction,
             purchasePropertyClaimFromBankAction,
-            mortgagePropertyAction
+            mortgagePropertyAction,
+            unmortgagePropertyAction
         }, dispatch)
     };
 };

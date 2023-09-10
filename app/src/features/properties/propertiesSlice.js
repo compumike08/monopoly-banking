@@ -1,13 +1,19 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { IDLE_STATUS, LOADING_STATUS, ERROR_STATUS } from "../../constants/general";
-import { getAllPropertyClaimsList, purchasePropertyClaimFromBank, mortgageProperty } from '../../api/propertiesAPI';
+import {
+    getAllPropertyClaimsList,
+    purchasePropertyClaimFromBank,
+    mortgageProperty,
+    unmortgageProperty
+} from '../../api/propertiesAPI';
 
 const initialState = {
     allPropertyClaimsList: [],
     getAllPropertyClaimsListStatus: IDLE_STATUS,
     purchasePropertyClaimFromBankStatus: IDLE_STATUS,
-    mortgagePropertyStatus: IDLE_STATUS
+    mortgagePropertyStatus: IDLE_STATUS,
+    unmortgagePropertyStatus: IDLE_STATUS
 };
 
 export const getAllPropertyClaimsAction = createAsyncThunk(
@@ -28,6 +34,13 @@ export const mortgagePropertyAction = createAsyncThunk(
     'propertyClaims/mortgageProperty',
     async (data) => {
         return mortgageProperty(data);
+    }
+);
+
+export const unmortgagePropertyAction = createAsyncThunk(
+    'propertyClaims/unmortgageProperty',
+    async (data) => {
+        return unmortgageProperty(data);
     }
 );
 
@@ -95,6 +108,16 @@ export const propertyClaimsSlice = createSlice({
             })
             .addCase(mortgagePropertyAction.rejected, (state) => {
                 state.mortgagePropertyStatus = ERROR_STATUS;
+            })
+            .addCase(unmortgagePropertyAction.pending, (state) => {
+                state.unmortgagePropertyStatus = LOADING_STATUS;
+            })
+            .addCase(unmortgagePropertyAction.fulfilled, (state, action) => {
+                state = processPropertyClaimUpdate(state, action, false);
+                state.unmortgagePropertyStatus = IDLE_STATUS;
+            })
+            .addCase(unmortgagePropertyAction.rejected, (state) => {
+                state.unmortgagePropertyStatus = ERROR_STATUS;
             });
     }
 });

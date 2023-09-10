@@ -17,9 +17,11 @@ const PropertyCard = ({
     showCardHeader,
     showBuyButton,
     showMortgageButton,
+    showUnmortgageButton,
     propertyData,
     buyPropertyFunction,
     mortgagePropertyFunction,
+    unmortgagePropertyFunction,
     loggedInPlayerId
 }) => {
     const {
@@ -56,6 +58,7 @@ const PropertyCard = ({
 
     const isShowBuyButton = showBuyButton && !ownedByPlayerId;
     const isShowMortgageButton = showMortgageButton && loggedInPlayerId === ownedByPlayerId && !isMortgaged;
+    const isShowUnmortgageButton = showUnmortgageButton && loggedInPlayerId === ownedByPlayerId && isMortgaged;
 
     return (
         <Card>
@@ -149,7 +152,7 @@ const PropertyCard = ({
                             </Col>
                         </Row>
                     )}
-                    {(isShowBuyButton || isShowMortgageButton) && (
+                    {(isShowBuyButton || isShowMortgageButton || isShowUnmortgageButton) && (
                         <Row>
                             <Col>
                                 {isShowBuyButton && (
@@ -157,6 +160,9 @@ const PropertyCard = ({
                                 )}
                                 {isShowMortgageButton && (
                                     <Button color="primary" onClick={() => mortgagePropertyFunction(propertyClaimId)}>Mortgage</Button>
+                                )}
+                                {isShowUnmortgageButton && (
+                                    <Button color="primary" onClick={() => unmortgagePropertyFunction(propertyClaimId)}>Unmortgage</Button>
                                 )}
                             </Col>
                         </Row>
@@ -170,9 +176,11 @@ const PropertyCard = ({
 PropertyCard.defaultProps = {
     showBuyButton: false,
     showMortgageButton: false,
+    showUnmortgageButton: false,
     showCardHeader: true,
     buyPropertyFunction: () => { /* noop */ },
-    mortgagePropertyFunction: () => { /* noop */ }
+    mortgagePropertyFunction: () => { /* noop */ },
+    unmortgagePropertyFunction: () => { /* noop */ }
 };
 
 PropertyCard.propTypes = {
@@ -201,9 +209,11 @@ PropertyCard.propTypes = {
     loggedInPlayerId: PropTypes.number.isRequired,
     showBuyButton: PropTypes.bool,
     showMortgageButton: PropTypes.bool,
+    showUnmortgageButton: PropTypes.bool,
     showCardHeader: PropTypes.bool,
     buyPropertyFunction: PropTypes.func,
-    mortgagePropertyFunction: PropTypes.func
+    mortgagePropertyFunction: PropTypes.func,
+    unmortgagePropertyFunction: PropTypes.func
 };
 
 export default PropertyCard;
