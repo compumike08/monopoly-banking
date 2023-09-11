@@ -11,12 +11,12 @@ import {
   Label,
   Input,
   FormFeedback,
-  Button,
+  Button
 } from "reactstrap";
 import { isEmailValid } from "../../utils/util";
 import {
   getUserProfileAction,
-  editUserProfileAction,
+  editUserProfileAction
 } from "./userProfileSlice";
 
 class UserProfile extends PureComponent {
@@ -29,7 +29,7 @@ class UserProfile extends PureComponent {
       username: "",
       email: "",
       isUsernameError: false,
-      isEmailError: false,
+      isEmailError: false
     };
   }
 
@@ -38,7 +38,7 @@ class UserProfile extends PureComponent {
 
     this.setState({
       username: this.props.username,
-      email: this.props.email,
+      email: this.props.email
     });
   }
 
@@ -49,7 +49,7 @@ class UserProfile extends PureComponent {
     ) {
       this.setState({
         username: this.props.username,
-        email: this.props.email,
+        email: this.props.email
       });
     }
   }
@@ -61,19 +61,19 @@ class UserProfile extends PureComponent {
       isUsernameError: false,
       isEmailError: false,
       backendErrorMsg: null,
-      isShowSuccessMsg: false,
+      isShowSuccessMsg: false
     });
   };
 
   handleUsernameChange = (evt) => {
     this.setState({
-      username: evt.target.value,
+      username: evt.target.value
     });
   };
 
   handleEmailChange = (evt) => {
     this.setState({
-      email: evt.target.value,
+      email: evt.target.value
     });
   };
 
@@ -84,14 +84,14 @@ class UserProfile extends PureComponent {
       isUsernameError: false,
       isEmailError: false,
       backendErrorMsg: null,
-      isShowSuccessMsg: false,
+      isShowSuccessMsg: false
     });
 
     // Validate new username is between 3 and 25 characters long
     if (this.state.username.length < 3 || this.state.username.length > 25) {
       isError = true;
       this.setState({
-        isUsernameError: true,
+        isUsernameError: true
       });
     }
 
@@ -99,7 +99,7 @@ class UserProfile extends PureComponent {
     if (this.state.email.length < 1 || !isEmailValid(this.state.email)) {
       isError = true;
       this.setState({
-        isEmailError: true,
+        isEmailError: true
       });
     }
 
@@ -108,16 +108,16 @@ class UserProfile extends PureComponent {
         await this.props.actions
           .editUserProfileAction({
             username: this.state.username,
-            email: this.state.email,
+            email: this.state.email
           })
           .unwrap();
 
         this.setState({
-          isShowSuccessMsg: true,
+          isShowSuccessMsg: true
         });
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -191,7 +191,7 @@ class UserProfile extends PureComponent {
 function mapStateToProps(state) {
   return {
     username: state.userProfileData.userProfile.username,
-    email: state.userProfileData.userProfile.email,
+    email: state.userProfileData.userProfile.email
   };
 }
 
@@ -200,10 +200,10 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(
       {
         getUserProfileAction,
-        editUserProfileAction,
+        editUserProfileAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

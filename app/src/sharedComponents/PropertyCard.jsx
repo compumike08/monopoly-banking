@@ -9,7 +9,7 @@ import {
   Row,
   Col,
   Button,
-  Badge,
+  Badge
 } from "reactstrap";
 import { formatNumberAsCurrency } from "../utils/util";
 
@@ -22,7 +22,7 @@ const PropertyCard = ({
   buyPropertyFunction,
   mortgagePropertyFunction,
   unmortgagePropertyFunction,
-  loggedInPlayerId,
+  loggedInPlayerId
 }) => {
   const {
     propertyClaimId,
@@ -42,7 +42,7 @@ const PropertyCard = ({
     ownedByPlayerId,
     isMortgaged,
     isRailroad,
-    isUtility,
+    isUtility
   } = propertyData;
 
   const formattedCost = formatNumberAsCurrency(cost);
@@ -205,7 +205,7 @@ PropertyCard.defaultProps = {
   },
   unmortgagePropertyFunction: () => {
     /* noop */
-  },
+  }
 };
 
 PropertyCard.propTypes = {
@@ -229,7 +229,7 @@ PropertyCard.propTypes = {
     isUtility: PropTypes.bool.isRequired,
     gameId: PropTypes.number.isRequired,
     ownedByPlayerId: PropTypes.number,
-    ownedByPlayerName: PropTypes.string,
+    ownedByPlayerName: PropTypes.string
   }).isRequired,
   loggedInPlayerId: PropTypes.number.isRequired,
   showBuyButton: PropTypes.bool,
@@ -238,7 +238,7 @@ PropertyCard.propTypes = {
   showCardHeader: PropTypes.bool,
   buyPropertyFunction: PropTypes.func,
   mortgagePropertyFunction: PropTypes.func,
-  unmortgagePropertyFunction: PropTypes.func,
+  unmortgagePropertyFunction: PropTypes.func
 };
 
 export default PropertyCard;

@@ -12,7 +12,7 @@ import {
   Label,
   Button,
   FormFeedback,
-  Alert,
+  Alert
 } from "reactstrap";
 import { createNewGameAction } from "./gamesSlice";
 
@@ -26,7 +26,7 @@ class NewGame extends React.Component {
     this.state = {
       backendErrMsg: null,
       isFreeParkingRadioButtonsValid: true,
-      isCollectFromFreeParking: null,
+      isCollectFromFreeParking: null
     };
   }
 
@@ -37,14 +37,14 @@ class NewGame extends React.Component {
     const isCollectFromFreeParking = value === CONST_YES ? true : false;
 
     this.setState({
-      isCollectFromFreeParking,
+      isCollectFromFreeParking
     });
   };
 
   handleSubmit = async () => {
     let isValid = true;
     this.setState({
-      isFreeParkingRadioButtonsValid: true,
+      isFreeParkingRadioButtonsValid: true
     });
 
     if (
@@ -53,13 +53,13 @@ class NewGame extends React.Component {
     ) {
       isValid = false;
       this.setState({
-        isFreeParkingRadioButtonsValid: false,
+        isFreeParkingRadioButtonsValid: false
       });
     }
 
     if (isValid) {
       const data = {
-        isCollectFromFreeParking: this.state.isCollectFromFreeParking,
+        isCollectFromFreeParking: this.state.isCollectFromFreeParking
       };
 
       try {
@@ -67,7 +67,7 @@ class NewGame extends React.Component {
         this.props.history.push("/newGameConfirmation");
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -141,10 +141,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        createNewGameAction,
+        createNewGameAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

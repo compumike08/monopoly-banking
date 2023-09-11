@@ -37,9 +37,9 @@ PaymentRecords.propTypes = {
       payRequestUUID: PropTypes.string.isRequired,
       fromName: PropTypes.string.isRequired,
       toName: PropTypes.string.isRequired,
-      formattedAmountPaid: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+      formattedAmountPaid: PropTypes.string.isRequired
+    })
+  ).isRequired
 };
 
 export default PaymentRecords;

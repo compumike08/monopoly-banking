@@ -12,7 +12,7 @@ import {
   Label,
   Button,
   FormFeedback,
-  Alert,
+  Alert
 } from "reactstrap";
 import { fetchExistingGameByCodeAction } from "./gamesSlice";
 
@@ -24,20 +24,20 @@ class JoinGame extends PureComponent {
     this.state = {
       gameCode: "",
       isGameCodeError: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     };
   }
 
   handleGameCodeChange = (evt) => {
     this.setState({
-      gameCode: evt.target.value,
+      gameCode: evt.target.value
     });
   };
 
   handleSubmit = async () => {
     if (this.state.gameCode.length !== GAME_CODE_LENGTH) {
       this.setState({
-        isGameCodeError: true,
+        isGameCodeError: true
       });
     } else {
       try {
@@ -47,7 +47,7 @@ class JoinGame extends PureComponent {
         this.props.history.push("/newPlayer");
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -101,10 +101,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        fetchExistingGameByCodeAction,
+        fetchExistingGameByCodeAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

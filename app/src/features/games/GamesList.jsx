@@ -7,7 +7,7 @@ import GameCard from "../../sharedComponents/GameCard";
 import {
   getAllGamesForUser,
   joinGameAsExistingPlayerAction,
-  fetchExistingGameByCodeAction,
+  fetchExistingGameByCodeAction
 } from "../games/gamesSlice";
 import { selectGamesListWithMappedPlayerNames } from "./gamesListPlayerNamesSelector";
 
@@ -17,7 +17,7 @@ class GamesList extends PureComponent {
 
     this.state = {
       isResponseError: false,
-      responseErrMsg: null,
+      responseErrMsg: null
     };
   }
 
@@ -28,7 +28,7 @@ class GamesList extends PureComponent {
   clearError = () => {
     this.setState({
       isResponseError: false,
-      responseErrMsg: null,
+      responseErrMsg: null
     });
   };
 
@@ -41,7 +41,7 @@ class GamesList extends PureComponent {
     } catch (err) {
       this.setState({
         isResponseError: true,
-        responseErrMsg: err.message,
+        responseErrMsg: err.message
       });
     }
   };
@@ -91,7 +91,7 @@ class GamesList extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    userGamesListMappedPlayerNames: selectGamesListWithMappedPlayerNames(state),
+    userGamesListMappedPlayerNames: selectGamesListWithMappedPlayerNames(state)
   };
 }
 
@@ -101,13 +101,13 @@ function mapDispatchToProps(dispatch) {
       {
         getAllGamesForUser,
         joinGameAsExistingPlayerAction,
-        fetchExistingGameByCodeAction,
+        fetchExistingGameByCodeAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(GamesList),
+  connect(mapStateToProps, mapDispatchToProps)(GamesList)
 );

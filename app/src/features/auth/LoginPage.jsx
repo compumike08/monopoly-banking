@@ -12,7 +12,7 @@ import {
   FormGroup,
   Label,
   Input,
-  FormFeedback,
+  FormFeedback
 } from "reactstrap";
 import { loginAction } from "./authSlice";
 
@@ -24,19 +24,19 @@ class LoginPage extends PureComponent {
       password: "",
       isUsernameError: false,
       isPasswordError: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     };
   }
 
   handleUsernameChange = (evt) => {
     this.setState({
-      username: evt.target.value,
+      username: evt.target.value
     });
   };
 
   handlePasswordChange = (evt) => {
     this.setState({
-      password: evt.target.value,
+      password: evt.target.value
     });
   };
 
@@ -50,20 +50,20 @@ class LoginPage extends PureComponent {
     this.setState({
       isUsernameError: false,
       isPasswordError: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     });
 
     if (this.state.username === null || this.state.username.length < 1) {
       isError = true;
       this.setState({
-        isUsernameError: true,
+        isUsernameError: true
       });
     }
 
     if (this.state.password === null || this.state.password.length < 1) {
       isError = true;
       this.setState({
-        isPasswordError: true,
+        isPasswordError: true
       });
     }
 
@@ -72,14 +72,14 @@ class LoginPage extends PureComponent {
         await this.props.actions
           .loginAction({
             username: this.state.username,
-            password: this.state.password,
+            password: this.state.password
           })
           .unwrap();
 
         this.props.history.push("/home");
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -145,10 +145,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        loginAction,
+        loginAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

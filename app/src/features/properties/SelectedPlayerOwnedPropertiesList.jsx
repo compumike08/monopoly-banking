@@ -8,7 +8,7 @@ import {
   AccordionBody,
   AccordionItem,
   AccordionHeader,
-  Badge,
+  Badge
 } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
 import { selectCurrentlySelectedPlayerOwnedProperties } from "./propertyClaimsSelectors";
@@ -19,18 +19,18 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
     super(props);
 
     this.state = {
-      openAccordionId: "",
+      openAccordionId: ""
     };
   }
 
   toggleAccordion = (id) => {
     if (this.state.openAccordionId === id) {
       this.setState({
-        openAccordionId: "",
+        openAccordionId: ""
       });
     } else {
       this.setState({
-        openAccordionId: id,
+        openAccordionId: id
       });
     }
   };
@@ -87,7 +87,7 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
                     </AccordionBody>
                   </AccordionItem>
                 );
-              },
+              }
             )}
           </Accordion>
         </Col>
@@ -103,19 +103,19 @@ function mapStateToProps(state, ownProps) {
     selectedPlayerOwnedPropertyClaimsList:
       selectCurrentlySelectedPlayerOwnedProperties(
         state,
-        ownProps.selectedPlayerId,
-      ),
+        ownProps.selectedPlayerId
+      )
   };
 }
 
 SelectedPlayerOwnedPropertiesList.defaultProps = {
-  selectedPlayerId: "",
+  selectedPlayerId: ""
 };
 
 SelectedPlayerOwnedPropertiesList.propTypes = {
   mortgagePropertyFunction: PropTypes.func.isRequired,
   unmortgagePropertyFunction: PropTypes.func.isRequired,
-  selectedPlayerId: PropTypes.string,
+  selectedPlayerId: PropTypes.string
 };
 
 export default connect(mapStateToProps)(SelectedPlayerOwnedPropertiesList);

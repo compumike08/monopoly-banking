@@ -7,7 +7,7 @@ import {
   Container,
   Row,
   Col,
-  Button,
+  Button
 } from "reactstrap";
 
 const GameCard = ({
@@ -16,7 +16,7 @@ const GameCard = ({
   playerNamesList,
   buttonLabel,
   buttonClickFunc,
-  buttonColor,
+  buttonColor
 }) => {
   return (
     <Card>
@@ -72,7 +72,7 @@ GameCard.defaultProps = {
     /* no-op */
   }),
   buttonColor: "primary",
-  playerNamesList: [],
+  playerNamesList: []
 };
 
 GameCard.propTypes = {
@@ -81,7 +81,7 @@ GameCard.propTypes = {
   buttonLabel: PropTypes.string,
   buttonClickFunc: PropTypes.func,
   buttonColor: PropTypes.string,
-  playerNamesList: PropTypes.arrayOf(PropTypes.string),
+  playerNamesList: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default GameCard;

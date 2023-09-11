@@ -12,5 +12,5 @@ export const selectActiveGameBankMoneySinkOnTop = createSelector(
     const sortedMoneySinks = moneySinksWithoutBank;
     sortedMoneySinks.unshift(bankMoneySink);
     return sortedMoneySinks;
-  },
+  }
 );

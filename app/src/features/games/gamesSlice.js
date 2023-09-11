@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import {
   IDLE_STATUS,
   LOADING_STATUS,
-  ERROR_STATUS,
+  ERROR_STATUS
 } from "../../constants/general";
 import { formatNumberAsCurrency } from "../../utils/util";
 import {
@@ -11,7 +11,7 @@ import {
   createNewGame,
   addNewPlayerToGame,
   fetchGameByCode,
-  joinGameAsExistingPlayer,
+  joinGameAsExistingPlayer
 } from "../../api/gamesAPI";
 import { sendPayment, getAllPaymentsList } from "../../api/paymentsAPI";
 
@@ -22,7 +22,7 @@ const initialState = {
     players: [],
     moneySinks: [],
     loggedInPlayerId: null,
-    paymentRecords: [],
+    paymentRecords: []
   },
   userGamesList: [],
   getAllGamesForUserStatus: IDLE_STATUS,
@@ -31,56 +31,56 @@ const initialState = {
   addNewPlayerToGameStatus: IDLE_STATUS,
   joinGameAsExistingPlayerStatus: IDLE_STATUS,
   sendPaymentStatus: IDLE_STATUS,
-  getAllPaymentsListStatus: IDLE_STATUS,
+  getAllPaymentsListStatus: IDLE_STATUS
 };
 
 export const getAllGamesForUser = createAsyncThunk(
   "games/getAllGamesForUserAction",
   async (data) => {
     return await fetchGamesByUser();
-  },
+  }
 );
 
 export const createNewGameAction = createAsyncThunk(
   "games/createNewGameAction",
   async (data) => {
     return await createNewGame(data);
-  },
+  }
 );
 
 export const addNewPlayerToGameAction = createAsyncThunk(
   "games/addNewPlayerToGameAction",
   async (data) => {
     return await addNewPlayerToGame(data.gameId, data);
-  },
+  }
 );
 
 export const joinGameAsExistingPlayerAction = createAsyncThunk(
   "games/joinGameAsExistingPlayerAction",
   async (gameId) => {
     return await joinGameAsExistingPlayer(gameId);
-  },
+  }
 );
 
 export const fetchExistingGameByCodeAction = createAsyncThunk(
   "games/fetchExistingGameByCodeAction",
   async (gameCode) => {
     return await fetchGameByCode(gameCode);
-  },
+  }
 );
 
 export const getAllPaymentsAction = createAsyncThunk(
   "games/getAllPayments",
   async (gameId) => {
     return await getAllPaymentsList(gameId);
-  },
+  }
 );
 
 export const sendPaymentAction = createAsyncThunk(
   "games/sendPayment",
   async (data) => {
     return await sendPayment(data);
-  },
+  }
 );
 
 const processPayment = (state, action, isFromWebsocketMsg) => {
@@ -96,7 +96,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     fromMoneySink,
     toMoneySink,
     amountPaid,
-    payRequestUUID,
+    payRequestUUID
   } = action.payload;
 
   let fromObject = null;
@@ -104,7 +104,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
 
   if (!isFromSink) {
     const playerIndex = state.activeGame.players.findIndex(
-      (player) => player.id === fromPlayer.id,
+      (player) => player.id === fromPlayer.id
     );
     if (playerIndex > -1) {
       state.activeGame.players[playerIndex] = fromPlayer;
@@ -112,7 +112,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     }
   } else {
     const sinkIndex = state.activeGame.moneySinks.findIndex(
-      (sink) => sink.id === fromMoneySink.id,
+      (sink) => sink.id === fromMoneySink.id
     );
     if (sinkIndex > -1) {
       state.activeGame.moneySinks[sinkIndex] = fromMoneySink;
@@ -122,7 +122,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
 
   if (!isToSink) {
     const playerIndex = state.activeGame.players.findIndex(
-      (player) => player.id === toPlayer.id,
+      (player) => player.id === toPlayer.id
     );
     if (playerIndex > -1) {
       state.activeGame.players[playerIndex] = toPlayer;
@@ -130,7 +130,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     }
   } else {
     const sinkIndex = state.activeGame.moneySinks.findIndex(
-      (sink) => sink.id === toMoneySink.id,
+      (sink) => sink.id === toMoneySink.id
     );
     if (sinkIndex > -1) {
       state.activeGame.moneySinks[sinkIndex] = toMoneySink;
@@ -147,7 +147,7 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
       payRequestUUID,
       fromName,
       toName,
-      formattedAmountPaid,
+      formattedAmountPaid
     });
 
     const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
@@ -169,7 +169,7 @@ const processPaymentRecordList = (state, action) => {
       fromMoneySink,
       toMoneySink,
       amountPaid,
-      payRequestUUID,
+      payRequestUUID
     } = paymentRecord;
 
     let fromObject = null;
@@ -177,14 +177,14 @@ const processPaymentRecordList = (state, action) => {
 
     if (!isFromSink) {
       const playerIndex = state.activeGame.players.findIndex(
-        (player) => player.id === fromPlayer.id,
+        (player) => player.id === fromPlayer.id
       );
       if (playerIndex > -1) {
         fromObject = fromPlayer;
       }
     } else {
       const sinkIndex = state.activeGame.moneySinks.findIndex(
-        (sink) => sink.id === fromMoneySink.id,
+        (sink) => sink.id === fromMoneySink.id
       );
       if (sinkIndex > -1) {
         fromObject = fromMoneySink;
@@ -193,14 +193,14 @@ const processPaymentRecordList = (state, action) => {
 
     if (!isToSink) {
       const playerIndex = state.activeGame.players.findIndex(
-        (player) => player.id === toPlayer.id,
+        (player) => player.id === toPlayer.id
       );
       if (playerIndex > -1) {
         toObject = toPlayer;
       }
     } else {
       const sinkIndex = state.activeGame.moneySinks.findIndex(
-        (sink) => sink.id === toMoneySink.id,
+        (sink) => sink.id === toMoneySink.id
       );
       if (sinkIndex > -1) {
         toObject = toMoneySink;
@@ -215,7 +215,7 @@ const processPaymentRecordList = (state, action) => {
       payRequestUUID,
       fromName,
       toName,
-      formattedAmountPaid,
+      formattedAmountPaid
     });
   });
 
@@ -234,7 +234,7 @@ export const gamesSlice = createSlice({
     },
     resetGameData() {
       return initialState;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -315,7 +315,7 @@ export const gamesSlice = createSlice({
       .addCase(getAllPaymentsAction.rejected, (state) => {
         state.getAllPaymentsListStatus = ERROR_STATUS;
       });
-  },
+  }
 });
 
 const { actions, reducer } = gamesSlice;

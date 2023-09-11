@@ -4,7 +4,7 @@ import { TOKEN_SESSION_ATTRIBUTE_NAME } from "../constants/general";
 const singleStompClient = new Client({
   reconnectDelay: 1000,
   heartbeatIncoming: 1000,
-  heartbeatOutgoing: 1000,
+  heartbeatOutgoing: 1000
 });
 
 export const stompClient = () => {
@@ -24,7 +24,7 @@ export const stompClient = () => {
 
   singleStompClient.brokerURL = wsSourceUrl;
   singleStompClient.connectHeaders = {
-    authorization: token,
+    authorization: token
   };
 
   return singleStompClient;
@@ -34,7 +34,7 @@ export const updateStompClientAuthTokenFromStorage = () => {
   const token = sessionStorage.getItem(TOKEN_SESSION_ATTRIBUTE_NAME);
 
   singleStompClient.connectHeaders = {
-    authorization: token,
+    authorization: token
   };
 
   return singleStompClient;

@@ -12,7 +12,7 @@ import {
   Label,
   Input,
   FormFeedback,
-  Button,
+  Button
 } from "reactstrap";
 import { resetPasswordAction } from "./authSlice";
 
@@ -27,19 +27,19 @@ class ResetPassword extends PureComponent {
       isPasswordError: false,
       isReenteredPasswordError: false,
       isPasswordsNotMatch: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     };
   }
 
   handlePasswordChange = (evt) => {
     this.setState({
-      password: evt.target.value,
+      password: evt.target.value
     });
   };
 
   handleReenteredPasswordChange = (evt) => {
     this.setState({
-      reenteredPassword: evt.target.value,
+      reenteredPassword: evt.target.value
     });
   };
 
@@ -48,7 +48,7 @@ class ResetPassword extends PureComponent {
     const forgotPasswordToken = queryParams.get("token");
 
     this.setState({
-      forgotPasswordToken,
+      forgotPasswordToken
     });
   }
 
@@ -59,13 +59,13 @@ class ResetPassword extends PureComponent {
       isPasswordError: false,
       isReenteredPasswordError: false,
       isPasswordsNotMatch: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     });
 
     if (this.state.password === null || this.state.password.length < 1) {
       isError = true;
       this.setState({
-        isPasswordError: true,
+        isPasswordError: true
       });
     }
 
@@ -75,7 +75,7 @@ class ResetPassword extends PureComponent {
     ) {
       isError = true;
       this.setState({
-        isReenteredPasswordError: true,
+        isReenteredPasswordError: true
       });
     }
 
@@ -83,7 +83,7 @@ class ResetPassword extends PureComponent {
       isError = true;
       this.setState({
         isReenteredPasswordError: true,
-        isPasswordsNotMatch: true,
+        isPasswordsNotMatch: true
       });
     }
 
@@ -92,14 +92,14 @@ class ResetPassword extends PureComponent {
         await this.props.actions
           .resetPasswordAction({
             forgotPasswordToken: this.state.forgotPasswordToken,
-            newPassword: this.state.password,
+            newPassword: this.state.password
           })
           .unwrap();
 
         this.props.history.push("/login");
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -166,13 +166,13 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        resetPasswordAction,
+        resetPasswordAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 
 export default withRouter(
-  connect(undefined, mapDispatchToProps)(ResetPassword),
+  connect(undefined, mapDispatchToProps)(ResetPassword)
 );

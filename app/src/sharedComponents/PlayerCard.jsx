@@ -10,7 +10,7 @@ const PlayerCard = ({ player, loggedInPlayerId, showPay, gameId }) => {
   const isYou = loggedInPlayerId === id;
   const mappedPlayer = {
     ...player,
-    isSink: false,
+    isSink: false
   };
   const formattedMoneyBalance = formatNumberAsCurrency(moneyBalance);
 
@@ -48,7 +48,7 @@ const PlayerCard = ({ player, loggedInPlayerId, showPay, gameId }) => {
 };
 
 PlayerCard.defaultProps = {
-  showPay: true,
+  showPay: true
 };
 
 PlayerCard.propTypes = {
@@ -57,10 +57,10 @@ PlayerCard.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     moneyBalance: PropTypes.number.isRequired,
-    playerRole: PropTypes.string.isRequired,
+    playerRole: PropTypes.string.isRequired
   }).isRequired,
   loggedInPlayerId: PropTypes.number.isRequired,
-  showPay: PropTypes.bool,
+  showPay: PropTypes.bool
 };
 
 export default PlayerCard;

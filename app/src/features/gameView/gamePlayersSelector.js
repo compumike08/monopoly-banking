@@ -9,20 +9,20 @@ export const selectActiveGamePlayersYouOnTop = createSelector(
   (players, loggedInPlayerId) => {
     const rawPlayers = Object.assign([], players);
     const playersWithoutYou = rawPlayers.filter(
-      (player) => player.id !== loggedInPlayerId,
+      (player) => player.id !== loggedInPlayerId
     );
     const youPlayer = rawPlayers.find(
-      (player) => player.id === loggedInPlayerId,
+      (player) => player.id === loggedInPlayerId
     );
     const sortedPlayers = playersWithoutYou;
     sortedPlayers.unshift(youPlayer);
     return sortedPlayers;
-  },
+  }
 );
 
 export const selectLoggedInPlayer = createSelector(
   [selectActiveGamePlayers, selectLoggedInPlayerId],
   (players, loggedInPlayerId) => {
     return players.find((player) => player.id === loggedInPlayerId);
-  },
+  }
 );

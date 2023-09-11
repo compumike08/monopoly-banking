@@ -7,11 +7,11 @@ import {
   TOPIC_GAME_PREFIX,
   TOPIC_GAME_PLAYERS,
   TOPIC_GAME_PAYMENT,
-  TOPIC_GAME_PROPERTY_UPDATE,
+  TOPIC_GAME_PROPERTY_UPDATE
 } from "../../constants/general";
 import {
   playerReceivedFromWs,
-  paymentReceivedFromWs,
+  paymentReceivedFromWs
 } from "../games/gamesSlice";
 import { propertyClaimUpdateReceivedFromWs } from "../properties/propertiesSlice";
 import GameView from "./GameView";
@@ -36,12 +36,12 @@ class GameContainer extends PureComponent {
           // called when the client receives a STOMP message from the server
           if (message.body) {
             componentThis.props.actions.playerReceivedFromWs(
-              JSON.parse(message.body),
+              JSON.parse(message.body)
             );
           } else {
             console.log("got empty message");
           }
-        },
+        }
       );
 
       componentThis.stompClient.subscribe(
@@ -50,12 +50,12 @@ class GameContainer extends PureComponent {
           // called when the client receives a STOMP message from the server
           if (message.body) {
             componentThis.props.actions.paymentReceivedFromWs(
-              JSON.parse(message.body),
+              JSON.parse(message.body)
             );
           } else {
             console.log("got empty message");
           }
-        },
+        }
       );
 
       componentThis.stompClient.subscribe(
@@ -64,12 +64,12 @@ class GameContainer extends PureComponent {
           // called when the client receives a STOMP message from the server
           if (message.body) {
             componentThis.props.actions.propertyClaimUpdateReceivedFromWs(
-              JSON.parse(message.body),
+              JSON.parse(message.body)
             );
           } else {
             console.log("got empty message");
           }
-        },
+        }
       );
     };
 
@@ -100,7 +100,7 @@ class GameContainer extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    activeGameId: state.gamesData.activeGame.gameId,
+    activeGameId: state.gamesData.activeGame.gameId
   };
 }
 
@@ -110,10 +110,10 @@ function mapDispatchToProps(dispatch) {
       {
         playerReceivedFromWs,
         paymentReceivedFromWs,
-        propertyClaimUpdateReceivedFromWs,
+        propertyClaimUpdateReceivedFromWs
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

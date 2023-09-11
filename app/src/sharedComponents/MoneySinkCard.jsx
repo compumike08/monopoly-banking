@@ -8,7 +8,7 @@ const MoneySinkCard = ({ sink, loggedInPlayerId, showPay, gameId }) => {
   const { name, moneyBalance } = sink;
   const mappedSink = {
     ...sink,
-    isSink: true,
+    isSink: true
   };
   const formattedMoneyBalance = formatNumberAsCurrency(moneyBalance);
 
@@ -44,7 +44,7 @@ const MoneySinkCard = ({ sink, loggedInPlayerId, showPay, gameId }) => {
 };
 
 MoneySinkCard.defaultProps = {
-  showPay: true,
+  showPay: true
 };
 
 MoneySinkCard.propTypes = {
@@ -53,10 +53,10 @@ MoneySinkCard.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     moneyBalance: PropTypes.number.isRequired,
-    isBank: PropTypes.bool.isRequired,
+    isBank: PropTypes.bool.isRequired
   }).isRequired,
   loggedInPlayerId: PropTypes.number.isRequired,
-  showPay: PropTypes.bool,
+  showPay: PropTypes.bool
 };
 
 export default MoneySinkCard;

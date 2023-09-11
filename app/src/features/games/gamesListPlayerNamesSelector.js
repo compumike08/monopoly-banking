@@ -12,8 +12,8 @@ export const selectGamesListWithMappedPlayerNames = createSelector(
         isCollectFromFreeParking: game.isCollectFromFreeParking,
         playerNames: game.players.map((player) => {
           return player.name;
-        }),
+        })
       };
     });
-  },
+  }
 );

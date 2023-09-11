@@ -11,7 +11,7 @@ import {
   Label,
   Input,
   FormFeedback,
-  Button,
+  Button
 } from "reactstrap";
 import { requestPasswordResetAction } from "./authSlice";
 import { isEmailValid } from "../../utils/util";
@@ -23,7 +23,7 @@ class RequestPasswordReset extends PureComponent {
     this.state = {
       isShowSuccessMsg: false,
       isEmailError: false,
-      email: "",
+      email: ""
     };
   }
 
@@ -31,13 +31,13 @@ class RequestPasswordReset extends PureComponent {
     this.setState({
       isShowSuccessMsg: false,
       isEmailError: false,
-      email: "",
+      email: ""
     });
   };
 
   handleEmailChange = (evt) => {
     this.setState({
-      email: evt.target.value,
+      email: evt.target.value
     });
   };
 
@@ -46,14 +46,14 @@ class RequestPasswordReset extends PureComponent {
 
     this.setState({
       isEmailError: false,
-      isShowSuccessMsg: false,
+      isShowSuccessMsg: false
     });
 
     // Validate new email is at least 1 character long and matches email regex
     if (this.state.email.length < 1 || !isEmailValid(this.state.email)) {
       isError = true;
       this.setState({
-        isEmailError: true,
+        isEmailError: true
       });
     }
 
@@ -61,16 +61,16 @@ class RequestPasswordReset extends PureComponent {
       try {
         await this.props.actions
           .requestPasswordResetAction({
-            email: this.state.email,
+            email: this.state.email
           })
           .unwrap();
 
         this.setState({
-          isShowSuccessMsg: true,
+          isShowSuccessMsg: true
         });
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -127,10 +127,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        requestPasswordResetAction,
+        requestPasswordResetAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

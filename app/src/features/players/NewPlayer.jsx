@@ -12,7 +12,7 @@ import {
   Label,
   Button,
   FormFeedback,
-  Alert,
+  Alert
 } from "reactstrap";
 import { addNewPlayerToGameAction } from "../games/gamesSlice";
 
@@ -24,30 +24,30 @@ class NewPlayer extends PureComponent {
       playerRole: "PLAYER",
       isNameError: false,
       isPlayerRoleError: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     };
   }
 
   handlePlayerNameChange = (evt) => {
     this.setState({
-      name: evt.target.value,
+      name: evt.target.value
     });
   };
 
   handlePlayerRoleChange = (evt) => {
     this.setState({
-      playerRole: evt.target.value,
+      playerRole: evt.target.value
     });
   };
 
   handleSubmit = async () => {
     this.setState({
-      isNameError: false,
+      isNameError: false
     });
 
     if (this.state.name.length < 1) {
       this.setState({
-        isNameError: true,
+        isNameError: true
       });
     } else {
       try {
@@ -55,14 +55,14 @@ class NewPlayer extends PureComponent {
           .addNewPlayerToGameAction({
             name: this.state.name,
             playerRole: this.state.playerRole,
-            gameId: this.props.activeGame.gameId,
+            gameId: this.props.activeGame.gameId
           })
           .unwrap();
         this.props.history.push("/gameView");
       } catch (err) {
         console.log(err);
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -124,7 +124,7 @@ class NewPlayer extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    activeGame: state.gamesData.activeGame,
+    activeGame: state.gamesData.activeGame
   };
 }
 
@@ -132,13 +132,13 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        addNewPlayerToGameAction,
+        addNewPlayerToGameAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(NewPlayer),
+  connect(mapStateToProps, mapDispatchToProps)(NewPlayer)
 );

@@ -2,13 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   IDLE_STATUS,
   LOADING_STATUS,
-  ERROR_STATUS,
+  ERROR_STATUS
 } from "../../constants/general";
 import {
   registerUser,
   authenticate,
   sendPasswordResetEmail,
-  resetPassword,
+  resetPassword
 } from "../../api/authAPI";
 
 const initialState = {
@@ -16,35 +16,35 @@ const initialState = {
   registerUserStatus: IDLE_STATUS,
   loginStatus: IDLE_STATUS,
   requestPasswordResetStatus: IDLE_STATUS,
-  resetPasswordStatus: IDLE_STATUS,
+  resetPasswordStatus: IDLE_STATUS
 };
 
 export const registerUserAction = createAsyncThunk(
   "auth/registerUserAction",
   async (data) => {
     return await registerUser(data);
-  },
+  }
 );
 
 export const loginAction = createAsyncThunk(
   "auth/loginAction",
   async (data) => {
     return await authenticate(data);
-  },
+  }
 );
 
 export const requestPasswordResetAction = createAsyncThunk(
   "auth/requestPasswordResetAction",
   async (data) => {
     return await sendPasswordResetEmail(data);
-  },
+  }
 );
 
 export const resetPasswordAction = createAsyncThunk(
   "auth/resetPasswordAction",
   async (data) => {
     return await resetPassword(data);
-  },
+  }
 );
 
 export const authSlice = createSlice({
@@ -53,7 +53,7 @@ export const authSlice = createSlice({
   reducers: {
     resetAuthData() {
       return initialState;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -94,7 +94,7 @@ export const authSlice = createSlice({
       .addCase(resetPasswordAction.rejected, (state) => {
         state.resetPasswordStatus = ERROR_STATUS;
       });
-  },
+  }
 });
 
 const { actions, reducer } = authSlice;

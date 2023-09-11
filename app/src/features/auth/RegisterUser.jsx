@@ -12,7 +12,7 @@ import {
   FormGroup,
   Label,
   Input,
-  FormFeedback,
+  FormFeedback
 } from "reactstrap";
 import { registerUserAction } from "./authSlice";
 
@@ -29,31 +29,31 @@ class RegisterUser extends PureComponent {
       isPasswordError: false,
       isReenteredPasswordError: false,
       isPasswordsNotMatch: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     };
   }
 
   handleUsernameChange = (evt) => {
     this.setState({
-      username: evt.target.value,
+      username: evt.target.value
     });
   };
 
   handleEmailChange = (evt) => {
     this.setState({
-      email: evt.target.value,
+      email: evt.target.value
     });
   };
 
   handlePasswordChange = (evt) => {
     this.setState({
-      password: evt.target.value,
+      password: evt.target.value
     });
   };
 
   handleReenteredPasswordChange = (evt) => {
     this.setState({
-      reenteredPassword: evt.target.value,
+      reenteredPassword: evt.target.value
     });
   };
 
@@ -66,27 +66,27 @@ class RegisterUser extends PureComponent {
       isPasswordError: false,
       isReenteredPasswordError: false,
       isPasswordsNotMatch: false,
-      backendErrorMsg: null,
+      backendErrorMsg: null
     });
 
     if (this.state.username === null || this.state.username.length < 1) {
       isError = true;
       this.setState({
-        isUsernameError: true,
+        isUsernameError: true
       });
     }
 
     if (this.state.email === null || this.state.email.length < 1) {
       isError = false;
       this.setState({
-        isEmailError: true,
+        isEmailError: true
       });
     }
 
     if (this.state.password === null || this.state.password.length < 1) {
       isError = true;
       this.setState({
-        isPasswordError: true,
+        isPasswordError: true
       });
     }
 
@@ -96,7 +96,7 @@ class RegisterUser extends PureComponent {
     ) {
       isError = true;
       this.setState({
-        isReenteredPasswordError: true,
+        isReenteredPasswordError: true
       });
     }
 
@@ -104,7 +104,7 @@ class RegisterUser extends PureComponent {
       isError = true;
       this.setState({
         isReenteredPasswordError: true,
-        isPasswordsNotMatch: true,
+        isPasswordsNotMatch: true
       });
     }
 
@@ -114,14 +114,14 @@ class RegisterUser extends PureComponent {
           .registerUserAction({
             username: this.state.username,
             email: this.state.email,
-            password: this.state.password,
+            password: this.state.password
           })
           .unwrap();
 
         this.props.history.push("/login");
       } catch (err) {
         this.setState({
-          backendErrorMsg: err.message,
+          backendErrorMsg: err.message
         });
       }
     }
@@ -212,10 +212,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        registerUserAction,
+        registerUserAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

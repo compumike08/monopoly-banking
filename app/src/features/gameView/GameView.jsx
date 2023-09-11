@@ -8,7 +8,7 @@ import {
   NavItem,
   NavLink,
   TabContent,
-  TabPane,
+  TabPane
 } from "reactstrap";
 import PaymentTabView from "./PaymentTabView";
 import PropertyTabView from "../properties/PropertyTabView";
@@ -19,7 +19,7 @@ class GameView extends PureComponent {
     super(props);
 
     this.state = {
-      activeTabId: "1",
+      activeTabId: "1"
     };
   }
 
@@ -85,7 +85,7 @@ class GameView extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    gameCode: state.gamesData.activeGame.code,
+    gameCode: state.gamesData.activeGame.code
   };
 }
 

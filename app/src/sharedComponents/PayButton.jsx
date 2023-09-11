@@ -12,7 +12,7 @@ import {
   Label,
   Input,
   FormFeedback,
-  ModalFooter,
+  ModalFooter
 } from "reactstrap";
 import { selectLoggedInPlayer } from "../features/gameView/gamePlayersSelector";
 import { sendPaymentAction } from "../features/games/gamesSlice";
@@ -26,7 +26,7 @@ class PayButton extends PureComponent {
       amountToPay: null,
       isAmountToPayValid: true,
       isResponseError: false,
-      responseErrorMsg: null,
+      responseErrorMsg: null
     };
   }
 
@@ -36,7 +36,7 @@ class PayButton extends PureComponent {
       isPayModalOpen: !this.state.isPayModalOpen,
       isAmountToPayValid: true,
       isResponseError: false,
-      responseErrorMsg: null,
+      responseErrorMsg: null
     });
   };
 
@@ -45,7 +45,7 @@ class PayButton extends PureComponent {
     const { value } = target;
 
     this.setState({
-      amountToPay: value,
+      amountToPay: value
     });
   };
 
@@ -53,13 +53,13 @@ class PayButton extends PureComponent {
     let isValid = true;
     this.clearError();
     this.setState({
-      isAmountToPayValid: isValid,
+      isAmountToPayValid: isValid
     });
 
     if (!this.state.amountToPay) {
       isValid = false;
       this.setState({
-        isAmountToPayValid: isValid,
+        isAmountToPayValid: isValid
       });
     }
 
@@ -70,7 +70,7 @@ class PayButton extends PureComponent {
         playerOrSink,
         isFromSink,
         fromSink,
-        loggedInPlayerObject,
+        loggedInPlayerObject
       } = this.props;
       const toId = playerOrSink.id;
       const data = {
@@ -85,14 +85,14 @@ class PayButton extends PureComponent {
         originalFromAmount: !isFromSink
           ? loggedInPlayerObject.moneyBalance
           : fromSink.moneyBalance,
-        originalToAmount: playerOrSink.moneyBalance,
+        originalToAmount: playerOrSink.moneyBalance
       };
 
       const result = await this.props.actions.sendPaymentAction(data);
       if (result.error && result.error.message) {
         this.setState({
           isResponseError: true,
-          responseErrorMsg: result.error.message,
+          responseErrorMsg: result.error.message
         });
       } else {
         this.togglePayModal();
@@ -103,7 +103,7 @@ class PayButton extends PureComponent {
   clearError = () => {
     this.setState({
       isResponseError: false,
-      responseErrorMsg: null,
+      responseErrorMsg: null
     });
   };
 
@@ -155,7 +155,7 @@ class PayButton extends PureComponent {
 
 PayButton.defaultProps = {
   isFromSink: false,
-  fromSink: null,
+  fromSink: null
 };
 
 PayButton.propTypes = {
@@ -165,19 +165,19 @@ PayButton.propTypes = {
     name: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
     isSink: PropTypes.bool.isRequired,
-    moneyBalance: PropTypes.number.isRequired,
+    moneyBalance: PropTypes.number.isRequired
   }).isRequired,
   isFromSink: PropTypes.bool,
   fromSink: PropTypes.shape({
     sinkId: PropTypes.number.isRequired,
     sinkName: PropTypes.string.isRequired,
-    moneyBalance: PropTypes.number.isRequired,
-  }),
+    moneyBalance: PropTypes.number.isRequired
+  })
 };
 
 const mapStateToProps = (state) => {
   return {
-    loggedInPlayerObject: selectLoggedInPlayer(state),
+    loggedInPlayerObject: selectLoggedInPlayer(state)
   };
 };
 
@@ -185,10 +185,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     actions: bindActionCreators(
       {
-        sendPaymentAction,
+        sendPaymentAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 };
 

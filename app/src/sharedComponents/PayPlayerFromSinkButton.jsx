@@ -12,7 +12,7 @@ import {
   Input,
   FormGroup,
   FormFeedback,
-  ModalFooter,
+  ModalFooter
 } from "reactstrap";
 import { selectActiveGameBankMoneySinkOnTop } from "../features/gameView/gameMoneySinksSelector";
 import { sendPaymentAction } from "../features/games/gamesSlice";
@@ -30,7 +30,7 @@ class PayPlayerFromSinkButton extends PureComponent {
       toPlayerId: props.players.length > 0 ? props.players[0].id : null,
       isToPlayerIdValid: true,
       amountToPay: null,
-      isAmountToPayValid: true,
+      isAmountToPayValid: true
     };
   }
 
@@ -40,14 +40,14 @@ class PayPlayerFromSinkButton extends PureComponent {
         this.props.moneySinks.length > 0 ? this.props.moneySinks[0].id : null,
       toPlayerId:
         this.props.players.length > 0 ? this.props.players[0].id : null,
-      amountToPay: null,
+      amountToPay: null
     });
   };
 
   showPayModal = () => {
     this.initializeFormFields();
     this.setState({
-      showPayModal: true,
+      showPayModal: true
     });
   };
 
@@ -58,7 +58,7 @@ class PayPlayerFromSinkButton extends PureComponent {
       responseErrorMsg: null,
       isAmountToPayValid: true,
       isToPlayerIdValid: true,
-      isFromSinkIdValid: true,
+      isFromSinkIdValid: true
     });
   };
 
@@ -69,14 +69,14 @@ class PayPlayerFromSinkButton extends PureComponent {
       responseErrorMsg: null,
       isAmountToPayValid: true,
       isToPlayerIdValid: true,
-      isFromSinkIdValid: true,
+      isFromSinkIdValid: true
     });
   };
 
   clearError = () => {
     this.setState({
       isResponseError: false,
-      responseErrorMsg: null,
+      responseErrorMsg: null
     });
   };
 
@@ -85,7 +85,7 @@ class PayPlayerFromSinkButton extends PureComponent {
     const { value } = target;
 
     this.setState({
-      fromSinkId: value,
+      fromSinkId: value
     });
   };
 
@@ -94,7 +94,7 @@ class PayPlayerFromSinkButton extends PureComponent {
     const { value } = target;
 
     this.setState({
-      toPlayerId: value,
+      toPlayerId: value
     });
   };
 
@@ -103,7 +103,7 @@ class PayPlayerFromSinkButton extends PureComponent {
     const { value } = target;
 
     this.setState({
-      amountToPay: value,
+      amountToPay: value
     });
   };
 
@@ -113,37 +113,37 @@ class PayPlayerFromSinkButton extends PureComponent {
     this.setState({
       isFromSinkIdValid: isValid,
       isToPlayerIdValid: isValid,
-      isAmountToPayValid: isValid,
+      isAmountToPayValid: isValid
     });
 
     if (!this.state.fromSinkId) {
       isValid = false;
       this.setState({
-        isFromSinkIdValid: false,
+        isFromSinkIdValid: false
       });
     }
 
     if (!this.state.toPlayerId) {
       isValid = false;
       this.setState({
-        isToPlayerIdValid: false,
+        isToPlayerIdValid: false
       });
     }
 
     if (!this.state.amountToPay) {
       isValid = false;
       this.setState({
-        isAmountToPayValid: false,
+        isAmountToPayValid: false
       });
     }
 
     if (isValid) {
       const { gameId, loggedInPlayerId } = this.props;
       const fromSink = this.props.moneySinks.find(
-        (sink) => sink.id === parseInt(this.state.fromSinkId),
+        (sink) => sink.id === parseInt(this.state.fromSinkId)
       );
       const toUser = this.props.players.find(
-        (player) => player.id === parseInt(this.state.toPlayerId),
+        (player) => player.id === parseInt(this.state.toPlayerId)
       );
 
       const data = {
@@ -156,14 +156,14 @@ class PayPlayerFromSinkButton extends PureComponent {
         isToSink: false,
         amountToPay: parseInt(this.state.amountToPay),
         originalFromAmount: fromSink.moneyBalance,
-        originalToAmount: toUser.moneyBalance,
+        originalToAmount: toUser.moneyBalance
       };
 
       const result = await this.props.actions.sendPaymentAction(data);
       if (result.error && result.error.message) {
         this.setState({
           isResponseError: true,
-          responseErrorMsg: result.error.message,
+          responseErrorMsg: result.error.message
         });
       } else {
         this.hidePayModal();
@@ -263,7 +263,7 @@ const mapStateToProps = (state) => {
     gameId: state.gamesData.activeGame.gameId,
     moneySinks: selectActiveGameBankMoneySinkOnTop(state),
     players: state.gamesData.activeGame.players,
-    loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId,
+    loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId
   };
 };
 
@@ -271,14 +271,14 @@ const mapDispatchToProps = (dispatch) => {
   return {
     actions: bindActionCreators(
       {
-        sendPaymentAction,
+        sendPaymentAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(PayPlayerFromSinkButton);

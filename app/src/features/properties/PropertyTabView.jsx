@@ -13,14 +13,14 @@ import {
   Label,
   Input,
   FormGroup,
-  Alert,
+  Alert
 } from "reactstrap";
 import { formatNumberAsCurrency } from "../../utils/util";
 import {
   getAllPropertyClaimsAction,
   purchasePropertyClaimFromBankAction,
   mortgagePropertyAction,
-  unmortgagePropertyAction,
+  unmortgagePropertyAction
 } from "./propertiesSlice";
 import PropertyCard from "../../sharedComponents/PropertyCard";
 import SelectedPlayerOwnedPropertiesList from "./SelectedPlayerOwnedPropertiesList";
@@ -39,7 +39,7 @@ class PropertyTabView extends PureComponent {
       isMortgagePropertyError: false,
       mortgagePropertyErrorMsg: null,
       isUnmortgagePropertyError: false,
-      unmortgagePropertyErrorMsg: null,
+      unmortgagePropertyErrorMsg: null
     };
   }
 
@@ -50,11 +50,11 @@ class PropertyTabView extends PureComponent {
   toggleAccordion = (id) => {
     if (this.state.openAccordionId === id) {
       this.setState({
-        openAccordionId: "",
+        openAccordionId: ""
       });
     } else {
       this.setState({
-        openAccordionId: id,
+        openAccordionId: id
       });
     }
   };
@@ -64,7 +64,7 @@ class PropertyTabView extends PureComponent {
     const { value } = target;
 
     this.setState({
-      selectedPlayerId: value,
+      selectedPlayerId: value
     });
   };
 
@@ -74,7 +74,7 @@ class PropertyTabView extends PureComponent {
     const data = {
       propertyClaimId: claimId,
       gameId: this.props.gameId,
-      playerId: this.props.loggedInPlayerId,
+      playerId: this.props.loggedInPlayerId
     };
 
     const response =
@@ -83,7 +83,7 @@ class PropertyTabView extends PureComponent {
     if (response.error && response.error.message) {
       this.setState({
         isBuyPropertyResponseError: true,
-        buyPropertyResponseErrorMsg: response.error.message,
+        buyPropertyResponseErrorMsg: response.error.message
       });
     }
   };
@@ -91,21 +91,21 @@ class PropertyTabView extends PureComponent {
   clearBuyPropertyError = () => {
     this.setState({
       isBuyPropertyResponseError: false,
-      buyPropertyResponseErrorMsg: null,
+      buyPropertyResponseErrorMsg: null
     });
   };
 
   clearMortgagePropertyError = () => {
     this.setState({
       isMortgagePropertyError: false,
-      mortgagePropertyErrorMsg: null,
+      mortgagePropertyErrorMsg: null
     });
   };
 
   clearUnmortgagePropertyError = () => {
     this.setState({
       isUnmortgagePropertyError: false,
-      unmortgagePropertyErrorMsg: null,
+      unmortgagePropertyErrorMsg: null
     });
   };
 
@@ -121,7 +121,7 @@ class PropertyTabView extends PureComponent {
     const data = {
       gameId: this.props.gameId,
       playerId: this.props.loggedInPlayerId,
-      propertyClaimId,
+      propertyClaimId
     };
 
     const response = await this.props.actions.mortgagePropertyAction(data);
@@ -129,7 +129,7 @@ class PropertyTabView extends PureComponent {
     if (response.error && response.error.message) {
       this.setState({
         isMortgagePropertyError: true,
-        mortgagePropertyErrorMsg: response.error.message,
+        mortgagePropertyErrorMsg: response.error.message
       });
     }
   };
@@ -140,7 +140,7 @@ class PropertyTabView extends PureComponent {
     const data = {
       gameId: this.props.gameId,
       playerId: this.props.loggedInPlayerId,
-      propertyClaimId,
+      propertyClaimId
     };
 
     const response = await this.props.actions.unmortgagePropertyAction(data);
@@ -148,7 +148,7 @@ class PropertyTabView extends PureComponent {
     if (response.error && response.error.message) {
       this.setState({
         isUnmortgagePropertyError: true,
-        unmortgagePropertyErrorMsg: response.error.message,
+        unmortgagePropertyErrorMsg: response.error.message
       });
     }
   };
@@ -309,7 +309,7 @@ function mapStateToProps(state) {
     gameId: state.gamesData.activeGame.gameId,
     loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId,
     activeGamePlayers: state.gamesData.activeGame.players,
-    allPropertyClaimsList: state.propertyClaimsData.allPropertyClaimsList,
+    allPropertyClaimsList: state.propertyClaimsData.allPropertyClaimsList
   };
 }
 
@@ -320,10 +320,10 @@ function mapDispatchToProps(dispatch) {
         getAllPropertyClaimsAction,
         purchasePropertyClaimFromBankAction,
         mortgagePropertyAction,
-        unmortgagePropertyAction,
+        unmortgagePropertyAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

@@ -2,31 +2,31 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   IDLE_STATUS,
   LOADING_STATUS,
-  ERROR_STATUS,
+  ERROR_STATUS
 } from "../../constants/general";
 import { editUser, getCurrentUser } from "../../api/userProfileAPI";
 
 const initialState = {
   userProfile: {
     username: "",
-    email: "",
+    email: ""
   },
   getUserProfileStatus: IDLE_STATUS,
-  editUserProfileStatus: IDLE_STATUS,
+  editUserProfileStatus: IDLE_STATUS
 };
 
 export const getUserProfileAction = createAsyncThunk(
   "userProfile/getUserProfileAction",
   async () => {
     return await getCurrentUser();
-  },
+  }
 );
 
 export const editUserProfileAction = createAsyncThunk(
   "userProfile/editUserProfileAction",
   async (data) => {
     return await editUser(data);
-  },
+  }
 );
 
 export const userProfileSlice = createSlice({
@@ -54,7 +54,7 @@ export const userProfileSlice = createSlice({
       .addCase(editUserProfileAction.rejected, (state) => {
         state.editUserProfileStatus = ERROR_STATUS;
       });
-  },
+  }
 });
 
 const { reducer } = userProfileSlice;

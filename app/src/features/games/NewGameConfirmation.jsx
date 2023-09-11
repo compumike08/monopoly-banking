@@ -45,7 +45,7 @@ class NewGameConfirmation extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    gameCode: state.gamesData.activeGame.code,
+    gameCode: state.gamesData.activeGame.code
   };
 }
 

@@ -3,13 +3,13 @@ import { toast } from "react-toastify";
 import {
   IDLE_STATUS,
   LOADING_STATUS,
-  ERROR_STATUS,
+  ERROR_STATUS
 } from "../../constants/general";
 import {
   getAllPropertyClaimsList,
   purchasePropertyClaimFromBank,
   mortgageProperty,
-  unmortgageProperty,
+  unmortgageProperty
 } from "../../api/propertiesAPI";
 
 const initialState = {
@@ -17,42 +17,42 @@ const initialState = {
   getAllPropertyClaimsListStatus: IDLE_STATUS,
   purchasePropertyClaimFromBankStatus: IDLE_STATUS,
   mortgagePropertyStatus: IDLE_STATUS,
-  unmortgagePropertyStatus: IDLE_STATUS,
+  unmortgagePropertyStatus: IDLE_STATUS
 };
 
 export const getAllPropertyClaimsAction = createAsyncThunk(
   "propertyClaims/getAllPropertyClaimsAction",
   async (gameId) => {
     return await getAllPropertyClaimsList(gameId);
-  },
+  }
 );
 
 export const purchasePropertyClaimFromBankAction = createAsyncThunk(
   "propertyClaims/purchasePropertyClaimFromBankAction",
   async (data) => {
     return await purchasePropertyClaimFromBank(data);
-  },
+  }
 );
 
 export const mortgagePropertyAction = createAsyncThunk(
   "propertyClaims/mortgageProperty",
   async (data) => {
     return mortgageProperty(data);
-  },
+  }
 );
 
 export const unmortgagePropertyAction = createAsyncThunk(
   "propertyClaims/unmortgageProperty",
   async (data) => {
     return unmortgageProperty(data);
-  },
+  }
 );
 
 const processPropertyClaimUpdate = (state, action, isReceivedFromWs) => {
   const data = action.payload;
 
   const propertyClaimArrayIndex = state.allPropertyClaimsList.findIndex(
-    (element) => element.propertyClaimId === data.propertyClaimId,
+    (element) => element.propertyClaimId === data.propertyClaimId
   );
   state.allPropertyClaimsList[propertyClaimArrayIndex] = data;
 
@@ -81,7 +81,7 @@ export const propertyClaimsSlice = createSlice({
     },
     resetPropertyClaimsData() {
       return initialState;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -103,7 +103,7 @@ export const propertyClaimsSlice = createSlice({
         (state, action) => {
           state = processPropertyClaimUpdate(state, action, false);
           state.purchasePropertyClaimFromBankStatus = IDLE_STATUS;
-        },
+        }
       )
       .addCase(purchasePropertyClaimFromBankAction.rejected, (state) => {
         state.purchasePropertyClaimFromBankStatus = ERROR_STATUS;
@@ -128,7 +128,7 @@ export const propertyClaimsSlice = createSlice({
       .addCase(unmortgagePropertyAction.rejected, (state) => {
         state.unmortgagePropertyStatus = ERROR_STATUS;
       });
-  },
+  }
 });
 
 const { actions, reducer } = propertyClaimsSlice;

@@ -41,7 +41,7 @@ export function registerSuccessfulLoginForJwt(token) {
   // The value of 60 represents 60 seconds, or one minute
   if (timerValueForRefresh < 60) {
     console.log(
-      "Unable to set refresh token timer due to token expiring too soon",
+      "Unable to set refresh token timer due to token expiring too soon"
     );
     throw new Error("Error setting refresh token timer");
   }
@@ -55,7 +55,7 @@ export async function registerUser(data) {
     const response = await axios.post(url, {
       username: data.username,
       email: data.email,
-      password: data.password,
+      password: data.password
     });
     return response.data;
   } catch (err) {
@@ -69,7 +69,7 @@ export async function authenticate(data) {
   try {
     const response = await axios.post(url, {
       username: data.username,
-      password: data.password,
+      password: data.password
     });
     registerSuccessfulLoginForJwt(response.data.token);
     return response.data.token;
@@ -96,7 +96,7 @@ export async function sendPasswordResetEmail(data) {
   const url = `/sendForgotPasswordEmail`;
   try {
     await axios.post(url, {
-      email: data.email,
+      email: data.email
     });
   } catch (err) {
     console.log(err);
@@ -109,7 +109,7 @@ export async function resetPassword(data) {
   try {
     await axios.post(url, {
       forgotPasswordToken: data.forgotPasswordToken,
-      newPassword: data.newPassword,
+      newPassword: data.newPassword
     });
   } catch (err) {
     console.log(err);

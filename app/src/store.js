@@ -9,6 +9,6 @@ export const store = configureStore({
     gamesData: gamesSlice,
     authData: authSlice,
     userProfileData: userProfileSlice,
-    propertyClaimsData: propertyClaimsSlice,
-  },
+    propertyClaimsData: propertyClaimsSlice
+  }
 });

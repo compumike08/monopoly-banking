@@ -10,7 +10,7 @@ import PaymentRecords from "../payments/PaymentRecords";
 import { getAllPaymentsAction } from "../games/gamesSlice";
 import {
   selectActiveGamePlayersYouOnTop,
-  selectLoggedInPlayer,
+  selectLoggedInPlayer
 } from "./gamePlayersSelector";
 import { selectActiveGameBankMoneySinkOnTop } from "./gameMoneySinksSelector";
 
@@ -26,7 +26,7 @@ class PaymentTabView extends PureComponent {
       players,
       gameId,
       moneySinks,
-      paymentRecords,
+      paymentRecords
     } = this.props;
     const { playerRole } = loggedInPlayerObject;
 
@@ -105,7 +105,7 @@ function mapStateToProps(state) {
     players: selectActiveGamePlayersYouOnTop(state),
     moneySinks: selectActiveGameBankMoneySinkOnTop(state),
     loggedInPlayerObject: selectLoggedInPlayer(state),
-    paymentRecords: state.gamesData.activeGame.paymentRecords,
+    paymentRecords: state.gamesData.activeGame.paymentRecords
   };
 }
 
@@ -113,10 +113,10 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        getAllPaymentsAction,
+        getAllPaymentsAction
       },
-      dispatch,
-    ),
+      dispatch
+    )
   };
 }
 

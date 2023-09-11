@@ -7,7 +7,7 @@ import {
   NavbarToggler,
   Collapse,
   Nav,
-  NavItem,
+  NavItem
 } from "reactstrap";
 
 const TitleBar = () => {
