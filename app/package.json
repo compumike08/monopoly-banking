@@ -22,6 +22,7 @@
     "uuid": "8.3.2"
   },
   "scripts": {
+    "prepare": "cd .. && husky install app/.husky",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -50,6 +51,11 @@
   },
   "devDependencies": {
     "eslint-config-prettier": "9.0.0",
+    "husky": "8.0.3",
+    "lint-staged": "14.0.1",
     "prettier": "3.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,json,css,md}": "prettier --write"
   }
 }
