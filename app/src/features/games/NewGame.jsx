@@ -64,7 +64,7 @@ class NewGame extends React.Component {
 
       try {
         await this.props.actions.createNewGameAction(data).unwrap();
-        this.props.history.push("/newGameConfirmation");
+        this.props.history.push("/newPlayer");
       } catch (err) {
         this.setState({
           backendErrorMsg: err.message
