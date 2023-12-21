@@ -12,7 +12,6 @@ import AuthLanding from './features/auth/AuthLanding';
 import RegisterUser from './features/auth/RegisterUser';
 import LoginPage from './features/auth/LoginPage';
 import NewGame from './features/games/NewGame';
-import NewGameConfirmation from './features/games/NewGameConfirmation';
 import NewPlayer from './features/players/NewPlayer';
 import JoinGame from "./features/games/JoinGame";
 import GamesList from './features/games/GamesList';
@@ -54,9 +53,6 @@ function App() {
                   </Route>
                   <Route path="/newGame">
                       <NewGame />
-                  </Route>
-                  <Route path="/newGameConfirmation">
-                    <NewGameConfirmation />
                   </Route>
                   <Route path="/newPlayer">
                       <NewPlayer />
