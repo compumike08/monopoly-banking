@@ -14,6 +14,8 @@ public class NewProposedTradeRequestDTO implements Serializable {
     private long gameId;
     private long proposingPlayerId;
     private long requestedPlayerId;
+    private long amountMoneyOffered;
+    private long amountMoneyRequested;
     private List<Long> proposedPropertyClaimIds;
     private List<Long> requestedPropertyClaimIds;
 }

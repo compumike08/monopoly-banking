@@ -29,6 +29,9 @@ public class ProposedTrade {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    private long amountMoneyOffered;
+    private long amountMoneyRequested;
+
     @OneToMany(mappedBy = "offeredInProposedTrade", cascade = CascadeType.ALL)
     private List<PropertyClaim> offeredPropertyClaims = new ArrayList<>();
 

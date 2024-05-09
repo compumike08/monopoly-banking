@@ -135,6 +135,8 @@ public class ConvertDTOUtil {
                 )
                 .proposingPlayerId(proposedTrade.getProposingPlayer().getId())
                 .requestedPlayerId(proposedTrade.getRequestedPlayer().getId())
+                .amountMoneyOffered(proposedTrade.getAmountMoneyOffered())
+                .amountMoneyRequested(proposedTrade.getAmountMoneyRequested())
                 .requestedPropertyClaims(
                         convertPropertyClaimListToPropertyClaimDTOList(proposedTrade.getRequestedPropertyClaims())
                 )

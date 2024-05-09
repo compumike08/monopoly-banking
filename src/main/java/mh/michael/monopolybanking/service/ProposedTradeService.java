@@ -90,6 +90,11 @@ public class ProposedTradeService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
 
+        if (requestDTO.getAmountMoneyRequested() < 0 || requestDTO.getAmountMoneyOffered() < 0) {
+            log.error("User attempted to propose trade involving negative money amounts");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid money amount(s)");
+        }
+
         List<ProposedTrade> allProposedTradesInGameList = proposedTradeRepository.findByGame_Id(requestDTO.getGameId());
 
         List<PropertyClaim> allPropertyClaimsInProposedTrades = new ArrayList<>();
@@ -144,10 +149,50 @@ public class ProposedTradeService {
         List<PropertyClaim> proposedPropertyClaims = propertyClaimRepository
                 .findByIdIn(requestDTO.getProposedPropertyClaimIds());
 
+        AtomicBoolean isProposedPropertyClaimBelongingToOtherPlayer = new AtomicBoolean(false);
+
+        requestDTO.getProposedPropertyClaimIds().forEach(proposedPropertyClaimId -> {
+            if (!proposingPlayerOpt.get().getOwnedPropertyClaims()
+                    .contains(propertyClaimRepository.getOne(proposedPropertyClaimId))) {
+                isProposedPropertyClaimBelongingToOtherPlayer.set(true);
+            }
+        });
+
+        if (isProposedPropertyClaimBelongingToOtherPlayer.get()) {
+            log.error("Player proposed trading a property he/she doesn't own");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        AtomicBoolean isRequestedPropertyClaimBelongingToOtherPlayer = new AtomicBoolean(false);
+
+        requestDTO.getRequestedPropertyClaimIds().forEach(requestedPropertyClaimId -> {
+            if (!requestedPlayerOpt.get().getOwnedPropertyClaims()
+                    .contains(propertyClaimRepository.getOne(requestedPropertyClaimId))) {
+                isRequestedPropertyClaimBelongingToOtherPlayer.set(true);
+            }
+        });
+
+        if (isRequestedPropertyClaimBelongingToOtherPlayer.get()) {
+            log.error("Player requested trading for a property the other player doesn't own");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        if (requestDTO.getAmountMoneyOffered() > proposingPlayerOpt.get().getMoneyBalance()) {
+            log.info("Player proposed a trade offering more money that he/she has");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot propose a trade that offers more money than you have");
+        }
+
+        if (requestDTO.getAmountMoneyRequested() > requestedPlayerOpt.get().getMoneyBalance()) {
+            log.info("Player proposed a trade requesting more money than the other play has");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot propose a trade that requests more money than the other player has");
+        }
+
         ProposedTrade newProposedTrade = ProposedTrade.builder()
                 .proposingPlayer(proposingPlayerOpt.get())
                 .requestedPlayer(requestedPlayerOpt.get())
                 .game(game)
+                .amountMoneyOffered(requestDTO.getAmountMoneyOffered())
+                .amountMoneyRequested(requestDTO.getAmountMoneyRequested())
                 .requestedPropertyClaims(requestedPropertyClaims)
                 .offeredPropertyClaims(proposedPropertyClaims)
                 .build();
