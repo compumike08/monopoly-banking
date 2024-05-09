@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public class ProposedTradeDTO implements Serializable {
     private long proposedTradeId;
-    private long proposingPlayerId;
-    private long requestedPlayerId;
+    private PlayerDTO proposingPlayer;
+    private PlayerDTO requestedPlayer;
     private long amountMoneyOffered;
     private long amountMoneyRequested;
     private List<PropertyClaimDTO> offeredPropertyClaims;
