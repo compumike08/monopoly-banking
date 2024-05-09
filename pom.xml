@@ -19,8 +19,8 @@
 		<java.version>11</java.version>
 		<jsonwebtoken.version>0.11.5</jsonwebtoken.version>
 		<frontend-maven-plugin.version>1.12.0</frontend-maven-plugin.version>
-    	<node.version>v16.13.1</node.version>
-    	<yarn.version>v1.22.4</yarn.version>
+    	<node.version>v20.10.0</node.version>
+    	<yarn.version>v1.22.21</yarn.version>
 	</properties>
 
 	<dependencies>
