@@ -26,3 +26,10 @@ export const selectLoggedInPlayer = createSelector(
     return players.find((player) => player.id === loggedInPlayerId);
   }
 );
+
+export const selectActivePlayersNoLoggedInPlayer = createSelector(
+  [selectActiveGamePlayers, selectLoggedInPlayerId],
+  (players, loggedInPlayerId) => {
+    return players.filter((player) => player.id !== loggedInPlayerId);
+  }
+);

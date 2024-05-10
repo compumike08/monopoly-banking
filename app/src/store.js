@@ -3,12 +3,14 @@ import gamesSlice from "./features/games/gamesSlice";
 import authSlice from "./features/auth/authSlice";
 import userProfileSlice from "./features/userProfile/userProfileSlice";
 import propertyClaimsSlice from "./features/properties/propertiesSlice";
+import tradesSlice from "./features/trades/tradesSlice";
 
 export const store = configureStore({
   reducer: {
     gamesData: gamesSlice,
     authData: authSlice,
     userProfileData: userProfileSlice,
-    propertyClaimsData: propertyClaimsSlice
+    propertyClaimsData: propertyClaimsSlice,
+    tradeData: tradesSlice
   }
 });

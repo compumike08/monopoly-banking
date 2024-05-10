@@ -58,16 +58,24 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
                       }
                     >
                       {property.name}{" "}
-                      <Badge className="ms-2">
-                        {formatNumberAsCurrency(property.cost)}
-                      </Badge>{" "}
-                      {property.isMortgaged ? (
+                      {!this.props.isTradeView && (
+                        <Badge className="ms-2">
+                          {formatNumberAsCurrency(property.cost)}
+                        </Badge>
+                      )}{" "}
+                      {property.isMortgaged && (
                         <Badge color="dark" className="ms-2">
                           Mortgaged
                         </Badge>
-                      ) : (
-                        ""
-                      )}
+                      )}{" "}
+                      {this.props.isTradeView &&
+                        this.props.selectedForTradePropertyClaimIds.includes(
+                          property.propertyClaimId
+                        ) && (
+                          <Badge color="success" className="ms-2">
+                            Selected For Trade
+                          </Badge>
+                        )}
                     </AccordionHeader>
                     <AccordionBody
                       accordionId={property.propertyClaimId.toString()}
@@ -75,13 +83,22 @@ class SelectedPlayerOwnedPropertiesList extends PureComponent {
                       <PropertyCard
                         propertyData={property}
                         loggedInPlayerId={this.props.loggedInPlayerId}
-                        showMortgageButton
-                        showUnmortgageButton
+                        showMortgageButton={!this.props.isTradeView}
+                        showUnmortgageButton={!this.props.isTradeView}
+                        isTradeView={this.props.isTradeView}
+                        tradeSelectFunction={this.props.tradeSelectFunction}
+                        tradeUnselectFunction={this.props.tradeUnselectFunction}
                         mortgagePropertyFunction={
                           this.props.mortgagePropertyFunction
                         }
                         unmortgagePropertyFunction={
                           this.props.unmortgagePropertyFunction
+                        }
+                        isSelectedForTrade={
+                          this.props.isTradeView &&
+                          this.props.selectedForTradePropertyClaimIds.includes(
+                            property.propertyClaimId
+                          )
                         }
                       />
                     </AccordionBody>
@@ -109,13 +126,31 @@ function mapStateToProps(state, ownProps) {
 }
 
 SelectedPlayerOwnedPropertiesList.defaultProps = {
-  selectedPlayerId: ""
+  mortgagePropertyFunction: () => {
+    /* noop */
+  },
+  unmortgagePropertyFunction: () => {
+    /* noop */
+  },
+  tradeSelectFunction: () => {
+    /* noop */
+  },
+  tradeUnselectFunction: () => {
+    /* noop */
+  },
+  selectedPlayerId: "",
+  isTradeView: false,
+  selectedForTradePropertyClaimIds: []
 };
 
 SelectedPlayerOwnedPropertiesList.propTypes = {
-  mortgagePropertyFunction: PropTypes.func.isRequired,
-  unmortgagePropertyFunction: PropTypes.func.isRequired,
-  selectedPlayerId: PropTypes.string
+  mortgagePropertyFunction: PropTypes.func,
+  unmortgagePropertyFunction: PropTypes.func,
+  tradeSelectFunction: PropTypes.func,
+  tradeUnselectFunction: PropTypes.func,
+  selectedPlayerId: PropTypes.string,
+  isTradeView: PropTypes.bool,
+  selectedForTradePropertyClaimIds: PropTypes.arrayOf(PropTypes.number)
 };
 
 export default connect(mapStateToProps)(SelectedPlayerOwnedPropertiesList);

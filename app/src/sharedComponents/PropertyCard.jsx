@@ -19,6 +19,10 @@ const PropertyCard = ({
   showMortgageButton,
   showUnmortgageButton,
   propertyData,
+  isTradeView,
+  isSelectedForTrade,
+  tradeSelectFunction,
+  tradeUnselectFunction,
   buyPropertyFunction,
   mortgagePropertyFunction,
   unmortgagePropertyFunction,
@@ -73,6 +77,7 @@ const PropertyCard = ({
     showMortgageButton && loggedInPlayerId === ownedByPlayerId && !isMortgaged;
   const isShowUnmortgageButton =
     showUnmortgageButton && loggedInPlayerId === ownedByPlayerId && isMortgaged;
+  const isShowTradeSelectButton = isTradeView;
 
   return (
     <Card>
@@ -156,9 +161,24 @@ const PropertyCard = ({
           )}
           {(isShowBuyButton ||
             isShowMortgageButton ||
-            isShowUnmortgageButton) && (
+            isShowUnmortgageButton ||
+            isShowTradeSelectButton) && (
             <Row>
               <Col>
+                {isShowTradeSelectButton && (
+                  <Button
+                    color="primary"
+                    onClick={
+                      !isSelectedForTrade
+                        ? () => tradeSelectFunction(propertyClaimId)
+                        : () => tradeUnselectFunction(propertyClaimId)
+                    }
+                  >
+                    {!isSelectedForTrade
+                      ? "Select To Trade"
+                      : "Unselect To Trade"}
+                  </Button>
+                )}
                 {isShowBuyButton && (
                   <Button
                     color="primary"
@@ -197,6 +217,14 @@ PropertyCard.defaultProps = {
   showMortgageButton: false,
   showUnmortgageButton: false,
   showCardHeader: true,
+  isSelectedForTrade: false,
+  isTradeView: false,
+  tradeSelectFunction: () => {
+    /* noop */
+  },
+  tradeUnselectFunction: () => {
+    /* noop */
+  },
   buyPropertyFunction: () => {
     /* noop */
   },
@@ -236,6 +264,10 @@ PropertyCard.propTypes = {
   showMortgageButton: PropTypes.bool,
   showUnmortgageButton: PropTypes.bool,
   showCardHeader: PropTypes.bool,
+  isSelectedForTrade: PropTypes.bool,
+  isTradeView: PropTypes.bool,
+  tradeSelectFunction: PropTypes.func,
+  tradeUnselectFunction: PropTypes.func,
   buyPropertyFunction: PropTypes.func,
   mortgagePropertyFunction: PropTypes.func,
   unmortgagePropertyFunction: PropTypes.func
