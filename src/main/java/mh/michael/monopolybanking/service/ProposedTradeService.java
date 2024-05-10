@@ -198,7 +198,20 @@ public class ProposedTradeService {
                 .build();
 
         ProposedTrade savedProposedTrade = proposedTradeRepository.save(newProposedTrade);
-        ProposedTradeDTO savedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(savedProposedTrade);
+
+        requestedPropertyClaims.forEach(propertyClaim -> {
+            propertyClaim.setRequestedInProposedTrade(savedProposedTrade);
+            propertyClaimRepository.save(propertyClaim);
+        });
+
+        proposedPropertyClaims.forEach(propertyClaim -> {
+            propertyClaim.setOfferedInProposedTrade(savedProposedTrade);
+            propertyClaimRepository.save(propertyClaim);
+        });
+
+        ProposedTrade newSavedProposedTrade = proposedTradeRepository.getOne(savedProposedTrade.getId());
+
+        ProposedTradeDTO savedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(newSavedProposedTrade);
 
         simpMessagingTemplate.convertAndSend(
                 "/topic/player/" + requestDTO.getRequestedPlayerId() + "/proposedTrade", savedProposedTradeDTO);
