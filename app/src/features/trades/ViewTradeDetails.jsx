@@ -6,7 +6,6 @@ import { Col, Row, Button, Alert } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { formatNumberAsCurrency } from "../../utils/util";
-import SelectedPlayerOwnedPropertiesList from "../properties/SelectedPlayerOwnedPropertiesList";
 import { selectSelectedTradeDetails } from "./tradesSelectors";
 import ProposedTradePropertiesList from "../properties/ProposedTradePropertiesList";
 
