@@ -213,10 +213,59 @@ public class ProposedTradeService {
 
         ProposedTradeDTO savedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(newSavedProposedTrade);
 
+        savedProposedTradeDTO.setIsProposedTradeCreated(true);
+
         simpMessagingTemplate.convertAndSend(
                 "/topic/player/" + requestDTO.getRequestedPlayerId() + "/proposedTrade", savedProposedTradeDTO);
         log.debug("Proposed trade websocket message sent");
 
         return savedProposedTradeDTO;
+    }
+
+    @Transactional
+    public ProposedTradeDTO cancelProposedTrade(long proposedTradeId, JwtUserDetails jwtUserDetails) {
+        Optional<ProposedTrade> optProposedTrade = proposedTradeRepository.findById(proposedTradeId);
+        if (optProposedTrade.isEmpty()) {
+            log.error("Proposed trade id {} not found", proposedTradeId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        ProposedTrade proposedTrade = optProposedTrade.get();
+
+        if (!jwtUserDetails.getPlayerIdList().contains(proposedTrade.getProposingPlayer().getId())) {
+            log.error("User attempted to cancel a proposed trade that they don't have access to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        List<Long> offeredPropertyClaimsIdsList = proposedTrade.getOfferedPropertyClaims().stream()
+                .map(PropertyClaim::getId).collect(Collectors.toList());
+        List<Long> requestedPropertyClaimsIdsList = proposedTrade.getRequestedPropertyClaims().stream()
+                .map(PropertyClaim::getId).collect(Collectors.toList());
+
+        List<Long> allPropertyClaimsIdsList = new ArrayList<>();
+        allPropertyClaimsIdsList.addAll(offeredPropertyClaimsIdsList);
+        allPropertyClaimsIdsList.addAll(requestedPropertyClaimsIdsList);
+
+        List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByIdIn(allPropertyClaimsIdsList);
+
+        propertyClaimList.forEach(propertyClaim -> {
+            propertyClaim.setOfferedInProposedTrade(null);
+            propertyClaim.setRequestedInProposedTrade(null);
+            propertyClaimRepository.save(propertyClaim);
+        });
+
+        proposedTrade = proposedTradeRepository.getOne(proposedTradeId);
+
+        proposedTradeRepository.delete(proposedTrade);
+
+        ProposedTradeDTO deletedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(proposedTrade);
+
+        deletedProposedTradeDTO.setIsProposedTradeCancelled(true);
+
+        simpMessagingTemplate.convertAndSend(
+                "/topic/player/" + proposedTrade.getRequestedPlayer().getId() + "/proposedTrade", deletedProposedTradeDTO);
+        log.debug("Cancel proposed trade websocket message sent");
+
+        return deletedProposedTradeDTO;
     }
 }

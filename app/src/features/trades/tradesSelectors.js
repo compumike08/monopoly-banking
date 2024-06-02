@@ -60,7 +60,6 @@ export const selectSelectedTradeDetails = createSelector(
       return toRequestedPlayerTrade;
     }
 
-    // If unable to find the selected trade id in either array, throw an error
-    throw new Error("Unable to find proposed trade by selected trade id");
+    return null;
   }
 );

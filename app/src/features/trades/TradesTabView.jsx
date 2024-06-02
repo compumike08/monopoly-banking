@@ -1,8 +1,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Col, Row, Button } from "reactstrap";
+import { Col, Row, Button, Alert } from "reactstrap";
 import {
+  cancelProposedTradeAction,
   getAllProposedTradesByProposingPlayerAction,
   getAllProposedTradesByRequestedPlayerAction
 } from "./tradesSlice";
@@ -21,7 +22,9 @@ class TradesTabView extends PureComponent {
     this.state = {
       isShowProposeTrade: false,
       isShowViewTradeDetails: false,
-      tradeIdToShow: -1
+      tradeIdToShow: -1,
+      isResponseError: false,
+      responseErrorMsg: null
     };
   }
 
@@ -51,7 +54,9 @@ class TradesTabView extends PureComponent {
     this.setState({
       isShowProposeTrade: false,
       isShowViewTradeDetails: false,
-      tradeIdToShow: -1
+      tradeIdToShow: -1,
+      isResponseError: false,
+      responseErrorMsg: null
     });
   };
 
@@ -59,6 +64,27 @@ class TradesTabView extends PureComponent {
     this.setState({
       isShowViewTradeDetails: true,
       tradeIdToShow: tradeId
+    });
+  };
+
+  cancelSelectedTradeFunction = async (tradeId) => {
+    this.clearError();
+
+    const response =
+      await this.props.actions.cancelProposedTradeAction(tradeId);
+
+    if (response.error && response.error.message) {
+      this.setState({
+        isResponseError: true,
+        responseErrorMsg: response.error.message
+      });
+    }
+  };
+
+  clearError = () => {
+    this.setState({
+      isResponseError: false,
+      responseErrorMsg: null
     });
   };
 
@@ -87,6 +113,19 @@ class TradesTabView extends PureComponent {
             </div>
           </Col>
         </Row>
+        {this.state.isResponseError && (
+          <Row>
+            <Col>
+              <Alert
+                color="danger"
+                isOpen={this.state.isResponseError}
+                toggle={this.clearError}
+              >
+                {this.state.responseErrorMsg}
+              </Alert>
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col lg="6">
             <Row>
@@ -100,6 +139,9 @@ class TradesTabView extends PureComponent {
                   tradeRecords={this.props.offeredTradeRecords}
                   viewSelectedTradeFunction={(tradeId) =>
                     this.viewSelectedTradeId(tradeId)
+                  }
+                  cancelSelectedTradeFunction={(tradeId) =>
+                    this.cancelSelectedTradeFunction(tradeId)
                   }
                 />
               </Col>
@@ -143,7 +185,8 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(
       {
         getAllProposedTradesByProposingPlayerAction,
-        getAllProposedTradesByRequestedPlayerAction
+        getAllProposedTradesByRequestedPlayerAction,
+        cancelProposedTradeAction
       },
       dispatch
     )

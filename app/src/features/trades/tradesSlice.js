@@ -8,7 +8,8 @@ import {
 import {
   getAllProposedTradesByProposingPlayerId,
   getAllProposedTradesByRequestedPlayerId,
-  proposeTrade
+  proposeTrade,
+  cancelProposedTrade
 } from "../../api/tradesAPI";
 
 const initialState = {
@@ -16,7 +17,8 @@ const initialState = {
   allProposedTradesToRequestedPlayer: [],
   getAllProposedTradesByProposingPlayerStatus: IDLE_STATUS,
   getAllProposedTradesByRequestedPlayerStatus: IDLE_STATUS,
-  proposeTradeStatus: IDLE_STATUS
+  proposeTradeStatus: IDLE_STATUS,
+  cancelProposedTradeStatus: IDLE_STATUS
 };
 
 export const getAllProposedTradesByProposingPlayerAction = createAsyncThunk(
@@ -40,14 +42,30 @@ export const proposeTradeAction = createAsyncThunk(
   }
 );
 
-const processProposedTradeCreated = (state, action, isReceivedFromWs) => {
+export const cancelProposedTradeAction = createAsyncThunk(
+  "proposedTrades/cancelProposedTradeAction",
+  async (proposedTradeId) => {
+    return await cancelProposedTrade(proposedTradeId);
+  }
+);
+
+const processProposedTradeUpdate = (state, action, isReceivedFromWs) => {
   const data = action.payload;
 
-  state.allProposedTradesToRequestedPlayer.push(data);
-
   if (isReceivedFromWs) {
-    const toastMessage = `${data.proposingPlayer.name} has proposed a trade with you`;
-    toast.success(toastMessage);
+    if (data.isProposedTradeCreated) {
+      state.allProposedTradesToRequestedPlayer.push(data);
+      const toastMessage = `${data.proposingPlayer.name} has proposed a trade with you`;
+      toast.success(toastMessage);
+    } else if (data.isProposedTradeCancelled) {
+      state.allProposedTradesToRequestedPlayer =
+        state.allProposedTradesToRequestedPlayer.filter(
+          (proposedTrade) =>
+            proposedTrade.proposedTradeId !== action.payload.proposedTradeId
+        );
+      const toastMessage = `${data.proposingPlayer.name} has cancelled a proposed trade with you`;
+      toast.success(toastMessage);
+    }
   }
 };
 
@@ -55,8 +73,8 @@ export const tradesSlice = createSlice({
   name: "trades",
   initialState,
   reducers: {
-    proposedTradeCreatedReceivedFromWs(state, action) {
-      state = processProposedTradeCreated(state, action, true);
+    proposedTradeUpdateReceivedFromWs(state, action) {
+      state = processProposedTradeUpdate(state, action, true);
     },
     resetAllProposedTradesData() {
       return initialState;
@@ -105,12 +123,26 @@ export const tradesSlice = createSlice({
       })
       .addCase(proposeTradeAction.rejected, (state) => {
         state.proposeTradeStatus = ERROR_STATUS;
+      })
+      .addCase(cancelProposedTradeAction.pending, (state) => {
+        state.cancelProposedTradeStatus = LOADING_STATUS;
+      })
+      .addCase(cancelProposedTradeAction.fulfilled, (state, action) => {
+        state.cancelProposedTradeStatus = IDLE_STATUS;
+        state.allProposedTradesFromProposingPlayer =
+          state.allProposedTradesFromProposingPlayer.filter(
+            (proposedTrade) =>
+              proposedTrade.proposedTradeId !== action.payload.proposedTradeId
+          );
+      })
+      .addCase(cancelProposedTradeAction.rejected, (state) => {
+        state.cancelProposedTradeStatus = ERROR_STATUS;
       });
   }
 });
 
 const { actions, reducer } = tradesSlice;
 
-export const { proposedTradeCreatedReceivedFromWs } = actions;
+export const { proposedTradeUpdateReceivedFromWs } = actions;
 
 export default reducer;

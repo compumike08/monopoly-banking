@@ -18,4 +18,10 @@ public class ProposedTradeDTO implements Serializable {
     private long amountMoneyRequested;
     private List<PropertyClaimDTO> offeredPropertyClaims;
     private List<PropertyClaimDTO> requestedPropertyClaims;
+
+    // These properties are for sending websocket messages
+    private boolean isProposedTradeCreated = false;
+    private boolean isProposedTradeCancelled = false;
+    private boolean isProposedTradeAccepted = false;
+    private boolean isProposedTradeRejected = false;
 }

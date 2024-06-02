@@ -5,6 +5,7 @@ import { Table, Button } from "reactstrap";
 const TradeRecords = ({
   tradeRecords,
   viewSelectedTradeFunction,
+  cancelSelectedTradeFunction,
   isRequested
 }) => {
   return (
@@ -14,6 +15,7 @@ const TradeRecords = ({
           <tr>
             <th>Trade ID</th>
             <th>{isRequested ? "Requested By" : "Proposed To"}</th>
+            {!isRequested && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -31,6 +33,18 @@ const TradeRecords = ({
                   </Button>
                 </td>
                 <td>{tradeRecord.playerName}</td>
+                {!isRequested && (
+                  <td>
+                    <Button
+                      color="danger"
+                      onClick={() =>
+                        cancelSelectedTradeFunction(tradeRecord.tradeId)
+                      }
+                    >
+                      Cancel
+                    </Button>
+                  </td>
+                )}
               </tr>
             );
           })}
@@ -41,6 +55,9 @@ const TradeRecords = ({
 };
 
 TradeRecords.defaultProps = {
+  cancelSelectedTradeFunction: () => {
+    /* noop */
+  },
   isRequested: false
 };
 
@@ -52,6 +69,7 @@ TradeRecords.propTypes = {
     })
   ).isRequired,
   viewSelectedTradeFunction: PropTypes.func.isRequired,
+  cancelSelectedTradeFunction: PropTypes.func,
   isRequested: PropTypes.bool
 };
 

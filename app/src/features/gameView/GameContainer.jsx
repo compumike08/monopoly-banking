@@ -16,7 +16,7 @@ import {
   paymentReceivedFromWs
 } from "../games/gamesSlice";
 import { propertyClaimUpdateReceivedFromWs } from "../properties/propertiesSlice";
-import { proposedTradeCreatedReceivedFromWs } from "../trades/tradesSlice";
+import { proposedTradeUpdateReceivedFromWs } from "../trades/tradesSlice";
 import GameView from "./GameView";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -80,7 +80,7 @@ class GameContainer extends PureComponent {
         (message) => {
           // called when the client receives a STOMP message from the server
           if (message.body) {
-            componentThis.props.actions.proposedTradeCreatedReceivedFromWs(
+            componentThis.props.actions.proposedTradeUpdateReceivedFromWs(
               JSON.parse(message.body)
             );
           } else {
@@ -129,7 +129,7 @@ function mapDispatchToProps(dispatch) {
         playerReceivedFromWs,
         paymentReceivedFromWs,
         propertyClaimUpdateReceivedFromWs,
-        proposedTradeCreatedReceivedFromWs
+        proposedTradeUpdateReceivedFromWs
       },
       dispatch
     )

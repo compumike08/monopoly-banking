@@ -81,7 +81,8 @@ const mapStateToProps = (state, ownProps) => {
     propertyClaimsList: selectProposedTradePropertiesListProperties(
       state,
       ownProps.propertyClaimIdsList
-    )
+    ),
+    loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId
   };
 };
 
