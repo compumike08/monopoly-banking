@@ -11,7 +11,7 @@ export const selectAllProposedTradesFromProposingPlayer = createSelector(
     return allProposedTradesFromProposingPlayerList.map((proposedTrade) => {
       return {
         tradeId: proposedTrade.proposedTradeId,
-        playerName: proposedTrade.proposingPlayer.name
+        playerName: proposedTrade.requestedPlayer.name
       };
     });
   }
@@ -23,7 +23,7 @@ export const selectAllProposedTradesToRequestedPlayer = createSelector(
     return allProposedTradesToRequestedPlayerList.map((proposedTrade) => {
       return {
         tradeId: proposedTrade.proposedTradeId,
-        playerName: proposedTrade.requestedPlayer.name
+        playerName: proposedTrade.proposingPlayer.name
       };
     });
   }

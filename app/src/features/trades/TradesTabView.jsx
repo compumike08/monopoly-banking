@@ -114,6 +114,7 @@ class TradesTabView extends PureComponent {
             <Row>
               <Col>
                 <TradeRecords
+                  isRequested
                   tradeRecords={this.props.requestedTradeRecords}
                   viewSelectedTradeFunction={(tradeId) =>
                     this.viewSelectedTradeId(tradeId)
