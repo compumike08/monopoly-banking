@@ -40,10 +40,24 @@ export const proposeTradeAction = createAsyncThunk(
   }
 );
 
-export const propertyClaimsSlice = createSlice({
-  name: "proposedTrades",
+const processProposedTradeCreated = (state, action, isReceivedFromWs) => {
+  const data = action.payload;
+
+  state.allProposedTradesToRequestedPlayer.push(data);
+
+  if (isReceivedFromWs) {
+    const toastMessage = `${data.proposingPlayer.name} has proposed a trade with you`;
+    toast.success(toastMessage);
+  }
+};
+
+export const tradesSlice = createSlice({
+  name: "trades",
   initialState,
   reducers: {
+    proposedTradeCreatedReceivedFromWs(state, action) {
+      state = processProposedTradeCreated(state, action, true);
+    },
     resetAllProposedTradesData() {
       return initialState;
     }
@@ -95,8 +109,8 @@ export const propertyClaimsSlice = createSlice({
   }
 });
 
-const { actions, reducer } = propertyClaimsSlice;
+const { actions, reducer } = tradesSlice;
 
-export const { resetPropertyClaimsData } = actions;
+export const { proposedTradeCreatedReceivedFromWs } = actions;
 
 export default reducer;

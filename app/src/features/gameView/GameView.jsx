@@ -8,7 +8,8 @@ import {
   NavItem,
   NavLink,
   TabContent,
-  TabPane
+  TabPane,
+  Badge
 } from "reactstrap";
 import PaymentTabView from "./PaymentTabView";
 import PropertyTabView from "../properties/PropertyTabView";
@@ -62,7 +63,15 @@ class GameView extends PureComponent {
                   this.setState({ activeTabId: "3" });
                 }}
               >
-                Trades
+                Trades{" "}
+                {this.props.allProposedTradesToRequestedPlayer.length +
+                  this.props.allProposedTradesFromProposingPlayer.length >
+                  0 && (
+                  <Badge color="info" pill>
+                    {this.props.allProposedTradesToRequestedPlayer.length +
+                      this.props.allProposedTradesFromProposingPlayer.length}
+                  </Badge>
+                )}
               </NavLink>
             </NavItem>
           </Nav>
@@ -85,7 +94,11 @@ class GameView extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    gameCode: state.gamesData.activeGame.code
+    gameCode: state.gamesData.activeGame.code,
+    allProposedTradesToRequestedPlayer:
+      state.tradeData.allProposedTradesToRequestedPlayer,
+    allProposedTradesFromProposingPlayer:
+      state.tradeData.allProposedTradesFromProposingPlayer
   };
 }
 

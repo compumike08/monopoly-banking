@@ -5,6 +5,8 @@ import { ToastContainer } from "react-toastify";
 import { stompClient } from "../../stomp/stompClient";
 import {
   TOPIC_GAME_PREFIX,
+  TOPIC_PLAYER_PREFIX,
+  TOPIC_PROPOSED_TRADE,
   TOPIC_GAME_PLAYERS,
   TOPIC_GAME_PAYMENT,
   TOPIC_GAME_PROPERTY_UPDATE
@@ -14,6 +16,7 @@ import {
   paymentReceivedFromWs
 } from "../games/gamesSlice";
 import { propertyClaimUpdateReceivedFromWs } from "../properties/propertiesSlice";
+import { proposedTradeCreatedReceivedFromWs } from "../trades/tradesSlice";
 import GameView from "./GameView";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -71,6 +74,20 @@ class GameContainer extends PureComponent {
           }
         }
       );
+
+      componentThis.stompClient.subscribe(
+        `${TOPIC_PLAYER_PREFIX}/${componentThis.props.loggedInPlayerId}/${TOPIC_PROPOSED_TRADE}`,
+        (message) => {
+          // called when the client receives a STOMP message from the server
+          if (message.body) {
+            componentThis.props.actions.proposedTradeCreatedReceivedFromWs(
+              JSON.parse(message.body)
+            );
+          } else {
+            console.log("got empty message");
+          }
+        }
+      );
     };
 
     this.stompClient.onStompError = function (frame) {
@@ -100,7 +117,8 @@ class GameContainer extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    activeGameId: state.gamesData.activeGame.gameId
+    activeGameId: state.gamesData.activeGame.gameId,
+    loggedInPlayerId: state.gamesData.activeGame.loggedInPlayerId
   };
 }
 
@@ -110,7 +128,8 @@ function mapDispatchToProps(dispatch) {
       {
         playerReceivedFromWs,
         paymentReceivedFromWs,
-        propertyClaimUpdateReceivedFromWs
+        propertyClaimUpdateReceivedFromWs,
+        proposedTradeCreatedReceivedFromWs
       },
       dispatch
     )
