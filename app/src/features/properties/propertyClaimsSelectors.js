@@ -13,3 +13,15 @@ export const selectCurrentlySelectedPlayerOwnedProperties = createSelector(
     );
   }
 );
+
+export const selectProposedTradePropertiesListProperties = createSelector(
+  [
+    getAllPropertyClaimsList,
+    (_state, propertyClaimIdsList) => propertyClaimIdsList
+  ],
+  (allPropertyClaimsList, propertyClaimIdsList) => {
+    return allPropertyClaimsList.filter((propertyClaim) =>
+      propertyClaimIdsList.includes(propertyClaim.propertyClaimId)
+    );
+  }
+);

@@ -28,3 +28,39 @@ export const selectAllProposedTradesToRequestedPlayer = createSelector(
     });
   }
 );
+
+export const selectSelectedTradeDetails = createSelector(
+  [
+    getAllProposedTradesFromProposingPlayer,
+    (_state, selectedTradeId) => selectedTradeId,
+    getAllProposedTradesToRequestedPlayer
+  ],
+  (
+    allProposedTradesFromProposingPlayerList,
+    selectedTradeId,
+    allProposedTradesToRequestedPlayerList
+  ) => {
+    const fromProposingPlayerTrade =
+      allProposedTradesFromProposingPlayerList.find(
+        (proposedTrade) => proposedTrade.proposedTradeId === selectedTradeId
+      );
+    let toRequestedPlayerTrade = null;
+
+    if (!fromProposingPlayerTrade) {
+      toRequestedPlayerTrade = allProposedTradesToRequestedPlayerList.find(
+        (proposedTrade) => proposedTrade.proposedTradeId === selectedTradeId
+      );
+    }
+
+    if (fromProposingPlayerTrade) {
+      return fromProposingPlayerTrade;
+    }
+
+    if (toRequestedPlayerTrade) {
+      return toRequestedPlayerTrade;
+    }
+
+    // If unable to find the selected trade id in either array, throw an error
+    throw new Error("Unable to find proposed trade by selected trade id");
+  }
+);

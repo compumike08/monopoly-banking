@@ -12,13 +12,16 @@ import {
 } from "./tradesSelectors";
 import TradeRecords from "./TradeRecords";
 import ProposeNewTrade from "./ProposeNewTrade";
+import ViewTradeDetails from "./ViewTradeDetails";
 
 class TradesTabView extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      isShowProposeTrade: false
+      isShowProposeTrade: false,
+      isShowViewTradeDetails: false,
+      tradeIdToShow: -1
     };
   }
 
@@ -46,17 +49,29 @@ class TradesTabView extends PureComponent {
     );
 
     this.setState({
-      isShowProposeTrade: false
+      isShowProposeTrade: false,
+      isShowViewTradeDetails: false,
+      tradeIdToShow: -1
+    });
+  };
+
+  viewSelectedTradeId = (tradeId) => {
+    this.setState({
+      isShowViewTradeDetails: true,
+      tradeIdToShow: tradeId
     });
   };
 
   render() {
     if (this.state.isShowProposeTrade) {
+      return <ProposeNewTrade backToTabView={this.showTabView} />;
+    }
+
+    if (this.state.isShowViewTradeDetails) {
       return (
-        <ProposeNewTrade
-          gameId={this.props.gameId}
-          loggedInPlayerId={this.props.loggedInPlayerId}
+        <ViewTradeDetails
           backToTabView={this.showTabView}
+          tradeIdToShow={this.state.tradeIdToShow}
         />
       );
     }
@@ -81,7 +96,12 @@ class TradesTabView extends PureComponent {
             </Row>
             <Row>
               <Col>
-                <TradeRecords tradeRecords={this.props.offeredTradeRecords} />
+                <TradeRecords
+                  tradeRecords={this.props.offeredTradeRecords}
+                  viewSelectedTradeFunction={(tradeId) =>
+                    this.viewSelectedTradeId(tradeId)
+                  }
+                />
               </Col>
             </Row>
           </Col>
@@ -93,7 +113,12 @@ class TradesTabView extends PureComponent {
             </Row>
             <Row>
               <Col>
-                <TradeRecords tradeRecords={this.props.requestedTradeRecords} />
+                <TradeRecords
+                  tradeRecords={this.props.requestedTradeRecords}
+                  viewSelectedTradeFunction={(tradeId) =>
+                    this.viewSelectedTradeId(tradeId)
+                  }
+                />
               </Col>
             </Row>
           </Col>

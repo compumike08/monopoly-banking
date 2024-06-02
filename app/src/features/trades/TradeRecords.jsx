@@ -1,8 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Table } from "reactstrap";
+import { Table, Button } from "reactstrap";
 
-const TradeRecords = ({ tradeRecords, isRequested }) => {
+const TradeRecords = ({
+  tradeRecords,
+  viewSelectedTradeFunction,
+  isRequested
+}) => {
   return (
     <div className="overflow-auto">
       <Table responsive>
@@ -16,7 +20,16 @@ const TradeRecords = ({ tradeRecords, isRequested }) => {
           {tradeRecords.map((tradeRecord) => {
             return (
               <tr key={`trade-record-key-${tradeRecord.tradeId}`}>
-                <td>{tradeRecord.tradeId}</td>
+                <td>
+                  <Button
+                    color="link"
+                    onClick={() =>
+                      viewSelectedTradeFunction(tradeRecord.tradeId)
+                    }
+                  >
+                    {tradeRecord.tradeId}
+                  </Button>
+                </td>
                 <td>{tradeRecord.playerName}</td>
               </tr>
             );
@@ -38,6 +51,7 @@ TradeRecords.propTypes = {
       playerName: PropTypes.string.isRequired
     })
   ).isRequired,
+  viewSelectedTradeFunction: PropTypes.func.isRequired,
   isRequested: PropTypes.bool
 };
 
