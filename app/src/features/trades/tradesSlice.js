@@ -64,7 +64,7 @@ const processProposedTradeUpdate = (state, action, isReceivedFromWs) => {
             proposedTrade.proposedTradeId !== action.payload.proposedTradeId
         );
       const toastMessage = `${data.proposingPlayer.name} has cancelled a proposed trade with you`;
-      toast.success(toastMessage);
+      toast.error(toastMessage);
     }
   }
 };
