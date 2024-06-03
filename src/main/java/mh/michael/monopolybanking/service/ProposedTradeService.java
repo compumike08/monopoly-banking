@@ -268,4 +268,51 @@ public class ProposedTradeService {
 
         return deletedProposedTradeDTO;
     }
+
+    @Transactional
+    public ProposedTradeDTO rejectProposedTrade(long proposedTradeId, JwtUserDetails jwtUserDetails) {
+        Optional<ProposedTrade> optProposedTrade = proposedTradeRepository.findById(proposedTradeId);
+        if (optProposedTrade.isEmpty()) {
+            log.error("Proposed trade id {} not found", proposedTradeId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        ProposedTrade proposedTrade = optProposedTrade.get();
+
+        if (!jwtUserDetails.getPlayerIdList().contains(proposedTrade.getRequestedPlayer().getId())) {
+            log.error("User attempted to reject a proposed trade that they don't have access to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        List<Long> offeredPropertyClaimsIdsList = proposedTrade.getOfferedPropertyClaims().stream()
+                .map(PropertyClaim::getId).collect(Collectors.toList());
+        List<Long> requestedPropertyClaimsIdsList = proposedTrade.getRequestedPropertyClaims().stream()
+                .map(PropertyClaim::getId).collect(Collectors.toList());
+
+        List<Long> allPropertyClaimsIdsList = new ArrayList<>();
+        allPropertyClaimsIdsList.addAll(offeredPropertyClaimsIdsList);
+        allPropertyClaimsIdsList.addAll(requestedPropertyClaimsIdsList);
+
+        List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByIdIn(allPropertyClaimsIdsList);
+
+        propertyClaimList.forEach(propertyClaim -> {
+            propertyClaim.setOfferedInProposedTrade(null);
+            propertyClaim.setRequestedInProposedTrade(null);
+            propertyClaimRepository.save(propertyClaim);
+        });
+
+        proposedTrade = proposedTradeRepository.getOne(proposedTradeId);
+
+        proposedTradeRepository.delete(proposedTrade);
+
+        ProposedTradeDTO deletedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(proposedTrade);
+
+        deletedProposedTradeDTO.setIsProposedTradeRejected(true);
+
+        simpMessagingTemplate.convertAndSend(
+                "/topic/player/" + proposedTrade.getProposingPlayer().getId() + "/proposedTrade", deletedProposedTradeDTO);
+        log.debug("Reject proposed trade websocket message sent");
+
+        return deletedProposedTradeDTO;
+    }
 }

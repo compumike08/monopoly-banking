@@ -1,14 +1,25 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Col, Row, Button } from "reactstrap";
+import { bindActionCreators } from "redux";
+import { Col, Row, Button, Alert } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { formatNumberAsCurrency } from "../../utils/util";
+import { rejectProposedTradeAction } from "./tradesSlice";
 import { selectSelectedTradeDetails } from "./tradesSelectors";
 import ProposedTradePropertiesList from "../properties/ProposedTradePropertiesList";
 
 class ViewTradeDetails extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isResponseError: false,
+      responseErrorMsg: null
+    };
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps.tradeDetails !== this.props.tradeDetails) {
       if (!this.props.tradeDetails) {
@@ -16,6 +27,25 @@ class ViewTradeDetails extends PureComponent {
       }
     }
   }
+
+  handleRejectTradeClick = async () => {
+    const response = await this.props.actions.rejectProposedTradeAction(
+      this.props.tradeDetails.proposedTradeId
+    );
+    if (response.error && response.error.message) {
+      this.setState({
+        isResponseError: true,
+        responseErrorMsg: response.error.message
+      });
+    }
+  };
+
+  clearError = () => {
+    this.setState({
+      isResponseError: false,
+      responseErrorMsg: null
+    });
+  };
 
   render() {
     const offeredPropertyClaimsIdList = !this.props.tradeDetails
@@ -53,6 +83,19 @@ class ViewTradeDetails extends PureComponent {
             </div>
           </Col>
         </Row>
+        {this.state.isResponseError && (
+          <Row>
+            <Col>
+              <Alert
+                color="danger"
+                isOpen={this.state.isResponseError}
+                toggle={this.clearError}
+              >
+                {this.state.responseErrorMsg}
+              </Alert>
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col>
             <div>
@@ -105,6 +148,17 @@ class ViewTradeDetails extends PureComponent {
             </Row>
           </Col>
         </Row>
+        {this.props.tradeDetails &&
+          this.props.tradeDetails.requestedPlayer.id ===
+            this.props.loggedInPlayerId && (
+            <Row>
+              <Col>
+                <Button color="danger" onClick={this.handleRejectTradeClick}>
+                  Reject Trade
+                </Button>
+              </Col>
+            </Row>
+          )}
       </>
     );
   }
@@ -123,4 +177,15 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(ViewTradeDetails);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(
+      {
+        rejectProposedTradeAction
+      },
+      dispatch
+    )
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewTradeDetails);

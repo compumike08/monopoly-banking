@@ -9,7 +9,8 @@ import {
   getAllProposedTradesByProposingPlayerId,
   getAllProposedTradesByRequestedPlayerId,
   proposeTrade,
-  cancelProposedTrade
+  cancelProposedTrade,
+  rejectProposedTrade
 } from "../../api/tradesAPI";
 
 const initialState = {
@@ -18,7 +19,8 @@ const initialState = {
   getAllProposedTradesByProposingPlayerStatus: IDLE_STATUS,
   getAllProposedTradesByRequestedPlayerStatus: IDLE_STATUS,
   proposeTradeStatus: IDLE_STATUS,
-  cancelProposedTradeStatus: IDLE_STATUS
+  cancelProposedTradeStatus: IDLE_STATUS,
+  rejectProposedTradeStatus: IDLE_STATUS
 };
 
 export const getAllProposedTradesByProposingPlayerAction = createAsyncThunk(
@@ -49,6 +51,13 @@ export const cancelProposedTradeAction = createAsyncThunk(
   }
 );
 
+export const rejectProposedTradeAction = createAsyncThunk(
+  "proposedTrades/rejectProposedTradeAction",
+  async (proposedTradeId) => {
+    return await rejectProposedTrade(proposedTradeId);
+  }
+);
+
 const processProposedTradeUpdate = (state, action, isReceivedFromWs) => {
   const data = action.payload;
 
@@ -64,6 +73,14 @@ const processProposedTradeUpdate = (state, action, isReceivedFromWs) => {
             proposedTrade.proposedTradeId !== action.payload.proposedTradeId
         );
       const toastMessage = `${data.proposingPlayer.name} has cancelled a proposed trade with you`;
+      toast.error(toastMessage);
+    } else if (data.isProposedTradeRejected) {
+      state.allProposedTradesFromProposingPlayer =
+        state.allProposedTradesFromProposingPlayer.filter(
+          (proposedTrade) =>
+            proposedTrade.proposedTradeId !== action.payload.proposedTradeId
+        );
+      const toastMessage = `${data.requestedPlayer.name} has rejected a trade you proposed`;
       toast.error(toastMessage);
     }
   }
@@ -137,6 +154,20 @@ export const tradesSlice = createSlice({
       })
       .addCase(cancelProposedTradeAction.rejected, (state) => {
         state.cancelProposedTradeStatus = ERROR_STATUS;
+      })
+      .addCase(rejectProposedTradeAction.pending, (state) => {
+        state.rejectProposedTradeStatus = LOADING_STATUS;
+      })
+      .addCase(rejectProposedTradeAction.fulfilled, (state, action) => {
+        state.rejectProposedTradeStatus = IDLE_STATUS;
+        state.allProposedTradesToRequestedPlayer =
+          state.allProposedTradesToRequestedPlayer.filter(
+            (proposedTrade) =>
+              proposedTrade.proposedTradeId !== action.payload.proposedTradeId
+          );
+      })
+      .addCase(rejectProposedTradeAction.rejected, (state) => {
+        state.rejectProposedTradeStatus = ERROR_STATUS;
       });
   }
 });

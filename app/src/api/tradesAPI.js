@@ -43,3 +43,14 @@ export async function cancelProposedTrade(proposedTradeId) {
     throw new Error(err.response.data.message);
   }
 }
+
+export async function rejectProposedTrade(proposedTradeId) {
+  const url = `/proposedTrades/rejectProposedTrade/${proposedTradeId}`;
+  try {
+    const response = await axios.post(url);
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.response.data.message);
+  }
+}

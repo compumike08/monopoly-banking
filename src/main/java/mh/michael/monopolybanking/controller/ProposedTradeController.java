@@ -49,4 +49,12 @@ public class ProposedTradeController {
     ) {
         return proposedTradeService.cancelProposedTrade(proposedTradeId, jwtUserDetails);
     }
+
+    @PostMapping("/rejectProposedTrade/{proposedTradeId}")
+    public ProposedTradeDTO rejectProposedTrade(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("proposedTradeId") long proposedTradeId
+    ) {
+        return proposedTradeService.rejectProposedTrade(proposedTradeId, jwtUserDetails);
+    }
 }
