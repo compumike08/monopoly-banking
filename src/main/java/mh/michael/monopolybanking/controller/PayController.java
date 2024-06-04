@@ -31,6 +31,6 @@ public class PayController {
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
             @RequestBody PayRequestDTO payRequestDTO
     ) {
-        return payService.payMoney(payRequestDTO, jwtUserDetails, false);
+        return payService.payMoney(payRequestDTO, jwtUserDetails, false, false);
     }
 }

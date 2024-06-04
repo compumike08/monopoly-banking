@@ -24,8 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-import static mh.michael.monopolybanking.constants.Constants.INITIAL_BANK_AMT;
-import static mh.michael.monopolybanking.constants.Constants.OUT_OF_SYNC_ERR_MSG;
+import static mh.michael.monopolybanking.constants.Constants.*;
 
 @Service
 @Slf4j
@@ -70,7 +69,8 @@ public class PayService {
     public PayResponseDTO payMoney(
             PayRequestDTO payRequestDTO,
             JwtUserDetails jwtUserDetails,
-            boolean isSystemBankPayment
+            boolean isSystemBankPayment,
+            boolean isBypassPlayerAuthChecks
     ) {
         log.info("Initiating payment...");
         List<Long> authGameIdList = jwtUserDetails.getGameIdList();
@@ -102,7 +102,7 @@ public class PayService {
                         payRequestDTO.getRequestInitiatorPlayerId()
                 );
 
-        if (!authPlayerIdList.contains(payRequestDTO.getRequestInitiatorPlayerId())) {
+        if (!authPlayerIdList.contains(payRequestDTO.getRequestInitiatorPlayerId()) && !isBypassPlayerAuthChecks) {
             log.error("User attempted to forge the requestInitiatorPlayerId in their pay request");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
@@ -140,7 +140,7 @@ public class PayService {
 
             fromMoneySink.setMoneyBalance(balanceRemaining);
         } else {
-            if (payRequestDTO.getRequestInitiatorPlayerId() != payRequestDTO.getFromId()) {
+            if (payRequestDTO.getRequestInitiatorPlayerId() != payRequestDTO.getFromId() && !isBypassPlayerAuthChecks) {
                 log.error("User attempted to pay from a source they don't have access to");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
             }
@@ -278,6 +278,10 @@ public class PayService {
                 .build();
 
         paymentRepository.save(payment);
+
+        if (isBypassPlayerAuthChecks) {
+            payResponseDTO.setIsIgnoreNotification(true);
+        }
 
         simpMessagingTemplate.convertAndSend("/topic/game/" + gameId + "/payment", payResponseDTO);
         log.debug("Payment websocket message sent");

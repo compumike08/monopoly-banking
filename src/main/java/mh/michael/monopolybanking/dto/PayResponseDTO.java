@@ -24,4 +24,7 @@ public class PayResponseDTO implements Serializable {
     private boolean isToSink;
     private long requestInitiatorPlayerId;
     private long amountPaid;
+
+    // These properties are for sending websocket messages
+    private boolean isIgnoreNotification = false;
 }

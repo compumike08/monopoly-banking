@@ -35,4 +35,5 @@ public class PropertyClaimDTO implements Serializable {
     // These properties are for sending websocket messages
     private boolean isMortgagingPropertyMsg = false;
     private boolean isUnmortgagingPropertyMsg = false;
+    private boolean isPartOfAcceptedTrade = false;
 }

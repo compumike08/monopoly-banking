@@ -54,3 +54,14 @@ export async function rejectProposedTrade(proposedTradeId) {
     throw new Error(err.response.data.message);
   }
 }
+
+export async function acceptProposedTrade(proposedTradeId) {
+  const url = `/proposedTrades/acceptProposedTrade/${proposedTradeId}`;
+  try {
+    const response = await axios.post(url);
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.response.data.message);
+  }
+}

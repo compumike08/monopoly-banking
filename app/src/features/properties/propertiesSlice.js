@@ -63,6 +63,9 @@ const processPropertyClaimUpdate = (state, action, isReceivedFromWs) => {
     } else if (data.isUnmortgagingPropertyMsg) {
       const toastMessage = `${data.ownedByPlayerName} has unmortgaged ${data.name}`;
       toast.success(toastMessage);
+    } else if (data.isPartOfAcceptedTrade) {
+      // Do not send toastify notification
+      return state;
     } else {
       const toastMessage = `${data.ownedByPlayerName} now owns ${data.name}`;
       toast.success(toastMessage);

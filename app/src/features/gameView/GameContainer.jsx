@@ -9,7 +9,8 @@ import {
   TOPIC_PROPOSED_TRADE,
   TOPIC_GAME_PLAYERS,
   TOPIC_GAME_PAYMENT,
-  TOPIC_GAME_PROPERTY_UPDATE
+  TOPIC_GAME_PROPERTY_UPDATE,
+  TOPIC_GAME_COMPLETED_TRADE
 } from "../../constants/general";
 import {
   playerReceivedFromWs,
@@ -77,6 +78,20 @@ class GameContainer extends PureComponent {
 
       componentThis.stompClient.subscribe(
         `${TOPIC_PLAYER_PREFIX}/${componentThis.props.loggedInPlayerId}/${TOPIC_PROPOSED_TRADE}`,
+        (message) => {
+          // called when the client receives a STOMP message from the server
+          if (message.body) {
+            componentThis.props.actions.proposedTradeUpdateReceivedFromWs(
+              JSON.parse(message.body)
+            );
+          } else {
+            console.log("got empty message");
+          }
+        }
+      );
+
+      componentThis.stompClient.subscribe(
+        `${TOPIC_GAME_PREFIX}/${componentThis.props.activeGameId}/${TOPIC_GAME_COMPLETED_TRADE}`,
         (message) => {
           // called when the client receives a STOMP message from the server
           if (message.body) {

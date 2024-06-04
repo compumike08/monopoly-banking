@@ -6,7 +6,10 @@ import { Col, Row, Button, Alert } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { formatNumberAsCurrency } from "../../utils/util";
-import { rejectProposedTradeAction } from "./tradesSlice";
+import {
+  rejectProposedTradeAction,
+  acceptProposedTradeAction
+} from "./tradesSlice";
 import { selectSelectedTradeDetails } from "./tradesSelectors";
 import ProposedTradePropertiesList from "../properties/ProposedTradePropertiesList";
 
@@ -30,6 +33,18 @@ class ViewTradeDetails extends PureComponent {
 
   handleRejectTradeClick = async () => {
     const response = await this.props.actions.rejectProposedTradeAction(
+      this.props.tradeDetails.proposedTradeId
+    );
+    if (response.error && response.error.message) {
+      this.setState({
+        isResponseError: true,
+        responseErrorMsg: response.error.message
+      });
+    }
+  };
+
+  handleAcceptTradeClick = async () => {
+    const response = await this.props.actions.acceptProposedTradeAction(
       this.props.tradeDetails.proposedTradeId
     );
     if (response.error && response.error.message) {
@@ -155,6 +170,9 @@ class ViewTradeDetails extends PureComponent {
               <Col>
                 <Button color="danger" onClick={this.handleRejectTradeClick}>
                   Reject Trade
+                </Button>{" "}
+                <Button color="primary" onClick={this.handleAcceptTradeClick}>
+                  Accept Trade
                 </Button>
               </Col>
             </Row>
@@ -181,7 +199,8 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(
       {
-        rejectProposedTradeAction
+        rejectProposedTradeAction,
+        acceptProposedTradeAction
       },
       dispatch
     )

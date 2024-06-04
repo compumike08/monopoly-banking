@@ -96,7 +96,8 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
     fromMoneySink,
     toMoneySink,
     amountPaid,
-    payRequestUUID
+    payRequestUUID,
+    isIgnoreNotification
   } = action.payload;
 
   let fromObject = null;
@@ -150,8 +151,10 @@ const processPayment = (state, action, isFromWebsocketMsg) => {
       formattedAmountPaid
     });
 
-    const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
-    toast.success(toastMessage);
+    if (!isIgnoreNotification) {
+      const toastMessage = `${fromName} paid ${toName} ${formattedAmountPaid}`;
+      toast.success(toastMessage);
+    }
   }
 
   return state;

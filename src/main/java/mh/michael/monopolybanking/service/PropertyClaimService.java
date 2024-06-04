@@ -146,7 +146,7 @@ public class PropertyClaimService {
                 .requestInitiatorPlayerId(player.getId())
                 .build();
 
-        payService.payMoney(payRequestDTO, jwtUserDetails, false);
+        payService.payMoney(payRequestDTO, jwtUserDetails, false, false);
 
         propertyClaim.setOwnedByPlayer(player);
 
@@ -228,7 +228,7 @@ public class PropertyClaimService {
                 .build();
 
         log.debug("Paying player for mortgaging property...");
-        payService.payMoney(payRequestDTO, jwtUserDetails, true);
+        payService.payMoney(payRequestDTO, jwtUserDetails, true, false);
 
         PropertyClaimDTO propertyClaimDTO = ConvertDTOUtil.convertPropertyClaimToPropertyClaimDTO(savedPropertyClaim);
 
@@ -303,7 +303,7 @@ public class PropertyClaimService {
                 .build();
 
         log.debug("Paying bank for unmortgaging property...");
-        payService.payMoney(payRequestDTO, jwtUserDetails, false);
+        payService.payMoney(payRequestDTO, jwtUserDetails, false, false);
 
         propertyClaim.setIsMortgaged(false);
 

@@ -2,6 +2,8 @@ package mh.michael.monopolybanking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import mh.michael.monopolybanking.dto.NewProposedTradeRequestDTO;
+import mh.michael.monopolybanking.dto.PayRequestDTO;
+import mh.michael.monopolybanking.dto.PropertyClaimDTO;
 import mh.michael.monopolybanking.dto.ProposedTradeDTO;
 import mh.michael.monopolybanking.model.Game;
 import mh.michael.monopolybanking.model.Player;
@@ -20,12 +22,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static mh.michael.monopolybanking.constants.Constants.INTERNAL_SERVER_ERROR_MSG;
-import static mh.michael.monopolybanking.util.ConvertDTOUtil.convertProposedTradeListToProposedTradeDTOList;
-import static mh.michael.monopolybanking.util.ConvertDTOUtil.convertProposedTradeToProposedTradeDTO;
+import static mh.michael.monopolybanking.util.ConvertDTOUtil.*;
 
 @Service
 @Slf4j
@@ -34,17 +36,19 @@ public class ProposedTradeService {
     private final PlayerRepository playerRepository;
     private final PropertyClaimRepository propertyClaimRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final PayService payService;
 
     public ProposedTradeService(
             ProposedTradeRepository proposedTradeRepository,
             PlayerRepository playerRepository,
             PropertyClaimRepository propertyClaimRepository,
-            SimpMessagingTemplate simpMessagingTemplate
-    ) {
+            SimpMessagingTemplate simpMessagingTemplate,
+            PayService payService) {
         this.proposedTradeRepository = proposedTradeRepository;
         this.playerRepository = playerRepository;
         this.propertyClaimRepository = propertyClaimRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.payService = payService;
     }
 
     @Transactional
@@ -318,6 +322,108 @@ public class ProposedTradeService {
         simpMessagingTemplate.convertAndSend(
                 "/topic/player/" + proposedTrade.getProposingPlayer().getId() + "/proposedTrade", deletedProposedTradeDTO);
         log.debug("Reject proposed trade websocket message sent");
+
+        return deletedProposedTradeDTO;
+    }
+
+    @Transactional
+    public ProposedTradeDTO acceptProposedTrade(long proposedTradeId, JwtUserDetails jwtUserDetails) {
+        Optional<ProposedTrade> optProposedTrade = proposedTradeRepository.findById(proposedTradeId);
+
+        if (optProposedTrade.isEmpty()) {
+            log.error("Proposed trade id {} not found", proposedTradeId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+        }
+
+        ProposedTrade proposedTrade = optProposedTrade.get();
+
+        if (!jwtUserDetails.getPlayerIdList().contains(proposedTrade.getRequestedPlayer().getId())) {
+            log.error("User attempted to accept a proposed trade that they don't have access to");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
+        if (proposedTrade.getAmountMoneyOffered() > 0) {
+            PayRequestDTO payRequestDTO = PayRequestDTO.builder()
+                    .amountToPay(proposedTrade.getAmountMoneyOffered())
+                    .payRequestUUID(UUID.randomUUID().toString())
+                    .isFromSink(false)
+                    .isToSink(false)
+                    .fromId(proposedTrade.getProposingPlayer().getId())
+                    .toId(proposedTrade.getRequestedPlayer().getId())
+                    .originalFromAmount(proposedTrade.getProposingPlayer().getMoneyBalance())
+                    .originalToAmount(proposedTrade.getRequestedPlayer().getMoneyBalance())
+                    .gameId(proposedTrade.getGame().getId())
+                    .requestInitiatorPlayerId(proposedTrade.getRequestedPlayer().getId())
+                    .build();
+
+            payService.payMoney(payRequestDTO, jwtUserDetails, false, true);
+        }
+
+        if (proposedTrade.getAmountMoneyRequested() > 0) {
+            PayRequestDTO payRequestDTO = PayRequestDTO.builder()
+                    .amountToPay(proposedTrade.getAmountMoneyRequested())
+                    .payRequestUUID(UUID.randomUUID().toString())
+                    .isFromSink(false)
+                    .isToSink(false)
+                    .fromId(proposedTrade.getRequestedPlayer().getId())
+                    .toId(proposedTrade.getProposingPlayer().getId())
+                    .originalFromAmount(proposedTrade.getRequestedPlayer().getMoneyBalance())
+                    .originalToAmount(proposedTrade.getProposingPlayer().getMoneyBalance())
+                    .gameId(proposedTrade.getGame().getId())
+                    .requestInitiatorPlayerId(proposedTrade.getRequestedPlayer().getId())
+                    .build();
+
+            payService.payMoney(payRequestDTO, jwtUserDetails, false, true);
+        }
+
+        List<PropertyClaim> offeredPropertyClaims = proposedTrade.getOfferedPropertyClaims();
+        List<PropertyClaim> requestedPropertyClaims = proposedTrade.getRequestedPropertyClaims();
+
+        Player requestedPlayer = proposedTrade.getRequestedPlayer();
+        offeredPropertyClaims.forEach(propertyClaim -> {
+            propertyClaim.setOwnedByPlayer(requestedPlayer);
+            propertyClaim.setOfferedInProposedTrade(null);
+        });
+
+        Player proposedPlayer = proposedTrade.getProposingPlayer();
+        requestedPropertyClaims.forEach(propertyClaim -> {
+            propertyClaim.setOwnedByPlayer(proposedPlayer);
+            propertyClaim.setRequestedInProposedTrade(null);
+        });
+
+        List<PropertyClaim> savedOfferedPropertyClaims = propertyClaimRepository.saveAll(offeredPropertyClaims);
+        List<PropertyClaim> savedRequestedPropertyClaims = propertyClaimRepository.saveAll(requestedPropertyClaims);
+
+        proposedTrade = proposedTradeRepository.getOne(proposedTradeId);
+
+        long gameId = proposedTrade.getGame().getId();
+
+        proposedTradeRepository.delete(proposedTrade);
+
+        savedOfferedPropertyClaims.forEach(propertyClaim -> {
+            PropertyClaimDTO propertyClaimDTO = convertPropertyClaimToPropertyClaimDTO(propertyClaim);
+            propertyClaimDTO.setIsPartOfAcceptedTrade(true);
+
+            simpMessagingTemplate.convertAndSend(
+                    "/topic/game/" + gameId + "/propertyUpdate", propertyClaimDTO);
+            log.debug("Property update websocket message sent");
+        });
+
+        savedRequestedPropertyClaims.forEach(propertyClaim -> {
+            PropertyClaimDTO propertyClaimDTO = convertPropertyClaimToPropertyClaimDTO(propertyClaim);
+            propertyClaimDTO.setIsPartOfAcceptedTrade(true);
+
+            simpMessagingTemplate.convertAndSend(
+                    "/topic/game/" + gameId + "/propertyUpdate", propertyClaimDTO);
+            log.debug("Property update websocket message sent");
+        });
+
+        ProposedTradeDTO deletedProposedTradeDTO = convertProposedTradeToProposedTradeDTO(proposedTrade);
+        deletedProposedTradeDTO.setIsProposedTradeAccepted(true);
+
+        simpMessagingTemplate.convertAndSend(
+                "/topic/game/" + proposedTrade.getGame().getId() + "/completedTrade", deletedProposedTradeDTO);
+        log.debug("Accept proposed trade websocket message sent");
 
         return deletedProposedTradeDTO;
     }

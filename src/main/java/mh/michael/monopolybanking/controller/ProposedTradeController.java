@@ -57,4 +57,12 @@ public class ProposedTradeController {
     ) {
         return proposedTradeService.rejectProposedTrade(proposedTradeId, jwtUserDetails);
     }
+
+    @PostMapping("/acceptProposedTrade/{proposedTradeId}")
+    public ProposedTradeDTO acceptProposedTrade(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @PathVariable("proposedTradeId") long proposedTradeId
+    ) {
+        return proposedTradeService.acceptProposedTrade(proposedTradeId, jwtUserDetails);
+    }
 }

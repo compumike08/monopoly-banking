@@ -11,5 +11,6 @@ export const TOPIC_GAME_PAYMENT = "payment";
 export const TOPIC_PROPOSED_TRADE = "proposedTrade";
 export const TOPIC_GAME_PROPERTY_UPDATE = "propertyUpdate";
 export const TOPIC_PLAYER_PROPOSED_TRADE = "proposedTrade";
+export const TOPIC_GAME_COMPLETED_TRADE = "completedTrade";
 
 export const BANKER_ROLE = "BANKER";
