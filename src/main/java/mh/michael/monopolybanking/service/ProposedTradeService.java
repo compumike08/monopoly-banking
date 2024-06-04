@@ -115,9 +115,15 @@ public class ProposedTradeService {
             }
         });
 
+        requestDTO.getRequestedPropertyClaimIds().forEach(propertyClaimId -> {
+            if (allProposedTradesPropertyClaimListIds.contains(propertyClaimId)) {
+                isAlreadyInProposedTrade.set(true);
+            }
+        });
+
         if (isAlreadyInProposedTrade.get()) {
             log.info("The user attempted to propose a trade involving one or more property claims that are already in other proposed trades");
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "One or more properties in trade are already part of other proposed trades");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "One or more properties in proposed trade are already part of other proposed trades");
         }
 
         AtomicBoolean isPropertyClaimInBothProposedAndRequested = new AtomicBoolean(false);
