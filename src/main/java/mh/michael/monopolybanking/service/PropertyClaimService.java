@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,6 +56,7 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByGame_Id(gameId);
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
@@ -70,6 +72,7 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByOwnedByPlayer_Id(playerId);
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
@@ -81,6 +84,7 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByGame_IdAndOwnedByPlayerIsNull(gameId);
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
