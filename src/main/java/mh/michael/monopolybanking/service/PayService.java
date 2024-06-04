@@ -83,6 +83,12 @@ public class PayService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
 
+        // Prevent negative amountToPay
+        if (payRequestDTO.getAmountToPay() < 0) {
+            log.error("Payment amount cannot be negative; amountToPay is: {}", payRequestDTO.getAmountToPay());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment amount cannot be negative");
+        }
+
         MoneySink fromMoneySink = null;
         MoneySink toMoneySink = null;
         Player fromPlayer = null;
