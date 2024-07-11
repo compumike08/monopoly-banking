@@ -136,8 +136,8 @@ class ProposeNewTrade extends PureComponent {
         gameId: this.props.gameId,
         proposingPlayerId: this.props.loggedInPlayerId,
         requestedPlayerId: this.state.selectedPlayerId,
-        amountMoneyOffered: this.state.amountToOffer,
-        amountMoneyRequested: this.state.amountToRequest,
+        amountMoneyOffered: parseInt(this.state.amountToOffer, 10),
+        amountMoneyRequested: parseInt(this.state.amountToRequest, 10),
         proposedPropertyClaimIds:
           this.state.selectedForTradeOfferedPropertyClaimIds,
         requestedPropertyClaimIds:
