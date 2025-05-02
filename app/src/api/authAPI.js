@@ -16,6 +16,11 @@ function isUserLoggedIn() {
 }
 
 function setupAxiosInterceptors(token) {
+  if (axiosHeaderInterceptor !== null) {
+    axios.interceptors.request.eject(axiosHeaderInterceptor);
+    axiosHeaderInterceptor = null;
+  }
+
   axiosHeaderInterceptor = axios.interceptors.request.use((config) => {
     if (isUserLoggedIn()) {
       config.headers.authorization = token;
