@@ -62,4 +62,7 @@ public class Property {
 
     @Column(nullable = false)
     private boolean isUtility;
+
+    @Column(nullable = false)
+    private Long boardPositionOrder;
 }

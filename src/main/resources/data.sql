@@ -16,7 +16,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Mediterranean Avenue',
              60,
@@ -33,7 +34,8 @@ INSERT INTO property (
              33,
              true,
              false,
-             false
+             false,
+             1
          );
 
 INSERT INTO property (
@@ -52,7 +54,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Baltic Avenue',
              60,
@@ -69,7 +72,8 @@ INSERT INTO property (
              33,
              true,
              false,
-             false
+             false,
+             2
          );
 
 INSERT INTO property (
@@ -83,7 +87,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Reading Railroad',
              200,
@@ -95,7 +100,8 @@ INSERT INTO property (
              110,
              false,
              true,
-             false
+             false,
+             3
          );
 
 INSERT INTO property (
@@ -114,7 +120,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Oriental Avenue',
              100,
@@ -131,7 +138,8 @@ INSERT INTO property (
              55,
              true,
              false,
-             false
+             false,
+             4
          );
 
 INSERT INTO property (
@@ -150,7 +158,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Vermont Avenue',
              100,
@@ -167,7 +176,8 @@ INSERT INTO property (
              55,
              true,
              false,
-             false
+             false,
+             5
          );
 
 INSERT INTO property (
@@ -186,7 +196,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Connecticut Avenue',
              120,
@@ -203,7 +214,8 @@ INSERT INTO property (
              66,
              true,
              false,
-             false
+             false,
+             6
          );
 
 INSERT INTO property (
@@ -222,7 +234,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'St. Charles Place',
              140,
@@ -239,7 +252,8 @@ INSERT INTO property (
              77,
              true,
              false,
-             false
+             false,
+             7
          );
 
 INSERT INTO property (
@@ -249,7 +263,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Electric Company',
              150,
@@ -257,7 +272,8 @@ INSERT INTO property (
              83,
              false,
              false,
-             true
+             true,
+             8
          );
 
 INSERT INTO property (
@@ -276,7 +292,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'States Avenue',
              140,
@@ -293,7 +310,8 @@ INSERT INTO property (
              77,
              true,
              false,
-             false
+             false,
+             9
          );
 
 INSERT INTO property (
@@ -312,7 +330,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Virginia Avenue',
              160,
@@ -329,7 +348,8 @@ INSERT INTO property (
              88,
              true,
              false,
-             false
+             false,
+             10
          );
 
 INSERT INTO property (
@@ -343,7 +363,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Pennsylvania Railroad',
              200,
@@ -355,7 +376,8 @@ INSERT INTO property (
              110,
              false,
              true,
-             false
+             false,
+             11
          );
 
 INSERT INTO property (
@@ -374,7 +396,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'St. James Place',
              180,
@@ -391,7 +414,8 @@ INSERT INTO property (
              99,
              true,
              false,
-             false
+             false,
+             12
          );
 
 INSERT INTO property (
@@ -410,7 +434,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Tennessee Avenue',
              180,
@@ -427,7 +452,8 @@ INSERT INTO property (
              99,
              true,
              false,
-             false
+             false,
+             13
          );
 
 INSERT INTO property (
@@ -446,7 +472,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'New York Avenue',
              200,
@@ -463,7 +490,8 @@ INSERT INTO property (
              110,
              true,
              false,
-             false
+             false,
+             14
          );
 
 INSERT INTO property (
@@ -482,7 +510,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Kentucky Avenue',
              220,
@@ -499,7 +528,8 @@ INSERT INTO property (
              121,
              true,
              false,
-             false
+             false,
+             15
          );
 
 INSERT INTO property (
@@ -518,7 +548,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Indiana Avenue',
              220,
@@ -535,7 +566,8 @@ INSERT INTO property (
              121,
              true,
              false,
-             false
+             false,
+             16
          );
 
 INSERT INTO property (
@@ -554,7 +586,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Illinois Avenue',
              240,
@@ -571,7 +604,8 @@ INSERT INTO property (
              132,
              true,
              false,
-             false
+             false,
+             17
          );
 
 INSERT INTO property (
@@ -585,7 +619,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'B&O Railroad',
              200,
@@ -597,7 +632,8 @@ INSERT INTO property (
              110,
              false,
              true,
-             false
+             false,
+             18
          );
 
 INSERT INTO property (
@@ -616,7 +652,46 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
+) VALUES (
+             'Atlantic Avenue',
+             260,
+             'yellow',
+             22,
+             44,
+             110,
+             330,
+             800,
+             975,
+             1150,
+             150,
+             130,
+             143,
+             true,
+             false,
+             false,
+             19
+         );
+
+INSERT INTO property (
+    name,
+    cost,
+    color,
+    rent_for_site,
+    rent_for_color_group,
+    rent_one_house_or_railroad,
+    rent_two_house_or_railroad,
+    rent_three_house_or_railroad,
+    rent_four_house_or_railroad,
+    rent_hotel,
+    building_cost,
+    mortgage_value,
+    unmortgage_value,
+    is_regular_property,
+    is_railroad,
+    is_utility,
+    board_position_order
 ) VALUES (
              'Ventnor Avenue',
              260,
@@ -633,7 +708,8 @@ INSERT INTO property (
              143,
              true,
              false,
-             false
+             false,
+             20
          );
 
 INSERT INTO property (
@@ -643,7 +719,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Water Works',
              150,
@@ -651,7 +728,8 @@ INSERT INTO property (
              83,
              false,
              false,
-             true
+             true,
+             21
          );
 
 INSERT INTO property (
@@ -670,7 +748,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Marvin Gardens',
              280,
@@ -687,7 +766,8 @@ INSERT INTO property (
              154,
              true,
              false,
-             false
+             false,
+             22
          );
 
 INSERT INTO property (
@@ -706,7 +786,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Pacific Avenue',
              300,
@@ -723,7 +804,8 @@ INSERT INTO property (
              165,
              true,
              false,
-             false
+             false,
+             23
          );
 
 INSERT INTO property (
@@ -742,7 +824,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'North Carolina Avenue',
              300,
@@ -759,7 +842,8 @@ INSERT INTO property (
              165,
              true,
              false,
-             false
+             false,
+             24
          );
 
 INSERT INTO property (
@@ -778,7 +862,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Pennsylvania Avenue',
              320,
@@ -795,7 +880,8 @@ INSERT INTO property (
              176,
              true,
              false,
-             false
+             false,
+             25
          );
 
 INSERT INTO property (
@@ -809,7 +895,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Short Line Railroad',
              200,
@@ -821,7 +908,8 @@ INSERT INTO property (
              110,
              false,
              true,
-             false
+             false,
+             26
          );
 
 INSERT INTO property (
@@ -840,7 +928,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Park Place',
              350,
@@ -857,7 +946,8 @@ INSERT INTO property (
              193,
              true,
              false,
-             false
+             false,
+             27
          );
 
 INSERT INTO property (
@@ -876,7 +966,8 @@ INSERT INTO property (
     unmortgage_value,
     is_regular_property,
     is_railroad,
-    is_utility
+    is_utility,
+    board_position_order
 ) VALUES (
              'Boardwalk',
              400,
@@ -893,5 +984,6 @@ INSERT INTO property (
              220,
              true,
              false,
-             false
+             false,
+             28
          );

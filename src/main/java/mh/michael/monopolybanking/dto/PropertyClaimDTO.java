@@ -31,6 +31,7 @@ public class PropertyClaimDTO implements Serializable {
     private Long gameId;
     private Long ownedByPlayerId;
     private String ownedByPlayerName;
+    private Long boardPositionOrder;
 
     // These properties are for sending websocket messages
     private boolean isMortgagingPropertyMsg = false;

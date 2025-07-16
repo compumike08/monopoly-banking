@@ -117,6 +117,7 @@ public class ConvertDTOUtil {
                 .rentTwoHouseOrRailroad(propertyClaim.getProperty().getRentTwoHouseOrRailroad())
                 .unmortgageValue(propertyClaim.getProperty().getUnmortgageValue())
                 .unmortgageValue(propertyClaim.getProperty().getUnmortgageValue())
+                .boardPositionOrder(propertyClaim.getProperty().getBoardPositionOrder())
                 .build();
     }
 

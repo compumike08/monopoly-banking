@@ -56,7 +56,8 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByGame_Id(gameId);
-        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) ->
+          Math.toIntExact(propertyClaim1.getProperty().getBoardPositionOrder() - propertyClaim2.getProperty().getBoardPositionOrder()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
@@ -72,7 +73,8 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByOwnedByPlayer_Id(playerId);
-        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) ->
+          Math.toIntExact(propertyClaim1.getProperty().getBoardPositionOrder() - propertyClaim2.getProperty().getBoardPositionOrder()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
@@ -84,7 +86,8 @@ public class PropertyClaimService {
         }
 
         List<PropertyClaim> propertyClaimList = propertyClaimRepository.findByGame_IdAndOwnedByPlayerIsNull(gameId);
-        propertyClaimList.sort((propertyClaim1, propertyClaim2) -> Math.toIntExact(propertyClaim1.getProperty().getId() - propertyClaim2.getProperty().getId()));
+        propertyClaimList.sort((propertyClaim1, propertyClaim2) ->
+          Math.toIntExact(propertyClaim1.getProperty().getBoardPositionOrder() - propertyClaim2.getProperty().getBoardPositionOrder()));
         return ConvertDTOUtil.convertPropertyClaimListToPropertyClaimDTOList(propertyClaimList);
     }
 
